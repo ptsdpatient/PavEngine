@@ -34,13 +34,14 @@ public class PavEngine extends Game {
     public SpriteBatch batch;
 
     public static BitmapFont
-        gameFont = new BitmapFont(load("font/ubuntu.fnt")),
-        bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
+        gameFont,
+        bigGameFont ;
 
     public static TextureRegion[]
-        uiBG = extractSprites("sprites/default/ui_bg.png",32,32),
-        uiControl = extractSprites("sprites/default/ui_control.png",32,32),
-        hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
+        uiBG ,
+        uiControl,
+        hoverUIBG;
+
     public String[] soundList = new String[]{
         "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
         "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"
@@ -52,13 +53,21 @@ public class PavEngine extends Game {
         Gdx.input.setCursorCatched(true);
 
         initializeSound();
+        
         batch = new SpriteBatch();
+        gameFont = new BitmapFont(load("font/ubuntu.fnt"));
+        bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
+
+        uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
+        uiControl = extractSprites("sprites/default/ui_control.png",32,32);
+        hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
 
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);
         upgradeScreen = new UpgradeScreen(this);
         pauseScreen = new PauseScreen(this);
+
 
         setScreen(loadingScreen);
 
