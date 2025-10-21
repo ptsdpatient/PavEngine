@@ -1,10 +1,14 @@
 package com.pavengine.app;
 
+import static com.pavengine.app.Methods.extractSprites;
+import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.lockCursor;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pavengine.app.PavScreen.GameScreen;
 import com.pavengine.app.PavScreen.LoadingScreen;
@@ -25,11 +29,18 @@ public class PavEngine extends Game {
     public static SoundBox soundBox = new SoundBox();
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
-    public StartScreen startScreen;
     public UpgradeScreen upgradeScreen;
     public PauseScreen pauseScreen;
     public SpriteBatch batch;
 
+    public static BitmapFont
+        gameFont = new BitmapFont(load("font/ubuntu.fnt")),
+        bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
+
+    public static TextureRegion[]
+        uiBG = extractSprites("sprites/default/ui_bg.png",32,32),
+        uiControl = extractSprites("sprites/default/ui_control.png",32,32),
+        hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
     public String[] soundList = new String[]{
         "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
         "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"

@@ -7,10 +7,12 @@ import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.blastRadius;
 import static com.pavengine.app.PavEngine.credits;
 import static com.pavengine.app.PavEngine.enableCursor;
+import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.playerDamage;
 import static com.pavengine.app.PavEngine.playerDamageRate;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sprayLimit;
+import static com.pavengine.app.PavEngine.uiControl;
 
 
 import com.badlogic.gdx.Gdx;

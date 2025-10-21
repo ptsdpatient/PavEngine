@@ -1,8 +1,9 @@
 package com.pavengine.app.MapEditor;
 
-import static com.pavengine.app.PavScreen.StartScreen.hoverUIBG;
-import static com.pavengine.app.PavScreen.StartScreen.uiBG;
-import static com.pavengine.app.PavScreen.StartScreen.uiControl;
+import static com.pavengine.app.PavEngine.hoverUIBG;
+import static com.pavengine.app.PavEngine.uiBG;
+
+import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
