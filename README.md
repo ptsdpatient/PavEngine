@@ -1,6 +1,6 @@
 # Pav Engine
 
-![Pav Engine Banner](https://via.placeholder.com/1200x300?text=Pav+Engine+%7C+Modular+LibGDX+Framework)
+![Pav Engine Banner](images/banner.png)
 
 **⚙️ A Modular Game Framework for Modern Creators**
 
