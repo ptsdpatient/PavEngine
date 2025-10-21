@@ -1,0 +1,352 @@
+package com.pavengine.app.PavGameObject;
+
+import static com.pavengine.app.ObjectBehaviorType.AttachToCamera;
+import static com.pavengine.app.ObjectBehaviorType.AttachToObject;
+import static com.pavengine.app.ObjectBehaviorType.Static;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
+
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.pavengine.app.Actions;
+import com.pavengine.app.Direction;
+import com.pavengine.app.Force;
+import com.pavengine.app.InteractType;
+import com.pavengine.app.ObjectType;
+import com.pavengine.app.PavBounds.PavBounds;
+
+import net.mgsx.gltf.scene3d.scene.Scene;
+
+import java.util.Objects;
+
+public class DynamicObject extends GameObject {
+
+    public DynamicObject() {
+
+    }
+
+    public DynamicObject(String name, Vector3 position, float size, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
+        this.name = name;
+        this.animationNames = animationNames;
+        this.objectType = objectType;
+        this.scene = scene;
+        this.size = new Vector3(size, size, size);
+        this.mass = mass;
+        this.pos = position;
+        this.bounciness = bounciness;
+        this.scene.modelInstance.transform.setToTranslation(position);
+        if (Objects.equals(this.name, "laser")) {
+            objectBehaviorType = AttachToObject;
+        } else {
+            objectBehaviorType = Static;
+        }
+        this.scene.modelInstance.transform.scl(size);
+        this.bounds = new BoundingBox();
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        this.radius = center.dst(bounds.max);
+
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        box = new PavBounds(bounds);
+        box.setBounds(bounds);
+
+    }
+
+    public DynamicObject(String name, Vector3 position, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
+        this.name = name;
+        this.animationNames = animationNames;
+        this.objectType = objectType;
+        this.scene = scene;
+        this.mass = mass;
+        this.pos = position;
+        this.bounciness = bounciness;
+        this.scene.modelInstance.transform.setToTranslation(position);
+        this.bounds = new BoundingBox();
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        objectBehaviorType = Static;
+        this.radius = center.dst(bounds.max);
+
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        box = new PavBounds(bounds);
+        box.setBounds(bounds);
+
+    }
+
+    public DynamicObject(String name, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
+        this.name = name;
+        this.scene = scene;
+
+        this.rotation = rotation;
+        this.size = size;
+        this.pos = position;
+        this.scene.modelInstance.transform.setToTranslation(position);
+        this.scene.modelInstance.transform.scl(size);
+
+        this.bounds = new BoundingBox();
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        this.radius = center.dst(bounds.max);
+
+        this.scene.modelInstance.calculateBoundingBox(bounds);
+        bounds.min.add(pos);
+        bounds.max.add(pos);
+        box = new PavBounds(bounds);
+        box.setBounds(bounds);
+
+        update(0);
+    }
+
+    public void setInteractAction(InteractType type) {
+        this.interactible = true;
+        this.interactType = type;
+    }
+
+    public void setRing(float ringRadius, float ringHeightOffset) {
+        this.ringDetection = true;
+        this.ringRadius = ringRadius;
+        this.ringHeightOffset = ringHeightOffset;
+    }
+
+    public boolean checkCollision(Vector3 position) {
+        this.bounds.getCenter(center);
+        center.mul(this.scene.modelInstance.transform);
+        return position.dst(center) < radius;
+    }
+
+    public float distanceFrom(Vector3 position) {
+        this.bounds.getCenter(center);
+        center.mul(this.scene.modelInstance.transform);
+        return position.dst(center);
+    }
+
+    public boolean checkCollision(GameObject otherObject) {
+        return box.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.box.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
+    }
+
+
+    public void rotate(Direction direction, float amplitude) {
+        rotation.idt().setFromAxis(direction.dir, amplitude);
+    }
+
+    public void updateCenter() {
+        this.box.getBounds().getCenter(center);
+        center.mul(this.scene.modelInstance.transform);
+    }
+
+    public boolean checkVerticalCollision(float distance) {
+        if (pos.y <= 0) {
+            pos.y = 0;
+            return true;
+        }
+
+        for (int i = 0; i < dynamicObjects.size; i++) {
+            if (dynamicObjects.get(i) == this || dynamicObjects.get(i).hasBounced || dynamicObjects.get(i).grounded)
+                continue;
+            Vector3 otherCenter = dynamicObjects.get(i).center;
+            if (otherCenter.dst(center) < distance) {
+                if (center.y > otherCenter.y) {
+                    if (forces.size < 1)
+                        forces.add(new Force(new Vector3(MathUtils.cos(MathUtils.random(0f, MathUtils.PI2)), 0, MathUtils.sin(MathUtils.random(0f, MathUtils.PI2))).nor(), 2));
+
+//                    float totalMass = this.mass+dynamicObjects.get(i).mass;
+//                    dynamicObjects.get(i).vy=(vy * (this.mass - dynamicObjects.get(i).mass) + 2 * dynamicObjects.get(i).mass * dynamicObjects.get(i).vy) / totalMass;
+//                    this.vy = (dynamicObjects.get(i).vy * (dynamicObjects.get(i).mass - this.mass) + 2 * this.mass * this.vy) / totalMass;
+//                    dynamicObjects.get(i).hasBounced=true;
+                    playAnimation(0, false, false);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void playAnimation(int index, boolean loop, boolean force) {
+        if ((animated && !force) || this.scene.animationController == null) return;
+
+        currentAnimation = index;
+        animated = true;
+
+        scene.animationController.setAnimation(animationNames[index], loop ? -1 : 1, new AnimationController.AnimationListener() {
+
+            @Override
+            public void onEnd(AnimationController.AnimationDesc animation) {
+                animated = false;
+                animation.time = 0f;
+            }
+
+            @Override
+            public void onLoop(AnimationController.AnimationDesc animation) {
+
+            }
+        });
+    }
+
+    public void moveTowards(Vector3 target, float speed, float delta) {
+        pos.add(new Vector3(target.x - pos.x, 0, target.z - pos.z).nor().scl(speed * delta));
+        dir = (new Vector3(target).sub(pos)).nor();
+        rotation = new Quaternion().setEulerAngles(90 + MathUtils.atan2(dir.x, dir.z) * MathUtils.radiansToDegrees, 0, 0);
+    }
+
+    @Override
+    public void slopeDetection() {
+
+    }
+
+    public void attachToObject(GameObject object, Vector3 offset) {
+        attachObject = object;
+        this.offset = offset;
+        this.objectBehaviorType = AttachToObject;
+        pos.set(attachObject.pos.cpy());
+        pos.add(offset.cpy());
+    }
+
+    public void attachToCamera(Vector3 offset) {
+        this.offset = offset;
+        camera.view.getRotation(rotation);
+        rotation.conjugate();
+        objectBehaviorType = AttachToCamera;
+        pos.set(camera.position);
+        pos.add(offset.cpy().rot(new Matrix4().set(rotation)));
+    }
+
+    public void setScale(Vector3 size) {
+        this.size = size;
+        this.scene.modelInstance.transform.scl(size);
+    }
+
+    public void update(float delta) {
+
+        updateCenter();
+//        testRotation += delta;
+        if (this.scene.animationController != null) scene.animationController.update(delta);
+
+        updateBox();
+
+        for (Actions action : actions) {
+            action.update(delta);
+            switch (action.action) {
+                case Rotate: {
+                    rotation.mul(new Quaternion().set(action.direction.dir, action.amplitude * (action.eased - action.lastEased)));
+                    action.lastEased = action.eased;
+                }
+                break;
+            }
+            if (action.elapsed >= action.duration) {
+                actions.removeValue(action, true);
+            }
+        }
+
+
+        for (Force f : forces) {
+            f.update(delta, false);
+            if (f.amplitude <= 0) {
+                forces.removeValue(f, true);
+            }
+        }
+
+        switch (objectBehaviorType) {
+            case FollowPlayer: {
+                moveTowards(camera.position, 3f, delta);
+                rotate(Direction.LEFT, 10);
+            }
+            break;
+
+            case AttachToObject: {
+
+//                print(offset);
+
+            }
+            break;
+
+            case AttachToCamera: {
+
+            }
+            break;
+        }
+//        print("" + camera.position);
+
+        scene.modelInstance.transform.set(pos, rotation, size);
+
+        if (objectType == ObjectType.DYNAMIC) {
+            if (!grounded) {
+
+                scene.modelInstance.transform.getTranslation(pos);
+                vy += (GRAVITY - (K / mass) * vy * Math.abs(vy)) * delta;
+                pos.y += vy * delta;
+
+                angularVelocity.scl(1f - angularDrag * delta);
+
+                scene.modelInstance.transform.getRotation(rotation);
+
+                if (objectType == ObjectType.DYNAMIC) {
+                    deltaRotation.setEulerAngles(
+                        angularVelocity.x * delta * MathUtils.radiansToDegrees,
+                        angularVelocity.y * delta * MathUtils.radiansToDegrees,
+                        angularVelocity.z * delta * MathUtils.radiansToDegrees
+                    );
+                    rotation.mul(deltaRotation);
+                    rotation.nor();
+                }
+
+                if (checkVerticalCollision(5f)) {
+                    vy = -vy * bounciness;
+
+                    if (Math.abs(vy) >= VELOCITY_THRESHOLD) {
+                        angularVelocity.add(
+                            (random.nextFloat() - 0.5f) * spinIntensity,
+                            (random.nextFloat() - 0.5f) * spinIntensity,
+                            (random.nextFloat() - 0.5f) * spinIntensity
+                        );
+                    } else {
+                        vy = 0;
+                        angularVelocity.set(0, 0, 0);
+                        grounded = true;
+                    }
+                } else if (!checkVerticalCollision(5f)) {
+                    hasBounced = false;
+                }
+
+            } else if (pos.y >= 3) {
+                grounded = false;
+            }
+        }
+    }
+
+
+    public boolean contains(Vector3 point) {
+        return box.contains(point);
+    }
+
+    public void updateBox() {
+        scene.modelInstance.calculateBoundingBox(bounds);
+        box.set(bounds, new Matrix4().set(pos, rotation, size));
+    }
+
+    @Override
+    public float getHeight() {
+        return bounds.getHeight() * size.y;
+    }
+
+    @Override
+    public float getWidth() {
+        return bounds.getWidth() * size.x;
+    }
+
+    @Override
+    public float getDepth() {
+        return bounds.getDepth() * size.z;
+    }
+
+}

@@ -1,0 +1,148 @@
+[
+    {
+        "name": "Lamp",
+        "type": "STATIC",
+        "position": {
+            "x": 19.7438,
+            "y": 0.0000,
+            "z": -13.2691
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Lamp",
+        "type": "STATIC",
+        "position": {
+            "x": 22.0991,
+            "y": 0.0000,
+            "z": 6.9241
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    }
+]

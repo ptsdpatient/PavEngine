@@ -1,0 +1,294 @@
+[
+    {
+        "name": "Car",
+        "type": "STATIC",
+        "position": {
+            "x": 21.0962,
+            "y": 0.0000,
+            "z": 5.6754
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": -0.3090,
+            "z": 0.0000,
+            "w": 0.9511
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Fence",
+        "type": "STATIC",
+        "position": {
+            "x": 23.4929,
+            "y": 0.0000,
+            "z": -9.8670
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.1219,
+            "z": 0.0000,
+            "w": 0.9925
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Fence",
+        "type": "STATIC",
+        "position": {
+            "x": 28.6481,
+            "y": 0.0000,
+            "z": 0.7247
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": -0.2504,
+            "z": 0.0000,
+            "w": 0.9681
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Fence",
+        "type": "STATIC",
+        "position": {
+            "x": 31.9356,
+            "y": 0.0000,
+            "z": 15.1906
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.1564,
+            "z": 0.0000,
+            "w": 0.9877
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    }
+]

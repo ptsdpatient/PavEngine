@@ -1,0 +1,441 @@
+[
+   
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 20.2656,
+            "y": 0.0000,
+            "z": 13.1228
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.9945,
+            "z": 0.0000,
+            "w": 0.1045
+        },
+        "size": {
+            "x": 1.5950,
+            "y": 1.5950,
+            "z": 1.5950
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 36.8512,
+            "y": 0.0000,
+            "z": 8.2855
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 2.4300,
+            "y": 2.4300,
+            "z": 2.4300
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 46.2731,
+            "y": 0.0000,
+            "z": -2.2802
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 2.9100,
+            "y": 2.9100,
+            "z": 2.9100
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 17.6406,
+            "y": 0.0000,
+            "z": -22.9882
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.3746,
+            "z": 0.0000,
+            "w": 0.9272
+        },
+        "size": {
+            "x": 2.5600,
+            "y": 2.5600,
+            "z": 2.5600
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 30.2843,
+            "y": 0.0000,
+            "z": -16.2726
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.6157,
+            "z": 0.0000,
+            "w": 0.7880
+        },
+        "size": {
+            "x": 2.7300,
+            "y": 2.7300,
+            "z": 2.7300
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Bush",
+        "type": "STATIC",
+        "position": {
+            "x": 39.5637,
+            "y": 0.0000,
+            "z": -8.8481
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 1.8500,
+            "y": 1.8500,
+            "z": 1.8500
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    }
+]

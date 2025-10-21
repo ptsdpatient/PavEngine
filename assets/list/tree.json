@@ -1,0 +1,294 @@
+[
+   {
+        "name": "Tree",
+        "type": "STATIC",
+        "position": {
+            "x": 28.7367,
+            "y": 0.0000,
+            "z": 11.0823
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.9511,
+            "z": 0.0000,
+            "w": 0.3090
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Tree",
+        "type": "STATIC",
+        "position": {
+            "x": 3.7890,
+            "y": 0.0000,
+            "z": 17.1497
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.6494,
+            "z": 0.0000,
+            "w": 0.7604
+        },
+        "size": {
+            "x": 0.8150,
+            "y": 0.8150,
+            "z": 0.8150
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Tree",
+        "type": "STATIC",
+        "position": {
+            "x": 23.5288,
+            "y": 0.0000,
+            "z": -13.1384
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000,
+            "w": 1.0000
+        },
+        "size": {
+            "x": 1.1900,
+            "y": 1.1900,
+            "z": 1.1900
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    },
+    {
+        "name": "Tree",
+        "type": "STATIC",
+        "position": {
+            "x": 3.2267,
+            "y": 0.0000,
+            "z": -22.6707
+        },
+        "rotation": {
+            "x": 0.0000,
+            "y": -0.7660,
+            "z": 0.0000,
+            "w": 0.6428
+        },
+        "size": {
+            "x": 1.0000,
+            "y": 1.0000,
+            "z": 1.0000
+        },
+        "animations": [],
+        "room": {
+            "isRoom": false,
+            "thickness": 0,
+            "entrances": [
+                {
+                    "offset": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "size": {
+                        "x": 0.0000,
+                        "y": 0.0000,
+                        "z": 0.0000
+                    },
+                    "type": "",
+                    "side": ""
+                }
+            ]
+        },
+        "enemy": {
+            "isEnemy": false,
+            "attackOffset": {
+                "x": 0.0000,
+                "y": 0.0000,
+                "z": 0.0000
+            },
+            "behaveRange": 0.0,
+            "attackRange": 0.0,
+            "fireRate": 100.0,
+            "damage": 0.0,
+            "behaveIfCloseToPlayer": false,
+            "attackAnimation": []
+        },
+        "interactible": false,
+        "interactType": [],
+        "offset": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "forwardDirection": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "padding": {
+            "x": 0.0000,
+            "y": 0.0000,
+            "z": 0.0000
+        },
+        "objectBehaviorType": "Static"
+    }
+]
