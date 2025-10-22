@@ -84,5 +84,10 @@ public class LoadingScreen extends PavScreen {
         batch.setColor(1, 1, 1, 1);
     }
 
+    @Override
+    public void world(float delta) {
+
+    }
+
 }
 

@@ -2,6 +2,7 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.GameInput.gameWorldInput;
 import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.resolution;
 
 import com.badlogic.gdx.Gdx;
@@ -18,26 +19,23 @@ import com.pavengine.app.PavEngine;
 
 public abstract class PavScreen implements Screen {
 
-    public static PavCursor cursor;
+    public static PavCursor cursor = new PavCursor(
+        "sprites/default/cursor_sheet.png",
+        175f
+    );
     public Vector2 resolution = new Vector2(1280,720);
     public PavEngine game;
-    public FitViewport viewport;
     public SpriteBatch batch;
-    public OrthographicCamera camera;
+    public OrthographicCamera camera  = new OrthographicCamera();
+    public FitViewport viewport = new FitViewport(resolution.x, resolution.y, camera);
 
     public PavScreen(PavEngine game) {
         this.game = game;
         this.batch = game.batch;
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(resolution.x, resolution.y, camera);
+
         camera.setToOrtho(false, resolution.x, resolution.y);
         viewport.apply();
-        cursor = new PavCursor(
-            "sprites/default/cursor_sheet.png",
-            175f
-        );
-
-        lockCursor(false);
+        print("new cursor");
 
         resize((int) resolution.x, (int) resolution.y);
 
@@ -52,17 +50,22 @@ public abstract class PavScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1f);
 
+        world(delta);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
+
         draw(delta);
+
         cursor.draw(batch, delta);
+
         batch.end();
     }
 
     public abstract void draw(float delta);
 
+    public abstract void world(float delta);
 
     @Override
     public void resize(int width, int height) {

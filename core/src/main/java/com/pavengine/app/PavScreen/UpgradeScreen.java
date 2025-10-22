@@ -138,5 +138,10 @@ public class UpgradeScreen extends PavScreen {
         }
     }
 
+    @Override
+    public void world(float delta) {
+
+    }
+
 }
 

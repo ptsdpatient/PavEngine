@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.pavengine.app.PavBounds.Entrance;
@@ -69,6 +70,17 @@ public class Methods {
     public static FileHandle load(String value) {
         return Gdx.files.internal(value);
     }
+
+    public static <T> T addAndGet(Array<T> array, T element) {
+        array.add(element);
+        return element;
+    }
+
+    public static <T> T setElement(T element, T value) {
+        element = value;
+        return element;
+    }
+
 
     public static TextureRegion[] extractSprites(String name, int width, int height) {
         TextureRegion sheet = new TextureRegion(new Texture(load(name)));

@@ -9,19 +9,28 @@ import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.math.Vector3;
 import com.pavengine.app.PavGameObject.GameObject;
 
+import net.mgsx.gltf.scene3d.lights.DirectionalShadowLight;
+
 public class PavLight {
     public static PavLightProfile profile = PavLightProfile.NIGHT;
     public Environment environment;
     public GameObject attachedObject;
     public boolean attached = false;
 
-    public PavLight(Environment environment, PavLightProfile profile) {
+    public PavLight(Environment environment, PavLightProfile profile, boolean shadows) {
         this.environment = environment;
         this.profile = profile;
         sceneManager.setAmbientLight(0.02f);
-        environment.add(new DirectionalLight().set(profile.color, profile.direction));
-        environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(5, -1, 0).nor()));
 
+
+        environment.add(new DirectionalLight().set(profile.color, profile.direction));
+        if(shadows){
+            environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(2, -1, 0).nor()));
+
+        } else {
+            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(2, -1, 0).nor()));
+
+        }
 
     }
 

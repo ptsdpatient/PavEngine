@@ -53,8 +53,9 @@ public class PavEngine extends Game {
         Gdx.input.setCursorCatched(true);
 
         initializeSound();
-        
+
         batch = new SpriteBatch();
+        
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
 

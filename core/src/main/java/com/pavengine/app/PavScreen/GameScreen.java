@@ -1,14 +1,12 @@
 package com.pavengine.app.PavScreen;
 
-import static com.pavengine.app.GameInput.gameWorldInput;
+import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.getJson;
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
-import static com.pavengine.app.PavEngine.resolution;
-import static com.pavengine.app.PavEngine.soundBox;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
@@ -17,7 +15,6 @@ import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
 import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
-import static com.pavengine.app.PavScreen.PavScreen.cursor;
 
 import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_LEFT;
@@ -26,10 +23,7 @@ import static com.pavengine.app.PavUI.PavAnchor.CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_CENTER;
 import static com.pavengine.app.PavUI.PavFlex.ROW;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -54,8 +48,6 @@ import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
 import com.pavengine.app.PavScript.Bullet;
 import com.pavengine.app.PavScript.Enemies.Enemy;
-import com.pavengine.app.PavScript.Enemies.EnemyBlueprint;
-import com.pavengine.app.PavScript.Interactable.Interactable;
 import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavScript.LevelManager;
 import com.pavengine.app.PavUI.ClickBehavior;
@@ -73,9 +65,10 @@ import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
 import java.util.ArrayList;
 
-public class GameScreen implements Screen {
+public class GameScreen extends PavScreen {
 
     public static GameObject selectedObject;
+    public static PBRShaderProvider shaderProvider;
     public static GameWorld world;
     public static Array<Lane> lanes = new Array<>();
     public static Array<Enemy> robots = new Array<>();
@@ -85,31 +78,27 @@ public class GameScreen implements Screen {
         damageSpark = new PavParticle2D("particles/spark/spark.p", "particles/spark"),
         bloodEffect = new PavParticle2D("particles/blood/blood.p", "particles/blood"),
         muzzleFlash = new PavParticle2D("particles/muzzle/muzzle.p", "particles/muzzle");
-    public static ArrayList<Interactable> books = new ArrayList<>();
-    public static String[] words = new String[]{
-        "Hello", "World"
-    };
+
     public static PavRay playerRay;
     public static MapEditor mapEditor;
     public static PavLayout
         messageBoxLayout,
-        interactableLayout = new PavLayout(CENTER, ROW, 3, 64 * 3, 64);
-    public static ArrayList<PavLayout>
-        gameWorldLayout = new ArrayList<>();
+        interactableLayout;
+    public static Array<PavLayout>
+        gameWorldLayout = new Array<>();
     public static Rectangle mapEditorPanel = new Rectangle(200, 0, 700, 300);
     public static TextBox messageBox = new TextBox("", gameFont, uiBG[2], ClickBehavior.NextMessage);
     public static LevelManager levelManager;
     public boolean intro = false;
     public PavEngine game;
-    private SpriteBatch batch;
 
     public GameScreen(PavEngine game) {
+        super(game);
 
         this.game = game;
         this.batch = game.batch;
 
         if (enableMapEditor) {
-            boolean dragAndDrop = true;
             enableCursor = true;
             mapEditor = new MapEditor(gameFont);
         }
@@ -120,9 +109,6 @@ public class GameScreen implements Screen {
         config.numSpotLights = 2;
         config.numBones = 30;
 
-//        config.numPointLights = 4;
-//        config.numDirectionalLights = 1;
-
         world = new GameWorld(
             game,
             enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.FirstPerson,
@@ -132,23 +118,24 @@ public class GameScreen implements Screen {
         );
 
 
+
+        interactableLayout  = new PavLayout(CENTER, ROW, 3, 64 * 3, 64);
         interactableLayout.addSprite(new TextButton("[ E ] Interact", gameFont, ClickBehavior.Nothing));
 
         messageBoxLayout = new PavLayout(BOTTOM_CENTER, ROW, 0, overlayCamera.viewportWidth, overlayCamera.viewportHeight / 3f, 12);
         messageBoxLayout.addSprite(messageBox);
 
-        gameWorldLayout.add(new PavLayout(CENTER, ROW, 3, 32, 32));
-        gameWorldLayout.get(gameWorldLayout.size() - 1).addSprite(new Image("sprites/crosshair.png"));
+        addAndGet(gameWorldLayout, new PavLayout(CENTER, ROW, 3, 32, 32))
+            .addSprite(new Image("sprites/crosshair.png"));
 
+        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_LEFT, ROW, 3, 192, 32, 3))
+            .addSprite(new HealthBar("Health", gameFont, ClickBehavior.Nothing, uiBG[5], uiBG[1]));
 
-        gameWorldLayout.add(new PavLayout(BOTTOM_LEFT, ROW, 3, 192, 32, 3));
-        gameWorldLayout.get(gameWorldLayout.size() - 1).addSprite(new HealthBar("Health", gameFont, ClickBehavior.Nothing, uiBG[5], uiBG[1]));
+        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_RIGHT, ROW, 3, 192, 32, 3))
+            .addSprite(new SprayBar("", gameFont, ClickBehavior.Nothing, uiBG[6], uiBG[1]));
 
-        gameWorldLayout.add(new PavLayout(BOTTOM_RIGHT, ROW, 3, 192, 32, 3));
-        gameWorldLayout.get(gameWorldLayout.size() - 1).addSprite(new SprayBar("", gameFont, ClickBehavior.Nothing, uiBG[6], uiBG[1]));
-
-        gameWorldLayout.add(new PavLayout(TOP_CENTER, ROW, 3, 192, 32, 25));
-        gameWorldLayout.get(gameWorldLayout.size() - 1).addSprite(new ProgressBar("", gameFont, ClickBehavior.Nothing, uiBG[7], uiBG[1]));
+        addAndGet(gameWorldLayout, new PavLayout(TOP_CENTER, ROW, 3, 192, 32, 25))
+            .addSprite(new ProgressBar("", gameFont, ClickBehavior.Nothing, uiBG[7], uiBG[1]));
 
 //        world.addObject("gun2", "gun2", new Vector3(0, 0, 0), 0.2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Shoot"});
 //        world.getGameObject("gun2").objectBehaviorType = ObjectBehaviorType.AttachToCamera;
@@ -216,12 +203,9 @@ public class GameScreen implements Screen {
 //        world.addObject("ground", "ground", new Vector3(-10, -2, 0), 50, 0.4f, ObjectType.GROUND, new String[]{""});
 
 
-        addObjects("walls");
-        addObjects("tree");
-        addObjects("bush");
-        addObjects("props");
-        addObjects("lamp");
-        addObjects("ground");
+        addObjects(
+            new String[]{ "walls", "tree", "bush", "props", "lamp", "ground"}
+        );
 
 
         for (int i = 0; i < 4; i++) {
@@ -256,117 +240,120 @@ public class GameScreen implements Screen {
 
     }
 
-    public static void addObjects(String fileName) {
-        JsonValue root = getJson("list/" + fileName + ".json");
+    public static void addObjects(String[] fileNames) {
+        for(String fileName : fileNames) {
+            JsonValue root = getJson("list/" + fileName + ".json");
 
-        if (root == null) return;
-        for (JsonValue obj : root) {
-            JsonValue
-                pos = obj.get("position"),
-                rot = obj.get("rotation"),
-                size = obj.get("size"),
-                room = obj.get("room"),
-                enemy = obj.get("enemy");
-            String name = obj.getString("name");
-            Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
+            if (root == null) return;
 
-            switch (obj.getString("type")) {
-                case "STATIC": {
-                    staticObjects.add(new StaticObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                    if (room.getBoolean("isRoom")) {
-                        ArrayList<EntranceBluprint> entrances = new ArrayList<>();
-                        for (JsonValue entrance : room.get("entrances")) {
-                            JsonValue
-                                roomOffset = entrance.get("offset"),
-                                roomSize = entrance.get("offset");
-                            String roomType = entrance.getString("type"),
-                                roomSide = entrance.getString("side");
-                            entrances.add(new EntranceBluprint() {{
-                                offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
-                                size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
-                                type = Entrance.Type.valueOf(roomType);
-                                side = EntranceBluprint.Side.valueOf(roomSide);
-                            }});
-                        }
-                        staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
-                    }
-                }
-                break;
-                case "GROUND": {
-                    groundObjects.add(new GroundObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                }
-                break;
-                case "TARGET": {
-                    targetObjects.add(new TargetObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                    if (enemy.getBoolean("isEnemy")) {
-                        JsonValue attackOffset = enemy.get("attackOffset");
+            for (JsonValue obj : root) {
+                JsonValue
+                    pos = obj.get("position"),
+                    rot = obj.get("rotation"),
+                    size = obj.get("size"),
+                    room = obj.get("room"),
+                    enemy = obj.get("enemy");
+                String name = obj.getString("name");
+                Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
 
-                        JsonValue attackArray = obj.get("attackAnimation");
-                        int[] attackAnimation = new int[attackArray.size];
-
-                        for (int i = 0; i < attackArray.size; i++) {
-                            attackAnimation[i] = attackArray.getInt(i);
-                        }
-
-                        targetObjects.get(targetObjects.size).setEnemy(
-                            new Vector3(attackOffset.getFloat("x"), attackOffset.getFloat("y"), attackOffset.getFloat("z")),
-                            enemy.getFloat("behaveRange"),
-                            enemy.getFloat("attackRange"),
-                            enemy.getFloat("fireRate"),
-                            enemy.getFloat("damage"),
-                            enemy.getBoolean("behaveIfCloseToPlayer"),
-                            attackAnimation
+                switch (obj.getString("type")) {
+                    case "STATIC": {
+                        staticObjects.add(new StaticObject(
+                                name,
+                                scene,
+                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+                            )
                         );
-
+                        if (room.getBoolean("isRoom")) {
+                            ArrayList<EntranceBluprint> entrances = new ArrayList<>();
+                            for (JsonValue entrance : room.get("entrances")) {
+                                JsonValue
+                                    roomOffset = entrance.get("offset"),
+                                    roomSize = entrance.get("offset");
+                                String roomType = entrance.getString("type"),
+                                    roomSide = entrance.getString("side");
+                                entrances.add(new EntranceBluprint() {{
+                                    offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
+                                    size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
+                                    type = Entrance.Type.valueOf(roomType);
+                                    side = EntranceBluprint.Side.valueOf(roomSide);
+                                }});
+                            }
+                            staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
+                        }
                     }
-                }
-                break;
-                case "KINEMATIC": {
-                    kinematicObjects.add(new KinematicObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                }
-                break;
-                case "DYNAMIC": {
-                    dynamicObjects.add(new DynamicObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                }
-                break;
-            }
+                    break;
+                    case "GROUND": {
+                        groundObjects.add(new GroundObject(
+                                name,
+                                scene,
+                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+                            )
+                        );
+                    }
+                    break;
+                    case "TARGET": {
+                        targetObjects.add(new TargetObject(
+                                name,
+                                scene,
+                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+                            )
+                        );
+                        if (enemy.getBoolean("isEnemy")) {
+                            JsonValue attackOffset = enemy.get("attackOffset");
 
-            sceneManager.addScene(scene);
+                            JsonValue attackArray = obj.get("attackAnimation");
+                            int[] attackAnimation = new int[attackArray.size];
+
+                            for (int i = 0; i < attackArray.size; i++) {
+                                attackAnimation[i] = attackArray.getInt(i);
+                            }
+
+                            targetObjects.get(targetObjects.size).setEnemy(
+                                new Vector3(attackOffset.getFloat("x"), attackOffset.getFloat("y"), attackOffset.getFloat("z")),
+                                enemy.getFloat("behaveRange"),
+                                enemy.getFloat("attackRange"),
+                                enemy.getFloat("fireRate"),
+                                enemy.getFloat("damage"),
+                                enemy.getBoolean("behaveIfCloseToPlayer"),
+                                attackAnimation
+                            );
+
+                        }
+                    }
+                    break;
+                    case "KINEMATIC": {
+                        kinematicObjects.add(new KinematicObject(
+                                name,
+                                scene,
+                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+                            )
+                        );
+                    }
+                    break;
+                    case "DYNAMIC": {
+                        dynamicObjects.add(new DynamicObject(
+                                name,
+                                scene,
+                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+                            )
+                        );
+                    }
+                    break;
+                }
+
+                sceneManager.addScene(scene);
+            }
         }
     }
 
@@ -378,13 +365,14 @@ public class GameScreen implements Screen {
         );
     }
 
+
     @Override
-    public void show() {
-        Gdx.input.setInputProcessor(gameWorldInput);
+    public void draw(float delta) {
+
     }
 
     @Override
-    public void render(float delta) {
+    public void world(float delta) {
         if (!intro) {
             intro = true;
 //            soundBox.playSound("intro.mp3");
@@ -393,28 +381,4 @@ public class GameScreen implements Screen {
         world.render(delta);
     }
 
-    @Override
-    public void resize(int width, int height) {
-        world.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-    }
-
-    @Override
-    public void dispose() {
-
-    }
 }

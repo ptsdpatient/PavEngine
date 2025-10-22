@@ -129,14 +129,14 @@ public class GameWorld {
     private TextButton creditShow;
 
     public GameWorld(PavEngine game, CameraBehaviorType cameraBehavior, Vector2 resolution, PavLightProfile lightProfile, PBRShaderProvider shaderProvider) {
-        this.cameraBehavior = cameraBehavior;
+        GameWorld.cameraBehavior = cameraBehavior;
         this.resolution = resolution;
         this.game = game;
         this.spriteBatch = game.batch;
         shapeRenderer = new ShapeRenderer();
         batch = new ModelBatch();
         sceneManager = new SceneManager(shaderProvider, new DepthShaderProvider());
-        pavLight = new PavLight(sceneManager.environment, lightProfile);
+        pavLight = new PavLight(sceneManager.environment, lightProfile,true);
 //        pavLight.addPointLight(Color.CYAN,new Vector3(5,1,2),500);
 
 
@@ -182,7 +182,7 @@ public class GameWorld {
 
         creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont, ClickBehavior.Nothing);
         gameWorldLayout.add(new PavLayout(PavAnchor.TOP_RIGHT, PavFlex.COLUMN, 0, 192, 16, 8));
-        gameWorldLayout.get(gameWorldLayout.size() - 1).addSprite(creditShow);
+        gameWorldLayout.peek().addSprite(creditShow);
 
     }
 

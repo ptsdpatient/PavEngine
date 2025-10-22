@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.Checkbox;
 import com.pavengine.app.PavUI.ClickBehavior;
@@ -24,7 +25,7 @@ import com.pavengine.app.PavUI.TextButton;
 import java.util.ArrayList;
 
 public class MapEditor {
-    public static ArrayList<GameObject> staticMapObjects;
+    public static Array<GameObject> staticMapObjects;
     public static ArrayList<String> objectList;
     public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
     public static Stepper scaleStepper, elevationStepper;
@@ -36,7 +37,7 @@ public class MapEditor {
     public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
 
     public MapEditor(BitmapFont font) {
-        staticMapObjects = new ArrayList<>();
+        staticMapObjects = new Array<>();
         objectList = new ArrayList<>();
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 128, 5));
