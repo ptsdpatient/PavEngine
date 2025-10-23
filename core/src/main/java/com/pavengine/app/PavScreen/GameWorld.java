@@ -12,6 +12,7 @@ import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.ThirdPersonCamera.camera;
 import static com.pavengine.app.PavEngine.bigGameFont;
+import static com.pavengine.app.PavEngine.cel_shading;
 import static com.pavengine.app.PavEngine.credits;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
@@ -23,7 +24,9 @@ import static com.pavengine.app.PavEngine.soundBox;
 import static com.pavengine.app.PavScreen.GameScreen.bloodEffect;
 import static com.pavengine.app.PavScreen.GameScreen.bullets;
 import static com.pavengine.app.PavScreen.GameScreen.damageSpark;
+
 import static com.pavengine.app.PavScreen.GameScreen.explodeEffect;
+
 import static com.pavengine.app.PavScreen.GameScreen.gameWorldLayout;
 import static com.pavengine.app.PavScreen.GameScreen.levelManager;
 import static com.pavengine.app.PavScreen.GameScreen.messageBoxLayout;
@@ -128,15 +131,15 @@ public class GameWorld {
     Vector2 resolution;
     private TextButton creditShow;
 
-    public GameWorld(PavEngine game, CameraBehaviorType cameraBehavior, Vector2 resolution, PavLightProfile lightProfile, PBRShaderProvider shaderProvider) {
+    public GameWorld(PavEngine game, CameraBehaviorType cameraBehavior, Vector2 resolution, PavLightProfile lightProfile, PBRShaderProvider shaderProvider, DepthShaderProvider depthShaderProvider) {
         GameWorld.cameraBehavior = cameraBehavior;
         this.resolution = resolution;
         this.game = game;
         this.spriteBatch = game.batch;
         shapeRenderer = new ShapeRenderer();
         batch = new ModelBatch();
-        sceneManager = new SceneManager(shaderProvider, new DepthShaderProvider());
-        pavLight = new PavLight(sceneManager.environment, lightProfile,true);
+        sceneManager = new SceneManager(shaderProvider, depthShaderProvider);
+        pavLight = new PavLight(sceneManager.environment, lightProfile);
 //        pavLight.addPointLight(Color.CYAN,new Vector3(5,1,2),500);
 
 
@@ -352,8 +355,10 @@ public class GameWorld {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-//        Gdx.gl.glEnable(GL20.GL_RGBA);
 
+        Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+        Gdx.gl.glCullFace(GL20.GL_FRONT);
+        Gdx.gl.glCullFace(GL20.GL_BACK);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setPauseScreen();
         }
@@ -417,6 +422,7 @@ public class GameWorld {
             torch.update(delta);
         }
 
+
         sceneManager.update(delta);
         sceneManager.render();
 
@@ -428,9 +434,9 @@ public class GameWorld {
         Gdx.gl.glLineWidth(3f);
 
 //        Debug Target object
-        for (GameObject obj : targetObjects) {
-            debugCube(obj.box, obj.debugColor);
-        }
+//        for (GameObject obj : targetObjects) {
+//            debugCube(obj.box, obj.debugColor);
+//        }
 
 //        for (GameObject obj : groundObjects) {
 //            debugCube(obj.box,obj.debugColor);

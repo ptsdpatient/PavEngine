@@ -42,6 +42,10 @@ public class PavEngine extends Game {
         uiControl,
         hoverUIBG;
 
+    public static boolean
+        cel_shading = true,
+        shadows = true;
+
     public String[] soundList = new String[]{
         "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
         "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"
@@ -55,7 +59,7 @@ public class PavEngine extends Game {
         initializeSound();
 
         batch = new SpriteBatch();
-        
+
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
 

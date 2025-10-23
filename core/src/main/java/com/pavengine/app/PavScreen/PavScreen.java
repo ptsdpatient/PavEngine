@@ -29,6 +29,8 @@ public abstract class PavScreen implements Screen {
     public OrthographicCamera camera  = new OrthographicCamera();
     public FitViewport viewport = new FitViewport(resolution.x, resolution.y, camera);
 
+
+
     public PavScreen(PavEngine game) {
         this.game = game;
         this.batch = game.batch;

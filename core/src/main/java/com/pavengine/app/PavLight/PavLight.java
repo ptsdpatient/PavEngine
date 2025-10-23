@@ -1,5 +1,6 @@
 package com.pavengine.app.PavLight;
 
+import static com.pavengine.app.PavEngine.shadows;
 import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 
 import com.badlogic.gdx.graphics.Color;
@@ -17,7 +18,7 @@ public class PavLight {
     public GameObject attachedObject;
     public boolean attached = false;
 
-    public PavLight(Environment environment, PavLightProfile profile, boolean shadows) {
+    public PavLight(Environment environment, PavLightProfile profile) {
         this.environment = environment;
         this.profile = profile;
         sceneManager.setAmbientLight(0.02f);
@@ -25,11 +26,9 @@ public class PavLight {
 
         environment.add(new DirectionalLight().set(profile.color, profile.direction));
         if(shadows){
-            environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(2, -1, 0).nor()));
-
+            environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(4, -1, 0).nor()));
         } else {
-            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(2, -1, 0).nor()));
-
+            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(4, -1, 0).nor()));
         }
 
     }

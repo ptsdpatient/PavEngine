@@ -1,9 +1,11 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Methods.addAndGet;
+import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.getJson;
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.PavEngine.cel_shading;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
@@ -23,7 +25,14 @@ import static com.pavengine.app.PavUI.PavAnchor.CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_CENTER;
 import static com.pavengine.app.PavUI.PavFlex.ROW;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -92,6 +101,7 @@ public class GameScreen extends PavScreen {
     public boolean intro = false;
     public PavEngine game;
 
+
     public GameScreen(PavEngine game) {
         super(game);
 
@@ -105,16 +115,26 @@ public class GameScreen extends PavScreen {
 
         lockCursor(!enableCursor);
 
-        PBRShaderConfig config = PBRShaderProvider.createDefaultConfig();
-        config.numSpotLights = 2;
-        config.numBones = 30;
+        PBRShaderConfig pbrConfig = PBRShaderProvider.createDefaultConfig();
+        pbrConfig.numSpotLights = 2;
+        pbrConfig.numBones = 32;
+
+        DepthShaderProvider depthShader = new DepthShaderProvider();
+        depthShader.config.numSpotLights = 2;
+        depthShader.config.numBones = 32;
+
+        if(cel_shading) {
+            pbrConfig.vertexShader = files("shaders/cel/vs.glsl").readString();
+            pbrConfig.fragmentShader = files("shaders/cel/fs.glsl").readString();
+        }
 
         world = new GameWorld(
             game,
             enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.FirstPerson,
             resolution,
             PavLightProfile.DAY,
-            new PBRShaderProvider(config)
+            new PBRShaderProvider(pbrConfig),
+            depthShader
         );
 
 
@@ -371,14 +391,14 @@ public class GameScreen extends PavScreen {
 
     }
 
+
+
     @Override
     public void world(float delta) {
-        if (!intro) {
-            intro = true;
-//            soundBox.playSound("intro.mp3");
-        }
 
         world.render(delta);
+
+
     }
 
 }

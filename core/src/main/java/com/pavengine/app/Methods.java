@@ -76,12 +76,6 @@ public class Methods {
         return element;
     }
 
-    public static <T> T setElement(T element, T value) {
-        element = value;
-        return element;
-    }
-
-
     public static TextureRegion[] extractSprites(String name, int width, int height) {
         TextureRegion sheet = new TextureRegion(new Texture(load(name)));
         return sheet.split(width, height)[0];

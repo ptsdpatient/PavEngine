@@ -179,7 +179,7 @@ public class LevelManager {
                 return new Robot(lanes.random(), new EnemyBlueprint(
                     "bipod",
                     new String[]{"Walk"},
-                    0f,       // yOffset
+                    0f,    // yOffset
                     7f,     // speed
                     200f,     // health
                     75f       // damage
