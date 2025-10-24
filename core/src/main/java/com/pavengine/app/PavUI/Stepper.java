@@ -1,11 +1,13 @@
 package com.pavengine.app.PavUI;
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.overlayViewport;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -71,9 +73,11 @@ public class Stepper {
 
 
     public void render(SpriteBatch sb) {
+
         if (background != null) background.draw(sb);
 
         layout = new GlyphLayout(font, text);
+
         float textX = box.x + stepUp.getWidth() / 2f;
         float textY = box.y + (box.height + layout.height) / 2f;
 
@@ -83,6 +87,7 @@ public class Stepper {
 
         overlayTouch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         overlayViewport.unproject(overlayTouch);
+
         if (enableMapEditor) {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 if (selectedObject == null) return;
@@ -106,7 +111,6 @@ public class Stepper {
                         }
                         clampMin(selectedObject.size, 0.1f);
                     }
-                    ;
                     break;
                     case StepperElevation: {
                         if (stepUp.getBoundingRectangle().contains(overlayTouch.x, overlayTouch.y)) {
@@ -117,14 +121,13 @@ public class Stepper {
                         }
                         clampMin(selectedObject.size, 0.1f);
                     }
-                    ;
                     break;
 
                 }
             }
         }
 
-//        debugRectangle(box, Color.BLUE);
+//        debugRectangle(box, Color.GREEN);
     }
 
     private void clampMin(Vector3 v, float min) {

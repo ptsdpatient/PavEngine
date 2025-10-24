@@ -1,5 +1,7 @@
 package com.pavengine.app.PavBounds;
 
+import static com.pavengine.app.Methods.print;
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -71,13 +73,16 @@ public class PavBounds {
     }
 
     public void updateRings(Vector3 pos, float ringRadius, float heightOffset) {
+//        print("Ring length : "+rings.length);
         for (int i = 0; i < rings.length; i++) {
+
             rings[i] =
                 new Vector3(
                     pos.x + ringRadius * MathUtils.cos((MathUtils.PI2 * i) / rings.length),
                     pos.y + heightOffset,
                     pos.z + ringRadius * MathUtils.sin((MathUtils.PI2 * i) / rings.length)
                 );
+//            print(rings[i] + ", " + i);
         }
 
     }

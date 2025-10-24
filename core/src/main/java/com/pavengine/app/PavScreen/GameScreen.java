@@ -52,6 +52,7 @@ import com.pavengine.app.PavGameObject.StaticObject;
 import com.pavengine.app.PavGameObject.TargetObject;
 import com.pavengine.app.PavLight.PavLightProfile;
 import com.pavengine.app.PavParticle2D;
+import com.pavengine.app.PavPlayer.Jump;
 import com.pavengine.app.PavPlayer.Movement;
 import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
@@ -130,7 +131,7 @@ public class GameScreen extends PavScreen {
 
         world = new GameWorld(
             game,
-            enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.FirstPerson,
+            enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.ThirdPerson,
             resolution,
             PavLightProfile.DAY,
             new PBRShaderProvider(pbrConfig),
@@ -148,14 +149,14 @@ public class GameScreen extends PavScreen {
         addAndGet(gameWorldLayout, new PavLayout(CENTER, ROW, 3, 32, 32))
             .addSprite(new Image("sprites/crosshair.png"));
 
-        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_LEFT, ROW, 3, 192, 32, 3))
-            .addSprite(new HealthBar("Health", gameFont, ClickBehavior.Nothing, uiBG[5], uiBG[1]));
-
-        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_RIGHT, ROW, 3, 192, 32, 3))
-            .addSprite(new SprayBar("", gameFont, ClickBehavior.Nothing, uiBG[6], uiBG[1]));
-
-        addAndGet(gameWorldLayout, new PavLayout(TOP_CENTER, ROW, 3, 192, 32, 25))
-            .addSprite(new ProgressBar("", gameFont, ClickBehavior.Nothing, uiBG[7], uiBG[1]));
+//        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_LEFT, ROW, 3, 192, 32, 3))
+//            .addSprite(new HealthBar("Health", gameFont, ClickBehavior.Nothing, uiBG[5], uiBG[1]));
+//
+//        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_RIGHT, ROW, 3, 192, 32, 3))
+//            .addSprite(new SprayBar("", gameFont, ClickBehavior.Nothing, uiBG[6], uiBG[1]));
+//
+//        addAndGet(gameWorldLayout, new PavLayout(TOP_CENTER, ROW, 3, 192, 32, 25))
+//            .addSprite(new ProgressBar("", gameFont, ClickBehavior.Nothing, uiBG[7], uiBG[1]));
 
 //        world.addObject("gun2", "gun2", new Vector3(0, 0, 0), 0.2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Shoot"});
 //        world.getGameObject("gun2").objectBehaviorType = ObjectBehaviorType.AttachToCamera;
@@ -224,7 +225,10 @@ public class GameScreen extends PavScreen {
 
 
         addObjects(
-            new String[]{ "walls", "tree", "bush", "props", "lamp", "ground"}
+            new String[]{
+//                "tree", "bush", "props", "lamp",
+                "ground"
+            }
         );
 
 
@@ -257,6 +261,11 @@ public class GameScreen extends PavScreen {
 
         levelManager = new LevelManager("levels/levels.json", game);
 
+
+    }
+
+    @Override
+    public void debug() {
 
     }
 
@@ -378,10 +387,14 @@ public class GameScreen extends PavScreen {
     }
 
     private void setPlayer() {
-        world.addObject("player", "turret_2", lanes.get(1).end.cpy(), 2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Bounce", "Squish"});
+        world.addObject("player", "ball", new Vector3(0,3,0), 2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Bounce", "Squish"});
         PavPlayer.player = world.getGameObject("player");
+        PavPlayer.player.detectSlope = true;
+        PavPlayer.player.setSlopeDetection();
+        PavPlayer.player.setRing(2f,0);
         PavPlayer.playerBehavior.add(
-            new Movement()
+            new Movement(),
+            new Jump()
         );
     }
 

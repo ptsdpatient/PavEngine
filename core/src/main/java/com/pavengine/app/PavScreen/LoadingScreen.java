@@ -34,6 +34,11 @@ public class LoadingScreen extends PavScreen {
     }
 
     @Override
+    public void debug() {
+
+    }
+
+    @Override
     public void draw(float delta) {
         batch.setColor(1, 1, 1, alpha);
 
@@ -41,14 +46,12 @@ public class LoadingScreen extends PavScreen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 currentIndex++;
                 if (currentIndex >= images.length) {
-                    batch.setColor(1, 1, 1, 1);
                     done = true;
                     PavEngine.enableCursor = false;
                     PavEngine.gamePause = false;
                     game.setGameScreen();
                     return;
                 }
-
                 alpha = 0f;
                 fadingIn = true;
             }

@@ -25,7 +25,7 @@ public class PavEngine extends Game {
     public static Vector2 resolution = new Vector2(1280, 720);
     public static float sprayTime = 0f, sprayLimit = 5f, playerDamageTime = 0f, playerDamage = 30f, playerDamageRate = 0.3f, sprayCooldown = 0f, blastRadius = 5f;
     public static boolean levelStatus = false;
-    public static float credits = 10f, health = 100f;
+    public static float credits = 1000f, health = 100f;
     public static SoundBox soundBox = new SoundBox();
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
@@ -43,7 +43,7 @@ public class PavEngine extends Game {
         hoverUIBG;
 
     public static boolean
-        cel_shading = true,
+        cel_shading = false,
         shadows = true;
 
     public String[] soundList = new String[]{
@@ -73,14 +73,15 @@ public class PavEngine extends Game {
         upgradeScreen = new UpgradeScreen(this);
         pauseScreen = new PauseScreen(this);
 
+//        setScreen(gameScreen);
 
-        setScreen(loadingScreen);
-
+        setGameScreen();
     }
 
     public void setGameScreen() {
         lockCursor(true);
         enableCursor = false;
+        batch.setColor(1, 1, 1, 1);
         setScreen(gameScreen);
     }
 

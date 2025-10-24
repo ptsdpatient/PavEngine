@@ -1,5 +1,7 @@
 package com.pavengine.app.PavUI;
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -178,6 +180,7 @@ public class PavLayout {
             }
 
             widget.render(sb);
+
 
         }
     }

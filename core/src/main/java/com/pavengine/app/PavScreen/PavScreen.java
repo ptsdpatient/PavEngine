@@ -53,7 +53,9 @@ public abstract class PavScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1f);
 
         world(delta);
+
         camera.update();
+
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
@@ -63,7 +65,12 @@ public abstract class PavScreen implements Screen {
         cursor.draw(batch, delta);
 
         batch.end();
+
+        debug();
+
     }
+
+    public abstract void debug();
 
     public abstract void draw(float delta);
 

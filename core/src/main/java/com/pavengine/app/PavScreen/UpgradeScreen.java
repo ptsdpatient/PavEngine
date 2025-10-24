@@ -1,6 +1,7 @@
 package com.pavengine.app.PavScreen;
 
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
@@ -18,6 +19,7 @@ import static com.pavengine.app.PavEngine.uiControl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -70,6 +72,16 @@ public class UpgradeScreen extends PavScreen {
 
     }
 
+    @Override
+    public void debug() {
+        for(PavLayout layout :  upgradeLayout) {
+            debugRectangle(layout.box, Color.YELLOW);
+            for(PavWidget widget : layout.widgets) {
+                debugRectangle(widget.box, Color.BLUE);
+            }
+        }
+    }
+
     public void applyTurretStats() {
 
         playerDamage = turretDamage.value;
@@ -81,9 +93,11 @@ public class UpgradeScreen extends PavScreen {
 
     @Override
     public void draw(float delta) {
-        batch.draw(image, 0, 0, resolution.x, resolution.y);
 
+
+        batch.draw(image, 0, 0, resolution.x, resolution.y);
         creditShow.text = ((int) credits) + " Credits";
+
 
 
         for (PavLayout layout : upgradeLayout) {
@@ -136,6 +150,10 @@ public class UpgradeScreen extends PavScreen {
                 }
             }
         }
+
+
+
+
     }
 
     @Override

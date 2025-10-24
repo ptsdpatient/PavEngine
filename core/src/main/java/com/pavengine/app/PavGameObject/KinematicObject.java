@@ -68,8 +68,6 @@ public class KinematicObject extends GameObject {
         box = new PavBounds(bounds);
         box.setBounds(bounds);
 
-
-        initialize();
     }
 
     public KinematicObject(String name, Vector3 position, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
@@ -94,7 +92,6 @@ public class KinematicObject extends GameObject {
         box = new PavBounds(bounds);
         box.setBounds(bounds);
 
-        initialize();
     }
 
     public KinematicObject(String name, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
@@ -122,11 +119,7 @@ public class KinematicObject extends GameObject {
         update(0);
     }
 
-    public void initialize() {
-        slopeRays.add(new SlopeRay(new Vector3(0, (bounds.getWidth() * size.x) / 2f, 0)));           // center
-        slopeRays.add(new SlopeRay(new Vector3(0, (bounds.getWidth() * size.x) / 2f, bounds.getWidth() * size.x)));      // forward
-        slopeRays.add(new SlopeRay(new Vector3(bounds.getWidth() * size.x, (bounds.getWidth() * size.x) / 2f, 0)));      // right
-    }
+
 
     public Quaternion getCameraRotation() {
         Vector3 dir = new Vector3(camera.direction).set(camera.direction.x, 0, camera.direction.z).nor();
@@ -260,10 +253,10 @@ public class KinematicObject extends GameObject {
         testRotation += 1;
 //        if(Objects.equals(name, "pencil"))print("" + this.rotation);
 //        if(Objects.equals(name, "pencil"))print("" + attachObject.rotation);
-
-        if (gravity) {
-
-        }
+//
+//        if (gravity) {
+//
+//        }
 
         updateCenter();
         updateBottom();
@@ -289,7 +282,7 @@ public class KinematicObject extends GameObject {
         }
 
 
-        reboundForce();
+//        reboundForce();
 
 
         for (Force f : forces) {
@@ -369,7 +362,6 @@ public class KinematicObject extends GameObject {
             ray.update(pos);
         }
 
-// Compute slope normal
         slopeNormal = slopeRays.get(1).intersection.cpy()
             .sub(slopeRays.get(0).intersection)
             .crs(slopeRays.get(2).intersection.cpy().sub(slopeRays.get(0).intersection))
@@ -411,12 +403,13 @@ public class KinematicObject extends GameObject {
             ),
             new Matrix4(pos.cpy(), rotation.cpy(), size.cpy())
         );
+        
+        if (ringDetection) {
+            box.updateRings(pos.cpy(), ringRadius, ringHeightOffset);
+            footBox.updateRings(pos.cpy(), 2, 2);
+        }
 
-//        print(name + " : " + ringDetection);
-
-        if (ringDetection) box.updateRings(pos.cpy(), ringRadius, ringHeightOffset);
-
-        if (detectSlope) footBox = new PavBounds(
+        if (detectSlope) footBox.set(
             new BoundingBox(
                 new Vector3(
                     bounds.min.x,

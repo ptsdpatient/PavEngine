@@ -1,5 +1,8 @@
 package com.pavengine.app.PavUI;
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -60,6 +63,7 @@ public class TextButton extends PavWidget {
         if (background != null) background.draw(sb);
 
 
+
         layout = new GlyphLayout(font, text);
         float textX = box.x + (box.width - layout.width) / 2f;
         float textY = box.y + (box.height + layout.height) / 2f;
@@ -69,11 +73,12 @@ public class TextButton extends PavWidget {
         }
 
         font.draw(sb, layout, textX, textY);
+
     }
 
     @Override
     public void setSize(float spriteWidth, float spriteHeight) {
-        box.setSize(spriteWidth, spriteHeight);
+        box.setSize(layout.width, spriteHeight);
         if (background != null) background.setSize(spriteWidth, spriteHeight);
     }
 

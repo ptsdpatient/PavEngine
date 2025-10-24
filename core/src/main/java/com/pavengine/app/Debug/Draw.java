@@ -1,5 +1,6 @@
 package com.pavengine.app.Debug;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
 import static com.pavengine.app.PavScreen.GameWorld.shapeRenderer;
@@ -12,6 +13,7 @@ import com.pavengine.app.Cell;
 import com.pavengine.app.CellType;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavRay;
+import com.pavengine.app.SlopeRay;
 
 public class Draw {
 
@@ -20,7 +22,6 @@ public class Draw {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.YELLOW);
         for (int i = 0; i < rings.length; i++) {
-//            print(rings[i]);
             Vector3 start = rings[i];
             Vector3 end = rings[(i + 1) % rings.length];
             shapeRenderer.line(start, end);
@@ -64,6 +65,15 @@ public class Draw {
     }
 
     public static void debugRay(PavRay ray) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.YELLOW);
+        Vector3 end = new Vector3(ray.ray.direction).scl(ray.distance).add(ray.ray.origin);
+        shapeRenderer.line(ray.ray.origin, end);
+        shapeRenderer.end();
+    }
+
+    public static void debugRay(SlopeRay ray) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.YELLOW);

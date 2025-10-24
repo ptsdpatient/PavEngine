@@ -209,4 +209,9 @@ public abstract class GameObject {
     public abstract boolean contains(Vector3 point);
 
 
+    public void setSlopeDetection() {
+        slopeRays.add(new SlopeRay(new Vector3(0, (bounds.getWidth() * size.x) / 2f, 0)));           // center
+        slopeRays.add(new SlopeRay(new Vector3(0, (bounds.getWidth() * size.x) / 2f, bounds.getWidth() * size.x)));      // forward
+        slopeRays.add(new SlopeRay(new Vector3(bounds.getWidth() * size.x, (bounds.getWidth() * size.x) / 2f, 0)));      // right
+    }
 }

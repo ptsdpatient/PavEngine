@@ -16,11 +16,10 @@ import com.pavengine.app.PavGameObject.GameObject;
 
 public class ThirdPersonCamera extends PavCamera {
 
-    Quaternion rotation;
 
     public ThirdPersonCamera(float fov) {
         super(fov);
-        dist = 1f;
+        dist = 10f;
         yaw = 0f;
         pitch = 25f;
         print("third ps");
@@ -77,12 +76,9 @@ public class ThirdPersonCamera extends PavCamera {
     }
 
     public void update(float delta) {
-//        if (!isColliding(player, getCameraRotation())) {
-//
-//        }
-        player.rotation.set(getCameraRotation());
-
-//        print(player.rotation+"");
+        if (!isColliding(player, getCameraRotation())) {
+            player.rotation.set(getCameraRotation());
+        }
 
         camera.position.lerp(
             new Vector3(

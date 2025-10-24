@@ -10,7 +10,7 @@ public class SlopeRay {
     public Ray ray;
     public Vector3 intersection = new Vector3();
     Vector3 offset;
-    float distance;
+    public float distance;
 
     public SlopeRay(Vector3 offset) {
         this.offset = offset;

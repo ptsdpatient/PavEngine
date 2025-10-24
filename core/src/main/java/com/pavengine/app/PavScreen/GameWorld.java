@@ -1,6 +1,10 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
+import static com.pavengine.app.Debug.Draw.debugLine;
+import static com.pavengine.app.Debug.Draw.debugRay;
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.Debug.Draw.debugRing;
 import static com.pavengine.app.MapEditor.MapEditor.elevationStepper;
 import static com.pavengine.app.MapEditor.MapEditor.mapEditingLayout;
 import static com.pavengine.app.MapEditor.MapEditor.roomCheckbox;
@@ -78,13 +82,16 @@ import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
 import com.pavengine.app.PavScript.Bullet;
 import com.pavengine.app.PavScript.Enemies.Enemy;
+import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavSkyBox;
 import com.pavengine.app.PavUI.ClickBehavior;
 import com.pavengine.app.PavUI.PavAnchor;
 import com.pavengine.app.PavUI.PavFlex;
 import com.pavengine.app.PavUI.PavLayout;
+import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
+import com.pavengine.app.SlopeRay;
 
 import net.mgsx.gltf.scene3d.lights.DirectionalLightEx;
 import net.mgsx.gltf.scene3d.scene.Scene;
@@ -365,9 +372,9 @@ public class GameWorld {
 
         creditShow.text = ((int) credits) + " Credits";
 
-        if (!gamePause) {
-            levelManager.update(delta);
-        }
+//        if (!gamePause) {
+//            levelManager.update(delta);
+//        }
 
         if (health <= 0) {
 
@@ -407,7 +414,7 @@ public class GameWorld {
 
         for (GameObject obj : kinematicObjects) {
             obj.update(delta);
-            if (obj.detectSlope) obj.slopeDetection();
+//            if (obj.detectSlope) obj.slopeDetection();
         }
 
         for (Enemy enemy : robots) {
@@ -434,13 +441,17 @@ public class GameWorld {
         Gdx.gl.glLineWidth(3f);
 
 //        Debug Target object
-//        for (GameObject obj : targetObjects) {
-//            debugCube(obj.box, obj.debugColor);
-//        }
+        for (GameObject obj : targetObjects) {
+            debugCube(obj.box, obj.debugColor);
+        }
 
-//        for (GameObject obj : groundObjects) {
-//            debugCube(obj.box,obj.debugColor);
-//        }
+        for (GameObject obj : staticObjects) {
+            debugCube(obj.box, obj.debugColor);
+        }
+
+        for (GameObject obj : groundObjects) {
+            debugCube(obj.box,obj.debugColor);
+        }
 
 
 //        for(PavLayout layout : mapEditingLayout) {
@@ -476,18 +487,24 @@ public class GameWorld {
 //        }
 
 
-//        for (GameObject obj : kinematicObjects) {
-//            debugCube(obj.box);
-//            if (obj.ringDetection) {
-//                debugRing(obj.box.rings);
-//            }
-//        }
+        for (GameObject obj : kinematicObjects) {
+            debugCube(obj.box);
+            if (obj.ringDetection) {
+                debugRing(obj.box.rings);
+                debugRing(obj.footBox.rings);
+            }
+            if(obj.detectSlope) {
+                for(SlopeRay ray : obj.slopeRays){
+                    debugRay(ray);
+                }
+            }
+        }
 
         shapeRenderer.setColor(Color.YELLOW);
 
-//        for (PavRay ray : lasers) {
-//            debugRay(ray);
-//        }
+        for (PavRay ray : lasers) {
+            debugRay(ray);
+        }
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -569,14 +586,12 @@ public class GameWorld {
 
         spriteBatch.end();
 
-//        for(PavLayout layout : gameWorldLayout) {
-//            for(PavWidget widget : layout.widgets) {
-//                debugRectangle(widget.box,Color.YELLOW);
-//            }
-//        }
-//        for(Lane lane : lanes) {
-//            debugLine(lane.start,lane.end);
-//        }
+        for(PavLayout layout : gameWorldLayout) {
+            for(PavWidget widget : layout.widgets) {
+                debugRectangle(widget.box,Color.YELLOW);
+            }
+        }
+
         playerRay.update(delta);
 //        debugRay(playerRay);
     }
