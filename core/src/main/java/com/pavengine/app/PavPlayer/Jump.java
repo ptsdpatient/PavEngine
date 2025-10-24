@@ -1,6 +1,7 @@
 package com.pavengine.app.PavPlayer;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
@@ -36,6 +37,7 @@ public class Jump implements PlayerBehavior {
     @Override
     public void update(GameObject player, float delta) {
         debugCube(player.footBox);
+
         if (jumping) {
             velocityY += gravity * delta;
             player.pos.y = MathUtils.lerp(player.pos.y, player.pos.y + velocityY * delta, 1f);
@@ -53,6 +55,9 @@ public class Jump implements PlayerBehavior {
                 }
             }
             for (GameObject obj : groundObjects) {
+
+//                print(player.footBox.ringOverlaps(obj.box,player.pos.cpy())?"overlapping":"not overlapping");
+
                 if (obj.box.intersects(player.footBox) && velocityY <= 0) {
 
                     if (Math.abs(velocityY) > 1f) {
@@ -72,17 +77,6 @@ public class Jump implements PlayerBehavior {
         } else if (!isColliding()) {
             jumping = true;
 
-        } else {
-            for (GameObject obj : groundObjects) {
-                if (player.footBox.intersects(obj.box) && player.box.intersects(obj.box)) {
-                    velocityY = 0f;
-                    player.pos.y = MathUtils.lerp(player.pos.y, (
-                        player.slopeRays.get(0).intersection.y +
-                            player.slopeRays.get(1).intersection.y +
-                            player.slopeRays.get(2).intersection.y
-                    ) / 3f + player.getHeight() * 0.5f, 0.1f);
-                }
-            }
         }
     }
 }

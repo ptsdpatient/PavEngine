@@ -343,6 +343,12 @@ public class KinematicObject extends GameObject {
         this.ringDetection = true;
         this.ringRadius = ringRadius;
         this.ringHeightOffset = ringHeightOffset;
+
+        box.heightOffset = ringHeightOffset;
+        box.ringRadius = ringRadius;
+
+        footBox.heightOffset = ringHeightOffset-2;
+        footBox.ringRadius = ringRadius;
     }
 
     private void updateBottom() {
@@ -403,10 +409,10 @@ public class KinematicObject extends GameObject {
             ),
             new Matrix4(pos.cpy(), rotation.cpy(), size.cpy())
         );
-        
+
         if (ringDetection) {
-            box.updateRings(pos.cpy(), ringRadius, ringHeightOffset);
-            footBox.updateRings(pos.cpy(), 2, 2);
+            box.updateRings(pos.cpy());
+            footBox.updateRings(pos.cpy());
         }
 
         if (detectSlope) footBox.set(

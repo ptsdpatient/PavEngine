@@ -35,7 +35,7 @@ public class Movement implements PlayerBehavior {
             if (obj == player) continue;
 
             if (
-                player.box.ringOverlaps(obj.box, nextPos, player.ringRadius, player.ringHeightOffset) &&
+                player.box.ringOverlaps(obj.box, nextPos) &&
                     // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
                     (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
             ) {
@@ -53,13 +53,13 @@ public class Movement implements PlayerBehavior {
 
                     if (
                         !bounds.isGround &&
-                            player.box.ringOverlaps(bounds,nextPos, player.ringRadius, player.ringHeightOffset) &&
+                            player.box.ringOverlaps(bounds,nextPos) &&
                             // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
                             (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
                     ) {
                         if(!obj.entrances.isEmpty()){
                             for(Entrance e : obj.entrances) {
-                                if(e.bounds.containsRing(player.box.rings,nextPos, player.ringRadius, player.ringHeightOffset)) {
+                                if(e.bounds.containsRing(player.box.rings,nextPos)) {
                                     print("contains");
                                     return false;
                                 }
@@ -70,7 +70,7 @@ public class Movement implements PlayerBehavior {
                 }
             } else {
                 if (
-                    player.box.ringOverlaps(obj.box, nextPos, player.ringRadius, player.ringHeightOffset) &&
+                    player.box.ringOverlaps(obj.box, nextPos) &&
                         // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
                         (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
                 ) {

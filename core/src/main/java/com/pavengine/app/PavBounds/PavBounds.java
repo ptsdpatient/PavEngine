@@ -14,6 +14,8 @@ public class PavBounds {
     public Vector3 offset = new Vector3(), min = new Vector3(), max = new Vector3();
     public Vector3[] rings = new Vector3[24];
 
+    public float ringRadius=2f ,heightOffset =0f;
+
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;
     }
@@ -44,7 +46,7 @@ public class PavBounds {
 
     }
 
-    public boolean ringOverlaps(PavBounds obj, Vector3 nextPos, float ringRadius, float heightOffset) {
+    public boolean ringOverlaps(PavBounds obj, Vector3 nextPos) {
         for (int i = 0; i < rings.length; i++) {
             if (obj.contains(
                 new Vector3(
@@ -58,8 +60,8 @@ public class PavBounds {
         return false;
     }
 
-    public boolean containsRing(Vector3[] rings, Vector3 nextPos, float ringRadius, float heightOffset) {
-//        print("checking");
+    public boolean containsRing(Vector3[] rings, Vector3 nextPos) {
+
         for (int i = 0; i < rings.length; i++) {
             if (!box.contains(
                 new Vector3(
@@ -72,7 +74,7 @@ public class PavBounds {
         return true;
     }
 
-    public void updateRings(Vector3 pos, float ringRadius, float heightOffset) {
+    public void updateRings(Vector3 pos) {
 //        print("Ring length : "+rings.length);
         for (int i = 0; i < rings.length; i++) {
 

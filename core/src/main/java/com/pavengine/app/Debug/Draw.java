@@ -20,7 +20,7 @@ public class Draw {
     public static void debugRing(Vector3[] rings) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.YELLOW);
+        shapeRenderer.setColor(Color.CYAN);
         for (int i = 0; i < rings.length; i++) {
             Vector3 start = rings[i];
             Vector3 end = rings[(i + 1) % rings.length];

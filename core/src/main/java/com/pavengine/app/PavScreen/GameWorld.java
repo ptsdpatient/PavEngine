@@ -25,6 +25,7 @@ import static com.pavengine.app.PavEngine.gamePause;
 import static com.pavengine.app.PavEngine.health;
 import static com.pavengine.app.PavEngine.levelStatus;
 import static com.pavengine.app.PavEngine.soundBox;
+import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameScreen.bloodEffect;
 import static com.pavengine.app.PavScreen.GameScreen.bullets;
 import static com.pavengine.app.PavScreen.GameScreen.damageSpark;
@@ -447,10 +448,16 @@ public class GameWorld {
 
         for (GameObject obj : staticObjects) {
             debugCube(obj.box, obj.debugColor);
+            if(player.footBox.ringOverlaps(obj.box, player.pos.cpy())) {
+                print(obj.name + "overlapping");
+            }
         }
 
         for (GameObject obj : groundObjects) {
             debugCube(obj.box,obj.debugColor);
+            if(player.footBox.ringOverlaps(obj.box, player.pos.cpy())) {
+                print(obj.name + "overlapping");
+            }
         }
 
 
