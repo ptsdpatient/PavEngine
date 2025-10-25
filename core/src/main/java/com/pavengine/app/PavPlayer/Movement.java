@@ -25,6 +25,7 @@ public class Movement implements PlayerBehavior {
     final Vector3 flatRight = new Vector3();
     final Vector3 moveDir = new Vector3();
     public Vector3 futurePos = new Vector3();
+    public Vector3 tmpV1 = new Vector3();
     float speed = 0f, targetSpeed = 0f, slopeFactor = 0f;
 
     public boolean isColliding(GameObject player, Vector3 nextPos) {
@@ -46,8 +47,13 @@ public class Movement implements PlayerBehavior {
 
             if (
                 player.footBox.ringOverlaps(obj.box, nextPos)) {
-                print("ramp up");
-                futurePos.y += 0.75f;
+                // --- smooth ramp climbing ---
+                Vector3 d = tmpV1.set(nextPos).sub(player.pos);
+                float h = (float)Math.sqrt(d.x * d.x + d.z * d.z);
+                if (h > 0f) d.scl(0.85f / h);
+                futurePos.set(player.pos.x + d.x * h, player.pos.y + MathUtils.lerp(0, h * 0.35f, 5f), player.pos.z + d.z * h);
+
+
                 return false;
             }
         }
@@ -148,4 +154,7 @@ public class Movement implements PlayerBehavior {
             speed = MathUtils.lerp(speed, 0f, decel * delta);
         }
     }
+
+
+
 }

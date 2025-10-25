@@ -495,10 +495,10 @@ public class GameWorld {
 
 
         for (GameObject obj : kinematicObjects) {
-//            debugCube(obj.box);
+            debugCube(obj.box);
             if (obj.ringDetection) {
-//                debugRing(obj.box.rings);
-//                debugRing(obj.footBox.rings);
+                debugRing(obj.box.rings);
+                debugRing(obj.footBox.rings);
             }
             if(obj.detectSlope) {
 //                for(SlopeRay ray : obj.slopeRays){

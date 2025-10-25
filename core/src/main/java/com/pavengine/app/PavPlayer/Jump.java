@@ -44,7 +44,7 @@ public class Jump implements PlayerBehavior {
 
     @Override
     public void update(GameObject player, float delta) {
-//        debugCube(player.footBox);
+        debugCube(player.footBox);
 
         boolean grounded = false;
 
