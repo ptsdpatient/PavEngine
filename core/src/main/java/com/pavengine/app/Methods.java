@@ -14,6 +14,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -75,6 +76,58 @@ public class Methods {
         array.add(element);
         return element;
     }
+
+//    public static Vector3 getEulerAngles(Quaternion q) {
+//        Vector3 angles = new Vector3();
+//
+//        // Pitch (X-axis rotation)
+//        float sinp = 2f * (q.w * q.x + q.y * q.z);
+//        float cosp = 1f - 2f * (q.x * q.x + q.y * q.y);
+//        angles.x = MathUtils.atan2(sinp, cosp) * MathUtils.radiansToDegrees;
+//
+//        // Yaw (Y-axis rotation)
+//        float siny = 2f * (q.w * q.y - q.z * q.x);
+//        if (Math.abs(siny) >= 1)
+//            angles.y = Math.copySign(90f, siny); // clamp at ±90°
+//        else
+//            angles.y = MathUtils.asin(siny) * MathUtils.radiansToDegrees;
+//
+//        // Roll (Z-axis rotation)
+//        float sinr = 2f * (q.w * q.z + q.x * q.y);
+//        float cosr = 1f - 2f * (q.y * q.y + q.z * q.z);
+//        angles.z = MathUtils.atan2(sinr, cosr) * MathUtils.radiansToDegrees;
+//
+//        return angles;
+//    }
+
+    public static Vector3 getEulerAngles(Quaternion q) {
+        Vector3 angles = new Vector3();
+
+        float qw = q.w;
+        float qx = q.x;
+        float qy = q.y;
+        float qz = q.z;
+
+        // Yaw (Y-axis rotation)
+        angles.y = (float) Math.atan2(2.0 * (qw * qy + qx * qz), 1 - 2.0 * (qy * qy + qz * qz));
+
+        // Pitch (X-axis rotation)
+        double sinp = 2.0 * (qw * qx - qz * qy);
+        if (Math.abs(sinp) >= 1)
+            angles.x = (float) Math.copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
+        else
+            angles.x = (float) Math.asin(sinp);
+
+        // Roll (Z-axis rotation)
+        angles.z = (float) Math.atan2(2.0 * (qw * qz + qx * qy), 1 - 2.0 * (qz * qz + qx * qx));
+
+        // Convert radians to degrees if needed
+        angles.scl(MathUtils.radiansToDegrees);
+
+        return angles;
+    }
+
+
 
     public static TextureRegion[] extractSprites(String name, int width, int height) {
         TextureRegion sheet = new TextureRegion(new Texture(load(name)));

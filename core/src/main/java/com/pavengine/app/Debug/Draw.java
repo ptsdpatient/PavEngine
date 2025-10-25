@@ -77,15 +77,14 @@ public class Draw {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.YELLOW);
-        Vector3 end = new Vector3(ray.ray.direction).scl(ray.distance).add(ray.ray.origin);
-        shapeRenderer.line(ray.ray.origin, end);
+        shapeRenderer.line(ray.ray.origin, ray.intersection);
         shapeRenderer.end();
     }
 
     public static void debugLine(Vector3 start, Vector3 end) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.YELLOW);
+        shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.line(start, end);
         shapeRenderer.end();
     }

@@ -1,11 +1,13 @@
 package com.pavengine.app.PavCamera;
 
 
+import static com.pavengine.app.Methods.getEulerAngles;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -25,13 +27,14 @@ public class ThirdPersonCamera extends PavCamera {
         print("third ps");
     }
 
-    public Quaternion getCameraRotation() {
+    public void getCameraRotation(Quaternion rotation) {
         Vector3 dir = new Vector3(camera.direction).set(camera.direction.x, 0, camera.direction.z).nor();
 
         float yawRad = (float) Math.atan2(dir.x, dir.z);
 
-        return new Quaternion().setFromAxisRad(Vector3.Y, yawRad);
+        rotation.setEulerAngles(yawRad * MathUtils.radiansToDegrees, rotation.getPitch(),rotation.getRoll());
     }
+
 
     public void rotate(float dx, float dy) {
         // yaw is the horizontal sensitivity
@@ -76,9 +79,8 @@ public class ThirdPersonCamera extends PavCamera {
     }
 
     public void update(float delta) {
-        if (!isColliding(player, getCameraRotation())) {
-            player.rotation.set(getCameraRotation());
-        }
+
+        getCameraRotation(player.rotation);
 
         camera.position.lerp(
             new Vector3(
@@ -87,6 +89,7 @@ public class ThirdPersonCamera extends PavCamera {
                 player.pos.z - (float) (dist * Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw)))
             )
             , 5f * delta);
+
         camera.lookAt(player.pos);
         camera.up.set(Vector3.Y);
         camera.update();

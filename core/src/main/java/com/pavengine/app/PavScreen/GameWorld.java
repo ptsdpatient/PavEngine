@@ -261,6 +261,11 @@ public class GameWorld {
 
 
     public GameObject getGameObject(String name) {
+        for (GameObject obj : groundObjects) {
+            if (Objects.equals(obj.name, name)) {
+                return obj;
+            }
+        }
         for (GameObject obj : staticObjects) {
             if (Objects.equals(obj.name, name)) {
                 return obj;
@@ -415,7 +420,7 @@ public class GameWorld {
 
         for (GameObject obj : kinematicObjects) {
             obj.update(delta);
-//            if (obj.detectSlope) obj.slopeDetection();
+            if (obj.detectSlope) obj.slopeDetection();
         }
 
         for (Enemy enemy : robots) {
@@ -448,16 +453,11 @@ public class GameWorld {
 
         for (GameObject obj : staticObjects) {
             debugCube(obj.box, obj.debugColor);
-            if(player.footBox.ringOverlaps(obj.box, player.pos.cpy())) {
-                print(obj.name + "overlapping");
-            }
+
         }
 
         for (GameObject obj : groundObjects) {
             debugCube(obj.box,obj.debugColor);
-            if(player.footBox.ringOverlaps(obj.box, player.pos.cpy())) {
-                print(obj.name + "overlapping");
-            }
         }
 
 
@@ -495,15 +495,22 @@ public class GameWorld {
 
 
         for (GameObject obj : kinematicObjects) {
-            debugCube(obj.box);
+//            debugCube(obj.box);
             if (obj.ringDetection) {
-                debugRing(obj.box.rings);
-                debugRing(obj.footBox.rings);
+//                debugRing(obj.box.rings);
+//                debugRing(obj.footBox.rings);
             }
             if(obj.detectSlope) {
-                for(SlopeRay ray : obj.slopeRays){
-                    debugRay(ray);
-                }
+//                for(SlopeRay ray : obj.slopeRays){
+//                    debugRay(ray);
+//                }
+//                print(obj.slopeNormal);
+//                debugLine(
+//                    obj.pos.cpy(),
+//                    obj.pos.cpy().add(obj.slopeNormal.cpy().scl(10)
+//                    )
+//                );
+
             }
         }
 

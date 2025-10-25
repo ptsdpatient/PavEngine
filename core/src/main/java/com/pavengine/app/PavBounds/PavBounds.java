@@ -4,6 +4,7 @@ import static com.pavengine.app.Methods.print;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.OrientedBoundingBox;
@@ -74,19 +75,28 @@ public class PavBounds {
         return true;
     }
 
-    public void updateRings(Vector3 pos) {
-//        print("Ring length : "+rings.length);
+//    public void updateRings(Vector3 pos) {
+//        for (int i = 0; i < rings.length; i++) {
+//
+//            rings[i] =
+//                new Vector3(
+//                    pos.x + ringRadius * MathUtils.cos((MathUtils.PI2 * i) / rings.length),
+//                    pos.y + heightOffset,
+//                    pos.z + ringRadius * MathUtils.sin((MathUtils.PI2 * i) / rings.length)
+//                );
+//        }
+//    }
+
+    public void updateRings(Vector3 pos, Quaternion rotation) {
         for (int i = 0; i < rings.length; i++) {
-
-            rings[i] =
-                new Vector3(
-                    pos.x + ringRadius * MathUtils.cos((MathUtils.PI2 * i) / rings.length),
-                    pos.y + heightOffset,
-                    pos.z + ringRadius * MathUtils.sin((MathUtils.PI2 * i) / rings.length)
-                );
-//            print(rings[i] + ", " + i);
+            Vector3 offset = new Vector3(
+                ringRadius * MathUtils.cos((MathUtils.PI2 * i) / rings.length),
+                heightOffset,
+                ringRadius * MathUtils.sin((MathUtils.PI2 * i) / rings.length)
+            );
+            offset.mul(rotation);
+            rings[i] = pos.cpy().add(offset);
         }
-
     }
 
 

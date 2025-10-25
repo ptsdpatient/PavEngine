@@ -17,21 +17,21 @@
 			"mesh":0,
 			"name":"Cube",
 			"scale":[
-				115.98599243164062,
-				1.393619418144226,
-				115.98599243164062
+				77.44004821777344,
+				3.0114541053771973,
+				72.17877960205078
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material",
+			"name":"Material.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0,
-					0.8001892566680908,
-					0.02276131883263588,
+					0.05081291124224663,
+					0.4869852066040039,
+					0.0012977257138118148,
 					1
 				],
 				"metallicFactor":0,
@@ -41,7 +41,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Cube",
+			"name":"Cube.001",
 			"primitives":[
 				{
 					"attributes":{

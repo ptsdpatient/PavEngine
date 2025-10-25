@@ -1,5 +1,6 @@
 package com.pavengine.app.PavGameObject;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.ObjectBehaviorType.AttachToCamera;
 import static com.pavengine.app.ObjectBehaviorType.AttachToObject;
 import static com.pavengine.app.ObjectBehaviorType.Static;
@@ -359,10 +360,6 @@ public class KinematicObject extends GameObject {
 
     @Override
     public void slopeDetection() {
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glLineWidth(3f);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         for (SlopeRay ray : slopeRays) {
             ray.update(pos);
@@ -373,18 +370,6 @@ public class KinematicObject extends GameObject {
             .crs(slopeRays.get(2).intersection.cpy().sub(slopeRays.get(0).intersection))
             .nor();
 
-
-        rotation.setEulerAngles(rotation.getYaw(),
-            (float) Math.asin(-slopeNormal.x) * MathUtils.radiansToDegrees,
-            (float) Math.asin(slopeNormal.z) * MathUtils.radiansToDegrees);
-        timeAlive += 1f;
-
-        shapeRenderer.setColor(Color.GREEN);
-        shapeRenderer.line(slopeRays.get(0).intersection,
-            slopeRays.get(0).intersection.cpy().add(slopeNormal.scl(5)));
-
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
     }
 
     public boolean contains(Vector3 point) {
@@ -411,8 +396,8 @@ public class KinematicObject extends GameObject {
         );
 
         if (ringDetection) {
-            box.updateRings(pos.cpy());
-            footBox.updateRings(pos.cpy());
+            box.updateRings(pos.cpy(),rotation.cpy());
+            footBox.updateRings(pos.cpy(),rotation.cpy());
         }
 
         if (detectSlope) footBox.set(

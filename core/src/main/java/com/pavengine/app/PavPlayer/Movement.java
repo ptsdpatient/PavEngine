@@ -1,12 +1,9 @@
 package com.pavengine.app.PavPlayer;
 
-import static com.pavengine.app.Methods.isKeyJustPressed;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavEngine.gamePause;
-import static com.pavengine.app.PavEngine.soundBox;
-import static com.pavengine.app.PavScreen.GameScreen.lanes;
 import static com.pavengine.app.PavScreen.GameWorld.cameraBehavior;
+import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
@@ -41,6 +38,17 @@ public class Movement implements PlayerBehavior {
             ) {
 
                 return true;
+            }
+        }
+
+        for (GameObject obj : groundObjects) {
+            if (obj == player) continue;
+
+            if (
+                player.footBox.ringOverlaps(obj.box, nextPos)) {
+                print("ramp up");
+                futurePos.y += 0.75f;
+                return false;
             }
         }
 
@@ -127,8 +135,11 @@ public class Movement implements PlayerBehavior {
 
             futurePos.set(player.pos).mulAdd(moveDir, speed * delta);
 
+
+
             if (!isColliding(player, futurePos)) {
                 player.pos.set(futurePos);
+
             } else {
                 speed = 0f;
             }
@@ -137,6 +148,4 @@ public class Movement implements PlayerBehavior {
             speed = MathUtils.lerp(speed, 0f, decel * delta);
         }
     }
-
-
 }

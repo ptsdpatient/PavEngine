@@ -234,6 +234,7 @@ public class GroundObject extends GameObject {
 //            attackBox = new OrientedBoundingBox(new BoundingBox(), new Matrix4(pos,rotation,new Vector3(1,1,1)));
 //            world.debugOOB(attackBox);
 //        }
+
         debugCube(attackBox);
 
         if (isEnemy && fireTime > 0) {

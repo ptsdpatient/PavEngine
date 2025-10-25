@@ -1,6 +1,7 @@
 package com.pavengine.app.PavPlayer;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
+import static com.pavengine.app.Methods.getEulerAngles;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
@@ -8,7 +9,14 @@ import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.PavGameObject.GameObject;
 
 public class Jump implements PlayerBehavior {
@@ -17,66 +25,58 @@ public class Jump implements PlayerBehavior {
     float velocityY = 0f;
     float jumpStrength = 18f;
     float gravity = -20f;
-    float bounceFactor = 0.6f;
 
-    public boolean isColliding() {
-        for (GameObject obj : targetObjects) {
-            if (player.footBox.intersects(obj.box)) {
-                return true;
-            }
-        }
+    private static final Vector3 tmpX = new Vector3();
+    private static final Vector3 tmpY = new Vector3();
+    private static final Vector3 tmpZ = new Vector3();
 
-        for (GameObject obj : groundObjects) {
-            if (player.footBox.intersects(obj.box)) {
-                return true;
-            }
-        }
-        return false;
+
+//    public void setRotationToPlane(Quaternion rotation, Quaternion targetRotation) {
+//        rotation.setEulerAngles(targetRotation.getYaw(), targetRotation.getPitch() , targetRotation.getRoll());
+//    }
+
+
+    public void setRotationToPlane() {
+
     }
+
+
 
     @Override
     public void update(GameObject player, float delta) {
-        debugCube(player.footBox);
+//        debugCube(player.footBox);
+
+        boolean grounded = false;
+
+        for (GameObject obj : groundObjects) {
+            if (player.footBox.ringOverlaps(obj.box,player.pos)) {
+
+                grounded = true;
+
+
+
+                if (velocityY <= 0) {
+                    velocityY = 0f;
+                    jumping = false;
+                }
+                break;
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && grounded) {
+//            player.playAnimation(0, false, false);
+            jumping = true;
+            velocityY = jumpStrength;
+        }
+
+        if (!grounded) {
+            jumping = true;
+        }
 
         if (jumping) {
             velocityY += gravity * delta;
-            player.pos.y = MathUtils.lerp(player.pos.y, player.pos.y + velocityY * delta, 1f);
-
-            for (GameObject obj : targetObjects) {
-                if (obj.box.intersects(player.footBox) && velocityY <= 0) {
-
-                    if (Math.abs(velocityY) > 1f) {
-                        if (Math.abs(velocityY) > 7f) player.playAnimation(0, false, false);
-                        velocityY = -velocityY * bounceFactor;
-                    } else {
-                        velocityY = 0f;
-                        jumping = false;
-                    }
-                }
-            }
-            for (GameObject obj : groundObjects) {
-
-//                print(player.footBox.ringOverlaps(obj.box,player.pos.cpy())?"overlapping":"not overlapping");
-
-                if (obj.box.intersects(player.footBox) && velocityY <= 0) {
-
-                    if (Math.abs(velocityY) > 1f) {
-                        if (Math.abs(velocityY) > 7f) player.playAnimation(0, false, false);
-                        velocityY = -velocityY * bounceFactor;
-                    } else {
-                        velocityY = 0f;
-                        jumping = false;
-                    }
-                }
-            }
-
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            player.playAnimation(0, false, false);
-            jumping = true;
-            velocityY = jumpStrength;
-        } else if (!isColliding()) {
-            jumping = true;
-
+            player.pos.y += velocityY * delta;
         }
     }
+
 }

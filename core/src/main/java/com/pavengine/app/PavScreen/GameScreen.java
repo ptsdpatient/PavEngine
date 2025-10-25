@@ -19,20 +19,11 @@ import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
 import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_CENTER;
-import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_LEFT;
-import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_RIGHT;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER;
-import static com.pavengine.app.PavUI.PavAnchor.TOP_CENTER;
 import static com.pavengine.app.PavUI.PavFlex.ROW;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -61,11 +52,8 @@ import com.pavengine.app.PavScript.Enemies.Enemy;
 import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavScript.LevelManager;
 import com.pavengine.app.PavUI.ClickBehavior;
-import com.pavengine.app.PavUI.HealthBar;
 import com.pavengine.app.PavUI.Image;
 import com.pavengine.app.PavUI.PavLayout;
-import com.pavengine.app.PavUI.ProgressBar;
-import com.pavengine.app.PavUI.SprayBar;
 import com.pavengine.app.PavUI.TextBox;
 import com.pavengine.app.PavUI.TextButton;
 
@@ -226,10 +214,11 @@ public class GameScreen extends PavScreen {
 
         addObjects(
             new String[]{
-                "tree", "bush", "props", "lamp",
+//                "tree", "bush", "props", "lamp",
                 "ground"
             }
         );
+
 
 
         for (int i = 0; i < 4; i++) {
@@ -260,6 +249,7 @@ public class GameScreen extends PavScreen {
 //        setEnemyBlueprint();
 
         levelManager = new LevelManager("levels/levels.json", game);
+
 
 
     }
