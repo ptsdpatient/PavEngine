@@ -1,8 +1,8 @@
-package com.pavengine.app.MapEditor;
+package com.pavengine.app.PavScreen;
 
+import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.uiBG;
-
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
@@ -13,6 +13,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.Checkbox;
 import com.pavengine.app.PavUI.ClickBehavior;
@@ -24,7 +25,7 @@ import com.pavengine.app.PavUI.TextButton;
 
 import java.util.ArrayList;
 
-public class MapEditor {
+public class MapEditor extends  PavScreen{
     public static Array<GameObject> staticMapObjects;
     public static ArrayList<String> objectList;
     public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
@@ -35,8 +36,13 @@ public class MapEditor {
     public static PavWidget exportModelInfo;
     public Vector3[] rotationOffset = new Vector3[]{new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)};
     public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
+    private BitmapFont font;
+    
 
-    public MapEditor(BitmapFont font) {
+    public MapEditor(PavEngine game) {
+        super(game);
+
+        this.font = gameFont;
         staticMapObjects = new Array<>();
         objectList = new ArrayList<>();
 
@@ -76,4 +82,19 @@ public class MapEditor {
         return folders;
     }
 
+
+    @Override
+    public void debug() {
+
+    }
+
+    @Override
+    public void draw(float delta) {
+
+    }
+
+    @Override
+    public void world(float delta) {
+
+    }
 }

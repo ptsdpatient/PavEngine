@@ -2,7 +2,7 @@ package com.pavengine.app.Debug;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
+import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavScreen.GameWorld.shapeRenderer;
 
 import com.badlogic.gdx.graphics.Color;

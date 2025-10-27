@@ -78,8 +78,8 @@ public class TextButton extends PavWidget {
 
     @Override
     public void setSize(float spriteWidth, float spriteHeight) {
-        box.setSize(layout.width, spriteHeight);
-        if (background != null) background.setSize(spriteWidth, spriteHeight);
+        box.setSize(Math.max(layout.width, spriteWidth), Math.max(layout.height, spriteHeight));
+        if (background != null) background.setSize(Math.max(layout.width, spriteWidth), Math.max(layout.height, spriteHeight));
     }
 
     @Override

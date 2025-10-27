@@ -26,18 +26,17 @@ public abstract class PavScreen implements Screen {
     public Vector2 resolution = new Vector2(1280,720);
     public PavEngine game;
     public SpriteBatch batch;
-    public OrthographicCamera camera  = new OrthographicCamera();
-    public FitViewport viewport = new FitViewport(resolution.x, resolution.y, camera);
-
+    private OrthographicCamera camera;
+    private FitViewport viewport;
 
 
     public PavScreen(PavEngine game) {
         this.game = game;
         this.batch = game.batch;
 
-        camera.setToOrtho(false, resolution.x, resolution.y);
-        viewport.apply();
-        print("new cursor");
+        this.camera = PavEngine.overlayCamera;
+        this.viewport = PavEngine.overlayViewport;
+
 
         resize((int) resolution.x, (int) resolution.y);
 

@@ -5,7 +5,7 @@ import static com.pavengine.app.ObjectBehaviorType.AttachToCamera;
 import static com.pavengine.app.ObjectBehaviorType.AttachToObject;
 import static com.pavengine.app.ObjectBehaviorType.Static;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavScreen.GameWorld.cameraBehavior;
+import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.shapeRenderer;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;

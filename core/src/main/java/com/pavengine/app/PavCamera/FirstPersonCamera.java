@@ -4,6 +4,7 @@ import static com.pavengine.app.Methods.isButtonPressed;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.blastRadius;
 import static com.pavengine.app.PavEngine.gamePause;
+import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.playerDamage;
 import static com.pavengine.app.PavEngine.playerDamageRate;
 import static com.pavengine.app.PavEngine.playerDamageTime;
@@ -15,7 +16,6 @@ import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameScreen.muzzleFlash;
 import static com.pavengine.app.PavScreen.GameScreen.playerRay;
 import static com.pavengine.app.PavScreen.GameScreen.robots;
-import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;

@@ -2,7 +2,7 @@ package com.pavengine.app.PavPlayer;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavScreen.GameWorld.cameraBehavior;
+import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;

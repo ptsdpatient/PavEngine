@@ -1,7 +1,7 @@
 package com.pavengine.app;
 
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
+import static com.pavengine.app.PavEngine.overlayCamera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;

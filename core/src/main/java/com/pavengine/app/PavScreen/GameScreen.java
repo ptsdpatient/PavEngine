@@ -1,6 +1,5 @@
 package com.pavengine.app.PavScreen;
 
-import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.getJson;
 import static com.pavengine.app.Methods.loadModel;
@@ -9,11 +8,11 @@ import static com.pavengine.app.PavEngine.cel_shading;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
+import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
-import static com.pavengine.app.PavScreen.GameWorld.overlayCamera;
 import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
@@ -30,7 +29,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.pavengine.app.CameraBehaviorType;
-import com.pavengine.app.MapEditor.MapEditor;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.Entrance;
 import com.pavengine.app.PavBounds.EntranceBluprint;
@@ -52,7 +50,6 @@ import com.pavengine.app.PavScript.Enemies.Enemy;
 import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavScript.LevelManager;
 import com.pavengine.app.PavUI.ClickBehavior;
-import com.pavengine.app.PavUI.Image;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.TextBox;
 import com.pavengine.app.PavUI.TextButton;
@@ -78,7 +75,7 @@ public class GameScreen extends PavScreen {
         muzzleFlash = new PavParticle2D("particles/muzzle/muzzle.p", "particles/muzzle");
 
     public static PavRay playerRay;
-    public static MapEditor mapEditor;
+    public static GameWorld.MapEditor mapEditor;
     public static PavLayout
         messageBoxLayout,
         interactableLayout;
@@ -99,7 +96,7 @@ public class GameScreen extends PavScreen {
 
         if (enableMapEditor) {
             enableCursor = true;
-            mapEditor = new MapEditor(gameFont);
+
         }
 
         lockCursor(!enableCursor);
@@ -119,7 +116,6 @@ public class GameScreen extends PavScreen {
 
         world = new GameWorld(
             game,
-            enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.ThirdPerson,
             resolution,
             PavLightProfile.DAY,
             new PBRShaderProvider(pbrConfig),
@@ -134,8 +130,8 @@ public class GameScreen extends PavScreen {
         messageBoxLayout = new PavLayout(BOTTOM_CENTER, ROW, 0, overlayCamera.viewportWidth, overlayCamera.viewportHeight / 3f, 12);
         messageBoxLayout.addSprite(messageBox);
 
-        addAndGet(gameWorldLayout, new PavLayout(CENTER, ROW, 3, 32, 32))
-            .addSprite(new Image("sprites/crosshair.png"));
+//        addAndGet(gameWorldLayout, new PavLayout(CENTER, ROW, 3, 32, 32))
+//            .addSprite(new Image("sprites/crosshair.png"));
 
 //        addAndGet(gameWorldLayout, new PavLayout(BOTTOM_LEFT, ROW, 3, 192, 32, 3))
 //            .addSprite(new HealthBar("Health", gameFont, ClickBehavior.Nothing, uiBG[5], uiBG[1]));
@@ -215,7 +211,7 @@ public class GameScreen extends PavScreen {
         addObjects(
             new String[]{
 //                "tree", "bush", "props", "lamp",
-                "ground"
+//                "ground"
             }
         );
 
@@ -225,15 +221,10 @@ public class GameScreen extends PavScreen {
             lanes.add(new Lane(new Vector3(19.6304f, 0.0000f, (i * 7.5f) - 13f), new Vector3(-32.692924f, 0.0000f, (i * 7.5f) - 13f)));
         }
 
-        setPlayer();
-
-        playerRay = new PavRay(world.getGameObject("player"), new Vector3(0, 1, 2), 2, 2, Color.CYAN);
-
-        //        for(String word : words) {
-//            books.add(new Book(word));
-//        }
-//
-//        jsonMapInteractible(books,"gameobjects.json");
+        if(!enableMapEditor) {
+            setPlayer();
+            playerRay = new PavRay(world.getGameObject("player"), new Vector3(0, 1, 2), 2, 2, Color.CYAN);
+        }
 
 
 //        addObjects("gameobjects.json");
@@ -258,6 +249,8 @@ public class GameScreen extends PavScreen {
     public void debug() {
 
     }
+
+
 
     public static void addObjects(String[] fileNames) {
         for(String fileName : fileNames) {

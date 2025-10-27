@@ -9,6 +9,7 @@ import static com.pavengine.app.PavEngine.blastRadius;
 import static com.pavengine.app.PavEngine.credits;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.gameFont;
+import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.playerDamage;
 import static com.pavengine.app.PavEngine.playerDamageRate;
 import static com.pavengine.app.PavEngine.resolution;
@@ -101,7 +102,7 @@ public class UpgradeScreen extends PavScreen {
 
 
         for (PavLayout layout : upgradeLayout) {
-            layout.draw(batch, viewport.getWorldWidth(), viewport.getWorldHeight());
+            layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
             for (PavWidget widget : layout.widgets) {
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     if (cursor.clicked(widget.box)) {

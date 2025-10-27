@@ -1,31 +1,33 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
-import static com.pavengine.app.Debug.Draw.debugLine;
 import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Debug.Draw.debugRing;
-import static com.pavengine.app.MapEditor.MapEditor.elevationStepper;
-import static com.pavengine.app.MapEditor.MapEditor.mapEditingLayout;
-import static com.pavengine.app.MapEditor.MapEditor.roomCheckbox;
-import static com.pavengine.app.MapEditor.MapEditor.rotationSteppers;
-import static com.pavengine.app.MapEditor.MapEditor.scaleStepper;
-import static com.pavengine.app.MapEditor.MapEditor.selectedObjectType;
+import static com.pavengine.app.PavEngine.overlayCamera;
+import static com.pavengine.app.PavEngine.overlayViewport;
+import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.perspectiveViewport;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.elevationStepper;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.mapEditingLayout;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.roomCheckbox;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.rotationSteppers;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.scaleStepper;
+import static com.pavengine.app.PavScreen.GameWorld.MapEditor.selectedObjectType;
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.ThirdPersonCamera.camera;
-import static com.pavengine.app.PavEngine.bigGameFont;
-import static com.pavengine.app.PavEngine.cel_shading;
 import static com.pavengine.app.PavEngine.credits;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
-import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.gamePause;
 import static com.pavengine.app.PavEngine.health;
+import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.levelStatus;
 import static com.pavengine.app.PavEngine.soundBox;
-import static com.pavengine.app.PavPlayer.PavPlayer.player;
+import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavScreen.GameScreen.bloodEffect;
 import static com.pavengine.app.PavScreen.GameScreen.bullets;
 import static com.pavengine.app.PavScreen.GameScreen.damageSpark;
@@ -40,17 +42,19 @@ import static com.pavengine.app.PavScreen.GameScreen.playerRay;
 import static com.pavengine.app.PavScreen.GameScreen.robots;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.PavScreen.cursor;
+import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
+import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
+import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -61,7 +65,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.CameraBehaviorType;
 import com.pavengine.app.Cell;
-import com.pavengine.app.GameSprite;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PathFinder;
 import com.pavengine.app.PavCamera.FirstPersonCamera;
@@ -83,27 +86,25 @@ import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
 import com.pavengine.app.PavScript.Bullet;
 import com.pavengine.app.PavScript.Enemies.Enemy;
-import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavSkyBox;
+import com.pavengine.app.PavUI.Checkbox;
 import com.pavengine.app.PavUI.ClickBehavior;
-import com.pavengine.app.PavUI.PavAnchor;
-import com.pavengine.app.PavUI.PavFlex;
+import com.pavengine.app.PavUI.Dropdown;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
-import com.pavengine.app.SlopeRay;
 
-import net.mgsx.gltf.scene3d.lights.DirectionalLightEx;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameWorld {
 
-    public static CameraBehaviorType cameraBehavior;
+
     public static Array<PavTorch> torches = new Array<>();
     public static Array<GameObject>
         staticObjects = new Array<>(),
@@ -111,36 +112,34 @@ public class GameWorld {
         kinematicObjects = new Array<>(),
         targetObjects = new Array<>(),
         groundObjects = new Array<>();
-    public static Array<GameSprite> sprites = new Array<>();
+
     public static Array<PavRay> lasers = new Array<>();
     public static PathFinder pathFinder = new PathFinder();
-    public static PavCamera pavCamera;
+
     public static SceneManager sceneManager;
-    public static OrthographicCamera overlayCamera;
     public static ShapeRenderer shapeRenderer;
-    public static FitViewport overlayViewport, perspectiveViewport;
     public static TextButton levelStatusButton;
     public PavLayout levelStatusLayout, levelStartTextLayout;
     public PavEngine game;
     public float levelStartTextTime = 5f;
     public ModelBatch batch;
-    public TextureRegion tex = new TextureRegion();
     public TextButton levelStartText;
     public SpriteBatch spriteBatch;
     public PavLight pavLight;
-    public DirectionalLightEx light;
-    public Model cubeModel;
-    public BitmapFont font = new BitmapFont();
-    public float deltaX = 0, deltaY = 0, sensitivity = 0.1f, playerSpeed = 0.05f;
-    public Vector3 right = new Vector3(), leftMove = new Vector3(), rightMove = new Vector3(), forward = new Vector3(), backward = new Vector3();
-    public PavSkyBox skyBox;
-    Vector3 flatForward = new Vector3(), flatRight = new Vector3(), cameraOffset = new Vector3(5, 0, 0);
-    float speed = 5f;
-    Vector2 resolution;
-    private TextButton creditShow;
 
-    public GameWorld(PavEngine game, CameraBehaviorType cameraBehavior, Vector2 resolution, PavLightProfile lightProfile, PBRShaderProvider shaderProvider, DepthShaderProvider depthShaderProvider) {
-        GameWorld.cameraBehavior = cameraBehavior;
+    public BitmapFont font = new BitmapFont();
+    public PavSkyBox skyBox;
+
+    Vector2 resolution;
+
+
+    public GameWorld (
+        PavEngine game,
+        Vector2 resolution,
+        PavLightProfile lightProfile,
+        PBRShaderProvider shaderProvider,
+        DepthShaderProvider depthShaderProvider
+    ) {
         this.resolution = resolution;
         this.game = game;
         this.spriteBatch = game.batch;
@@ -148,26 +147,13 @@ public class GameWorld {
         batch = new ModelBatch();
         sceneManager = new SceneManager(shaderProvider, depthShaderProvider);
         pavLight = new PavLight(sceneManager.environment, lightProfile);
-//        pavLight.addPointLight(Color.CYAN,new Vector3(5,1,2),500);
 
 
-        overlayCamera = new OrthographicCamera();
-        overlayViewport = new FitViewport(resolution.x, resolution.y, overlayCamera);
-        overlayCamera.setToOrtho(false, resolution.x, resolution.y);
-
-        camera = new PerspectiveCamera(67, resolution.x, resolution.y);
-        camera.near = 0.1f;
-        camera.far = 1000f;
-        perspectiveViewport = new FitViewport(resolution.x, resolution.y, camera);
-
-        overlayViewport.apply();
-        perspectiveViewport.apply();
 
         sceneManager.setCamera(camera);
 
-
 //        overlayCamera.position.set(camera.position.cpy());
-        initializeCamera();
+
 //        for (int k = 0;k<=7;k++) {
 //        for (int i = 0; i <= 7; i++) {
 //            for (int j = 0; j <= 7; j++) {
@@ -182,82 +168,22 @@ public class GameWorld {
 
         skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
 
-        levelStatusLayout = new PavLayout(PavAnchor.CENTER, PavFlex.COLUMN, 5, 720, 64);
-        levelStatusButton = new TextButton("You Won! (Click to Continue)", gameFont, ClickBehavior.Nothing);
-        levelStatusLayout.addSprite(levelStatusButton);
+//        levelStatusLayout = new PavLayout(PavAnchor.CENTER, PavFlex.COLUMN, 5, 720, 64);
+//        levelStatusButton = new TextButton("You Won! (Click to Continue)", gameFont, ClickBehavior.Nothing);
+//        levelStatusLayout.addSprite(levelStatusButton);
 
 
-        levelStartTextLayout = new PavLayout(PavAnchor.TOP_CENTER, PavFlex.COLUMN, 5, 720, 64);
-        levelStartText = new TextButton("Level 1", bigGameFont, ClickBehavior.Nothing);
-        levelStartTextLayout.addSprite(levelStartText);
+//        levelStartTextLayout = new PavLayout(PavAnchor.TOP_CENTER, PavFlex.COLUMN, 5, 720, 64);
+//        levelStartText = new TextButton("Level 1", bigGameFont, ClickBehavior.Nothing);
+//        levelStartTextLayout.addSprite(levelStartText);
 
-        creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont, ClickBehavior.Nothing);
-        gameWorldLayout.add(new PavLayout(PavAnchor.TOP_RIGHT, PavFlex.COLUMN, 0, 192, 16, 8));
-        gameWorldLayout.peek().addSprite(creditShow);
-
-    }
-
-    private void initializeCamera() {
-        switch (cameraBehavior) {
-            case FirstPerson:
-                pavCamera = new FirstPersonCamera(67);
-
-                break;
-
-            case ThirdPerson:
-                // Handle third-person camera logic
-                pavCamera = new ThirdPersonCamera(67);
-                break;
-
-            case Isometric:
-                pavCamera = new IsometricCamera(67);
-
-                // Handle isometric camera logic
-                break;
-
-            case Orthographic:
-                // Handle orthographic camera logic
-                break;
-
-            case TopDown:
-                // Handle top-down camera logic
-                pavCamera = new TopDownCamera(67, true);
-                break;
-
-            case SideScroller:
-                // Handle side-scroller camera logic
-                break;
-
-            case FreeLook:
-                // Handle free-look camera logic
-                break;
-
-            case Orbit:
-                // Handle orbit camera logic
-                break;
-
-            case Cinematic:
-                // Handle cinematic camera logic
-                break;
-
-            case Fixed:
-                // Handle fixed camera logic
-                break;
-
-            case VR:
-                // Handle VR camera logic
-                break;
-
-            case SplitScreen:
-                // Handle split-screen camera logic
-                break;
-
-            default:
-                // Handle unknown or unsupported behavior
-                break;
-        }
+//        creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont, ClickBehavior.Nothing);
+//        gameWorldLayout.add(new PavLayout(PavAnchor.TOP_RIGHT, PavFlex.COLUMN, 0, 192, 16, 8));
+//        gameWorldLayout.peek().addSprite(creditShow);
 
     }
+
+
 
 
     public GameObject getGameObject(String name) {
@@ -376,7 +302,9 @@ public class GameWorld {
             game.setPauseScreen();
         }
 
-        creditShow.text = ((int) credits) + " Credits";
+        if(!enableMapEditor) {
+//            creditShow.text = ((int) credits) + " Credits";
+        }
 
 //        if (!gamePause) {
 //            levelManager.update(delta);
@@ -531,9 +459,11 @@ public class GameWorld {
         spriteBatch.setProjectionMatrix(overlayCamera.combined);
         spriteBatch.begin();
 
-        if (levelStartTextTime >= 0f && !gamePause) {
-            levelStartTextTime -= delta;
-            levelStartTextLayout.draw(spriteBatch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
+        if(!enableMapEditor) {
+            if (levelStartTextTime >= 0f && !gamePause) {
+                levelStartTextTime -= delta;
+                levelStartTextLayout.draw(spriteBatch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
+            }
         }
 
 
@@ -606,8 +536,73 @@ public class GameWorld {
             }
         }
 
-        playerRay.update(delta);
+        if(enableMapEditor) {
+            for(PavLayout layout : mapEditingLayout) {
+                for(PavWidget widget : layout.widgets) {
+                    if(widget.isHovered) debugRectangle(widget.box,Color.GREEN);
+                }
+            }
+        }
+
+
+
+        if(!enableMapEditor) {
+            playerRay.update(delta);
+        }
 //        debugRay(playerRay);
     }
 
+    public static class MapEditor {
+        public static Array<GameObject> staticMapObjects;
+        public static ArrayList<String> objectList;
+        public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
+        public static Stepper scaleStepper, elevationStepper;
+        public static Checkbox roomCheckbox;
+        public static Dropdown selectedObjectType;
+        public static ArrayList<Stepper> rotationSteppers = new ArrayList<>();
+        public static PavWidget exportModelInfo;
+        public Vector3[] rotationOffset = new Vector3[]{new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)};
+        public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
+
+        public MapEditor(BitmapFont font) {
+            staticMapObjects = new Array<>();
+            objectList = new ArrayList<>();
+
+            mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 128, 5));
+            for (String model : listModels("assets/models/"))
+                mapEditingLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+
+
+            scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
+            elevationStepper = new Stepper(192 * 2 + 32, 140 - 20, new Vector3(0f, 0.05f, 0f), ClickBehavior.StepperElevation, "Elevation", font, uiControl[0], uiControl[1]);
+            roomCheckbox = new Checkbox(192 * 3 + 32, 140 - 20, false, ClickBehavior.CheckboxRoom, "Room", font, uiControl[4], uiControl[5]);
+            selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
+            mapEditingLayout.add(new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5));
+            mapEditingLayout.get(1).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+
+
+            int i = 0;
+            for (Vector3 offset : rotationOffset) {
+                rotationSteppers.add(new Stepper(192 * (i + 1) + 32, 50 - 20, offset, ClickBehavior.StepperRotation, rotationNames[i], font, uiControl[0], uiControl[1]));
+                i++;
+            }
+
+        }
+
+        public ArrayList<String> listModels(String path) {
+            ArrayList<String> folders = new ArrayList<>();
+
+            FileHandle dir = Gdx.files.internal(path);
+
+            if (dir.exists()) {
+                for (FileHandle file : dir.list()) {
+                    if (file.isDirectory()) {
+                        folders.add(file.name());
+                    }
+                }
+            }
+            return folders;
+        }
+
+    }
 }

@@ -1,8 +1,8 @@
 package com.pavengine.app.PavUI;
 
 import static com.pavengine.app.PavEngine.enableMapEditor;
+import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
-import static com.pavengine.app.PavScreen.GameWorld.overlayViewport;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

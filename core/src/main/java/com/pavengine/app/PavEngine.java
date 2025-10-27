@@ -3,14 +3,24 @@ package com.pavengine.app;
 import static com.pavengine.app.Methods.extractSprites;
 import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.pavengine.app.PavCamera.FirstPersonCamera;
+import com.pavengine.app.PavCamera.IsometricCamera;
+import com.pavengine.app.PavCamera.PavCamera;
+import com.pavengine.app.PavCamera.ThirdPersonCamera;
+import com.pavengine.app.PavCamera.TopDownCamera;
 import com.pavengine.app.PavScreen.GameScreen;
+import com.pavengine.app.PavScreen.GameWorld;
 import com.pavengine.app.PavScreen.LoadingScreen;
 import com.pavengine.app.PavScreen.PauseScreen;
 import com.pavengine.app.PavScreen.UpgradeScreen;
@@ -18,9 +28,10 @@ import com.pavengine.app.PavSound.SoundBox;
 
 
 public class PavEngine extends Game {
-    public static boolean dragAndDrop = false;
+    public static CameraBehaviorType cameraBehavior;
+    public static boolean dragAndDrop = true;
     public static boolean enableCursor = true;
-    public static boolean enableMapEditor = false;
+    public static boolean enableMapEditor = true;
     public static boolean gamePause = false;
     public static Vector2 resolution = new Vector2(1280, 720);
     public static float sprayTime = 0f, sprayLimit = 5f, playerDamageTime = 0f, playerDamage = 30f, playerDamageRate = 0.3f, sprayCooldown = 0f, blastRadius = 5f;
@@ -32,6 +43,9 @@ public class PavEngine extends Game {
     public UpgradeScreen upgradeScreen;
     public PauseScreen pauseScreen;
     public SpriteBatch batch;
+    public static FitViewport overlayViewport, perspectiveViewport;
+    public static PavCamera pavCamera;
+    public static OrthographicCamera overlayCamera  = new OrthographicCamera();
 
     public static BitmapFont
         gameFont,
@@ -44,7 +58,7 @@ public class PavEngine extends Game {
 
     public static boolean
         cel_shading = false,
-        shadows = true;
+        shadows = false;
 
     public String[] soundList = new String[]{
         "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
@@ -54,11 +68,33 @@ public class PavEngine extends Game {
     @Override
     public void create() {
 
-        Gdx.input.setCursorCatched(true);
+        if(!enableMapEditor) {
+            Gdx.input.setCursorCatched(true);
+        } else {
+            dragAndDrop = true;
+        }
 
         initializeSound();
 
         batch = new SpriteBatch();
+
+        overlayCamera =new OrthographicCamera();
+        overlayCamera.setToOrtho(false, resolution.x, resolution.y);
+
+        overlayViewport = new FitViewport(resolution.x,resolution.y,overlayCamera);
+
+        overlayViewport.apply();
+
+        cameraBehavior = enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.ThirdPerson;
+
+        camera = new PerspectiveCamera(67, resolution.x, resolution.y);
+        camera.near = 0.1f;
+        camera.far = 1000f;
+        perspectiveViewport = new FitViewport(resolution.x, resolution.y, camera);
+
+        perspectiveViewport.apply();
+
+        initializeCamera();
 
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
@@ -101,5 +137,67 @@ public class PavEngine extends Game {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    private void initializeCamera() {
+        switch (cameraBehavior) {
+            case FirstPerson:
+                pavCamera = new FirstPersonCamera(67);
+
+                break;
+
+            case ThirdPerson:
+                // Handle third-person camera logic
+                pavCamera = new ThirdPersonCamera(67);
+                break;
+
+            case Isometric:
+                pavCamera = new IsometricCamera(67);
+
+                // Handle isometric camera logic
+                break;
+
+            case Orthographic:
+                // Handle orthographic camera logic
+                break;
+
+            case TopDown:
+                // Handle top-down camera logic
+                pavCamera = new TopDownCamera(67, true);
+                break;
+
+            case SideScroller:
+                // Handle side-scroller camera logic
+                break;
+
+            case FreeLook:
+                // Handle free-look camera logic
+                break;
+
+            case Orbit:
+                // Handle orbit camera logic
+                break;
+
+            case Cinematic:
+                // Handle cinematic camera logic
+                break;
+
+            case Fixed:
+                // Handle fixed camera logic
+                break;
+
+            case VR:
+                // Handle VR camera logic
+                break;
+
+            case SplitScreen:
+                // Handle split-screen camera logic
+                break;
+
+            default:
+                // Handle unknown or unsupported behavior
+                break;
+        }
+
     }
 }
