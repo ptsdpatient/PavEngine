@@ -7,6 +7,7 @@ import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.blastRadius;
 import static com.pavengine.app.PavEngine.credits;
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayViewport;

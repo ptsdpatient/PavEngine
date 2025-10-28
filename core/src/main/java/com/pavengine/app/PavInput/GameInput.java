@@ -1,8 +1,8 @@
-package com.pavengine.app;
+package com.pavengine.app.PavInput;
 
-import static com.pavengine.app.CameraBehaviorType.FirstPerson;
-import static com.pavengine.app.CameraBehaviorType.ThirdPerson;
+import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.PavEngine.cameraBehavior;
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.perspectiveViewport;
@@ -21,7 +21,7 @@ import static com.pavengine.app.PavScreen.GameWorld.pathFinder;
 import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
-import static com.pavengine.app.PavScreen.PavScreen.cursor;
+
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -30,7 +30,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavGameObject.GameObject;
+import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
@@ -52,6 +54,11 @@ public class GameInput {
 
         @Override
         public boolean keyUp(int keycode) {
+            if(keycode == Input.Keys.ESCAPE) {
+                Gdx.input.setCursorCatched(!enableCursor);
+                lockCursor(enableCursor);
+            }
+
             if (keycode == Input.Keys.SPACE) {
                 if (pathFinder.hasStart && pathFinder.hasEnd && !pathFinder.findingPath) {
                     pathFinder.findPath();
@@ -115,6 +122,10 @@ public class GameInput {
         @Override
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
+            if(!enableCursor) {
+                lockCursor(false);
+                Gdx.input.setCursorCatched(true);
+            }
             switch (cameraBehavior) {
                 case TopDown: {
                     if (dragAndDrop) {
@@ -172,7 +183,7 @@ public class GameInput {
                         }
 
 
-                        cursor.setCursor(0);
+                        cursor.setCursor(1);
                     }
                 }
                 break;
@@ -195,7 +206,7 @@ public class GameInput {
             switch (cameraBehavior) {
                 case Isometric:
                 case TopDown: {
-                    if (enableCursor) cursor.setCursor(1);
+                    if (enableCursor) cursor.setCursor(2);
 
                     if (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE)) {
                         pavCamera.pan(-(screenX - lastX) * panSpeed, (screenY - lastY) * panSpeed);

@@ -8,8 +8,8 @@ public class PathFinder {
     public boolean findingPath = false;
 //    Cell[][] grid;
     public Array<Cell> grid = new Array<>();
-    boolean hasStart = false;
-    boolean hasEnd = false;
+    public boolean hasStart = false;
+    public boolean hasEnd = false;
     Array<Cell> calculatePath = new Array<>(), exploredPath = new Array<>();
     Vector3 currentCell = new Vector3(), startPosition = new Vector3(), endPosition = new Vector3();
     int iterations = 0;

@@ -22,6 +22,7 @@ import com.pavengine.app.PavCamera.TopDownCamera;
 import com.pavengine.app.PavScreen.GameScreen;
 import com.pavengine.app.PavScreen.GameWorld;
 import com.pavengine.app.PavScreen.LoadingScreen;
+import com.pavengine.app.PavScreen.MapEditor;
 import com.pavengine.app.PavScreen.PauseScreen;
 import com.pavengine.app.PavScreen.UpgradeScreen;
 import com.pavengine.app.PavSound.SoundBox;
@@ -38,14 +39,20 @@ public class PavEngine extends Game {
     public static boolean levelStatus = false;
     public static float credits = 1000f, health = 100f;
     public static SoundBox soundBox = new SoundBox();
+
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
     public UpgradeScreen upgradeScreen;
     public PauseScreen pauseScreen;
+    public MapEditor mapEditor;
+
     public SpriteBatch batch;
     public static FitViewport overlayViewport, perspectiveViewport;
     public static PavCamera pavCamera;
     public static OrthographicCamera overlayCamera  = new OrthographicCamera();
+
+
+    public static PavCursor cursor;
 
     public static BitmapFont
         gameFont,
@@ -67,14 +74,19 @@ public class PavEngine extends Game {
 
     @Override
     public void create() {
+        Gdx.input.setCursorCatched(true);
 
         if(!enableMapEditor) {
-            Gdx.input.setCursorCatched(true);
         } else {
             dragAndDrop = true;
         }
 
         initializeSound();
+
+        cursor = new PavCursor(
+            "sprites/default/cursor_sheet.png",
+            275f
+        );
 
         batch = new SpriteBatch();
 
@@ -108,10 +120,17 @@ public class PavEngine extends Game {
         gameScreen = new GameScreen(this);
         upgradeScreen = new UpgradeScreen(this);
         pauseScreen = new PauseScreen(this);
+        mapEditor = new MapEditor(this);
 
-//        setScreen(gameScreen);
 
-        setGameScreen();
+
+
+        if(enableMapEditor){
+            setScreen(mapEditor);
+        } else {
+            setGameScreen();
+        }
+
     }
 
     public void setGameScreen() {

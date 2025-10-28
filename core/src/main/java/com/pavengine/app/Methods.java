@@ -1,13 +1,14 @@
 package com.pavengine.app;
 
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableCursor;
+import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
-import static com.pavengine.app.PavScreen.PavScreen.cursor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
@@ -137,6 +139,7 @@ public class Methods {
     public static void lockCursor(boolean lock) {
         enableCursor = !lock;
         cursor.setCursor(lock ? 0 : 1);
+        cursor.position = new Vector2(resolution.x/2f, resolution.y/2f);
     }
 
     public static boolean isKeyPressed(String keyName) {

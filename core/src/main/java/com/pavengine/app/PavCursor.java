@@ -16,17 +16,23 @@ public class PavCursor {
     public Sprite cursor;
     TextureRegion[] cursors;
     float sensitivity;
+    Vector2 position;
+    public static Rectangle clickArea;
 
     public PavCursor(String name, float sensitivity) {
         cursors = extractSprites(name, 32, 32);
+        position = new Vector2(resolution.x / 2f, resolution.y / 2f);
         cursor = new Sprite(cursors[1]);
         this.sensitivity = sensitivity;
+        clickArea = new Rectangle(0,0,10,10).setPosition(position);
+        clickArea.setPosition(position);
     }
 
     public void setCursor(int index) {
+        print("setting cursor");
         this.index = index;
         cursor.setRegion(cursors[index]);
-        cursor.setPosition(resolution.x / 2f, resolution.y / 2f);
+        cursor.setPosition(position.x, position.y);
     }
 
     public void move(Vector2 translate) {
@@ -35,12 +41,18 @@ public class PavCursor {
 
     public void draw(SpriteBatch sb, float delta) {
         cursor.draw(sb);
-        cursor.translate(Gdx.input.getDeltaX() * delta * sensitivity, -Gdx.input.getDeltaY() * delta * sensitivity);
+        position.add(
+            Gdx.input.getDeltaX() * delta * sensitivity,
+            -Gdx.input.getDeltaY() * delta * sensitivity
+        );
+        cursor.setPosition(position.x, position.y);
+        clickArea.setPosition(
+            position.cpy().add(0,cursor.getHeight() - 10f)
+        );
     }
-
-
 
     public boolean clicked(Rectangle box) {
-        return cursor.getBoundingRectangle().overlaps(box);
+        return clickArea.overlaps(box);
     }
+
 }

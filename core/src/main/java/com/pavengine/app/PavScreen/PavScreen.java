@@ -1,28 +1,24 @@
 package com.pavengine.app.PavScreen;
 
-import static com.pavengine.app.GameInput.gameWorldInput;
-import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.PavInput.GameInput.gameWorldInput;
 import static com.pavengine.app.Methods.print;
-import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavEngine.cursor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 
 public abstract class PavScreen implements Screen {
 
-    public static PavCursor cursor = new PavCursor(
-        "sprites/default/cursor_sheet.png",
-        175f
-    );
+
     public Vector2 resolution = new Vector2(1280,720);
     public PavEngine game;
     public SpriteBatch batch;
@@ -59,13 +55,16 @@ public abstract class PavScreen implements Screen {
 
         batch.begin();
 
+        cursor.draw(batch, delta);
+
         draw(delta);
 
-        cursor.draw(batch, delta);
 
         batch.end();
 
         debug();
+
+        debugRectangle(PavCursor.clickArea, Color.CYAN);
 
     }
 
@@ -77,6 +76,8 @@ public abstract class PavScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+//        cursor.cursor.setPosition(resolution.x/2f,resolution.y/2f);
+//        print(cursor.cursor.getX() + " : " + cursor.cursor.getY());
         viewport.update(width, height, true);
         viewport.apply();
     }
