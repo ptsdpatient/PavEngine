@@ -31,7 +31,6 @@ public class PavCursor {
     }
 
     public void setCursor(int index) {
-        print("setting cursor");
         this.index = index;
         cursor.setRegion(cursors[index]);
         cursor.setPosition(position.x, position.y);
@@ -45,15 +44,15 @@ public class PavCursor {
             (Math.abs(Gdx.input.getDeltaY()) < 80? -Gdx.input.getDeltaY() : 0f)  * delta * sensitivity
         );
 
+        position.set(MathUtils.clamp(position.x,-32,resolution.x),MathUtils.clamp(position.y,-32,resolution.y));
+
+
         cursor.setPosition(position.x, position.y);
 
         tmp.set(position.x, position.y + cursor.getHeight() - 10f);
 
         clickArea.setPosition(tmp);
 
-//        clickArea.setPosition(
-//            position.cpy().add(0,cursor.getHeight() - 10f)
-//        );
     }
 
     public boolean clicked(Rectangle box) {

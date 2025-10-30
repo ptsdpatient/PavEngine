@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.pavengine.app.Cell;
 import com.pavengine.app.CellType;
 import com.pavengine.app.PavBounds.PavBounds;
@@ -78,6 +79,15 @@ public class Draw {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.YELLOW);
         shapeRenderer.line(ray.ray.origin, ray.intersection);
+        shapeRenderer.end();
+    }
+
+    public static void debugRay(Ray ray) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.YELLOW);
+        Vector3 end = new Vector3(ray.direction).scl(20).add(ray.origin);
+        shapeRenderer.line(ray.origin, end);
         shapeRenderer.end();
     }
 

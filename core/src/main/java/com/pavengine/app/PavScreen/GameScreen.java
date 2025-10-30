@@ -1,18 +1,15 @@
 package com.pavengine.app.PavScreen;
 
-import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.getJson;
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
-import static com.pavengine.app.PavEngine.cel_shading;
-import static com.pavengine.app.PavEngine.depthShader;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayCamera;
-import static com.pavengine.app.PavEngine.pbrConfig;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
@@ -23,14 +20,13 @@ import static com.pavengine.app.PavUI.PavAnchor.BOTTOM_CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER;
 import static com.pavengine.app.PavUI.PavFlex.ROW;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import com.pavengine.app.CameraBehaviorType;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.Entrance;
 import com.pavengine.app.PavBounds.EntranceBluprint;
@@ -41,7 +37,6 @@ import com.pavengine.app.PavGameObject.GroundObject;
 import com.pavengine.app.PavGameObject.KinematicObject;
 import com.pavengine.app.PavGameObject.StaticObject;
 import com.pavengine.app.PavGameObject.TargetObject;
-import com.pavengine.app.PavLight.PavLightProfile;
 import com.pavengine.app.PavParticle2D;
 import com.pavengine.app.PavPlayer.Jump;
 import com.pavengine.app.PavPlayer.Movement;
@@ -49,7 +44,6 @@ import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
 import com.pavengine.app.PavScript.Bullet;
 import com.pavengine.app.PavScript.Enemies.Enemy;
-import com.pavengine.app.PavScript.Lane;
 import com.pavengine.app.PavScript.LevelManager;
 import com.pavengine.app.PavUI.ClickBehavior;
 import com.pavengine.app.PavUI.PavLayout;
@@ -57,7 +51,6 @@ import com.pavengine.app.PavUI.TextBox;
 import com.pavengine.app.PavUI.TextButton;
 
 import net.mgsx.gltf.scene3d.scene.Scene;
-import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
 import java.util.ArrayList;
@@ -67,7 +60,6 @@ public class GameScreen extends PavScreen {
     public static GameObject selectedObject;
     public static PBRShaderProvider shaderProvider;
     public static GameWorld world;
-    public static Array<Lane> lanes = new Array<>();
     public static Array<Enemy> robots = new Array<>();
     public static Array<Bullet> bullets = new Array<>();
     public static PavParticle2D
@@ -97,7 +89,6 @@ public class GameScreen extends PavScreen {
 
         if (enableMapEditor) {
             enableCursor = true;
-
         }
 
         lockCursor(!enableCursor);
@@ -202,13 +193,14 @@ public class GameScreen extends PavScreen {
 
 
 
-        for (int i = 0; i < 4; i++) {
-            lanes.add(new Lane(new Vector3(19.6304f, 0.0000f, (i * 7.5f) - 13f), new Vector3(-32.692924f, 0.0000f, (i * 7.5f) - 13f)));
-        }
+
 
         if(!enableMapEditor) {
             setPlayer();
-            playerRay = new PavRay(world.getGameObject("player"), new Vector3(0, 1, 2), 2, 2, Color.CYAN);
+            playerRay = new PavRay(
+                world.getGameObject("player"),
+                new Vector3(0, 1, 2), 2, 2, Color.CYAN
+            );
         }
 
 
@@ -227,7 +219,11 @@ public class GameScreen extends PavScreen {
         levelManager = new LevelManager("levels/levels.json", game);
 
 
+    }
 
+    @Override
+    public void setInput() {
+        Gdx.input.setInputProcessor(gameWorldInput);
     }
 
     @Override
@@ -376,10 +372,7 @@ public class GameScreen extends PavScreen {
 
     @Override
     public void world(float delta) {
-
         world.render(delta);
-
-
     }
 
 }

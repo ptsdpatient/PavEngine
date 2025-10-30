@@ -22,6 +22,8 @@ import com.pavengine.app.PavCamera.IsometricCamera;
 import com.pavengine.app.PavCamera.PavCamera;
 import com.pavengine.app.PavCamera.ThirdPersonCamera;
 import com.pavengine.app.PavCamera.TopDownCamera;
+import com.pavengine.app.PavLight.PavLight;
+import com.pavengine.app.PavLight.PavLightProfile;
 import com.pavengine.app.PavScreen.GameScreen;
 import com.pavengine.app.PavScreen.GameWorld;
 import com.pavengine.app.PavScreen.LoadingScreen;
@@ -71,6 +73,8 @@ public class PavEngine extends Game {
 
     public PavSkyBox skyBox;
 
+    public PavLight pavLight;
+
     public static TextureRegion[]
         uiBG ,
         uiControl,
@@ -98,7 +102,7 @@ public class PavEngine extends Game {
 
         cursor = new PavCursor(
             "sprites/default/cursor_sheet.png",
-            275f
+            175f
         );
 
         pbrConfig = PBRShaderProvider.createDefaultConfig();
@@ -119,7 +123,7 @@ public class PavEngine extends Game {
         overlayCamera =new OrthographicCamera();
         overlayCamera.setToOrtho(false, resolution.x, resolution.y);
 
-        overlayViewport = new FitViewport(resolution.x,resolution.y,overlayCamera);
+        overlayViewport = new FitViewport(resolution.x,resolution.y, overlayCamera);
 
         overlayViewport.apply();
 
@@ -140,6 +144,7 @@ public class PavEngine extends Game {
         );
 
         sceneManager.setCamera(camera);
+        pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
 
         skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
 

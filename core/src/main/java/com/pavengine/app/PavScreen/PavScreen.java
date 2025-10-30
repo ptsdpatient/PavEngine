@@ -1,7 +1,6 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugRectangle;
-import static com.pavengine.app.PavInput.GameInput.gameWorldInput;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 
@@ -40,8 +39,9 @@ public abstract class PavScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(gameWorldInput);
+        setInput();
     }
+
 
     @Override
     public void render(float delta) {
@@ -67,6 +67,8 @@ public abstract class PavScreen implements Screen {
         debugRectangle(PavCursor.clickArea, Color.CYAN);
 
     }
+
+    public abstract void setInput();
 
     public abstract void debug();
 
@@ -94,7 +96,9 @@ public abstract class PavScreen implements Screen {
 
     @Override
     public void hide() {
+
         Gdx.input.setInputProcessor(null);
+
     }
 
     @Override

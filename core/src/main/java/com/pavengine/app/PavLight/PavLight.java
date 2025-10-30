@@ -22,7 +22,6 @@ public class PavLight {
         this.profile = profile;
         sceneManager.setAmbientLight(0.02f);
 
-
         environment.add(new DirectionalLight().set(profile.color, profile.direction));
         if(shadows){
             environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(4, -1, 0).nor()));

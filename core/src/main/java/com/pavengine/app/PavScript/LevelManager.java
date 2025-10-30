@@ -4,7 +4,6 @@ import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.soundBox;
-import static com.pavengine.app.PavScreen.GameScreen.lanes;
 import static com.pavengine.app.PavScreen.GameScreen.robots;
 import static com.pavengine.app.PavScreen.GameWorld.levelStatusButton;
 
@@ -131,75 +130,75 @@ public class LevelManager {
         int typeId = available.get(random.nextInt(available.size()));
         remainingEnemies.put(typeId, remainingEnemies.get(typeId) - 1);
 
-        Enemy e = createEnemyById(typeId);
-        if (e != null) robots.add(e);
+//        Enemy e = createEnemyById(typeId);
+//        if (e != null) robots.add(e);
     }
 
-    private Enemy createEnemyById(int id) {
-        switch (id) {
-            case 1:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "sweeper",
-                    new String[]{"Roll"},
-                    0f,       // yOffset
-                    7f,     // speed
-                    50f,     // health
-                    10f       // damage
-                ));
-
-            case 2:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "drone",
-                    new String[]{""},
-                    5f,       // yOffset
-                    3.5f,       // speed
-                    50f,      // health
-                    15f        // damage
-                ));
-
-            case 3:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "spider",
-                    new String[]{"Crawl"},
-                    0f,       // yOffset
-                    8f,       // speed
-                    75f,      // health
-                    30f        // damage
-                ));
-
-            case 4:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "doraemon",
-                    new String[]{"Walk"},
-                    0f,       // yOffset
-                    3f,     // speed
-                    180f,     // health
-                    50f       // damage
-                ));
-            case 5:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "bipod",
-                    new String[]{"Walk"},
-                    0f,    // yOffset
-                    7f,     // speed
-                    200f,     // health
-                    75f       // damage
-                ));
-
-            case 6:
-                return new Robot(lanes.random(), new EnemyBlueprint(
-                    "prime",
-                    new String[]{"Walk"},
-                    0f,       // yOffset
-                    4f,     // speed
-                    350f,     // health
-                    75f       // damage
-                ));
-
-            default:
-                return null;
-        }
-    }
+//    private Enemy createEnemyById(int id) {
+//        switch (id) {
+//            case 1:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "sweeper",
+//                    new String[]{"Roll"},
+//                    0f,       // yOffset
+//                    7f,     // speed
+//                    50f,     // health
+//                    10f       // damage
+//                ));
+//
+//            case 2:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "drone",
+//                    new String[]{""},
+//                    5f,       // yOffset
+//                    3.5f,       // speed
+//                    50f,      // health
+//                    15f        // damage
+//                ));
+//
+//            case 3:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "spider",
+//                    new String[]{"Crawl"},
+//                    0f,       // yOffset
+//                    8f,       // speed
+//                    75f,      // health
+//                    30f        // damage
+//                ));
+//
+//            case 4:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "doraemon",
+//                    new String[]{"Walk"},
+//                    0f,       // yOffset
+//                    3f,     // speed
+//                    180f,     // health
+//                    50f       // damage
+//                ));
+//            case 5:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "bipod",
+//                    new String[]{"Walk"},
+//                    0f,    // yOffset
+//                    7f,     // speed
+//                    200f,     // health
+//                    75f       // damage
+//                ));
+//
+//            case 6:
+//                return new Robot(lanes.random(), new EnemyBlueprint(
+//                    "prime",
+//                    new String[]{"Walk"},
+//                    0f,       // yOffset
+//                    4f,     // speed
+//                    350f,     // health
+//                    75f       // damage
+//                ));
+//
+//            default:
+//                return null;
+//        }
+//    }
 
     private float getDynamicSpawnInterval(float progress, LevelData current) {
         // total remaining enemies

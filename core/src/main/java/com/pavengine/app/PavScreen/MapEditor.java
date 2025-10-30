@@ -1,6 +1,8 @@
 package com.pavengine.app.PavScreen;
 
+import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
@@ -11,7 +13,9 @@ import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
+import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
+import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
@@ -35,8 +39,7 @@ import com.pavengine.app.PavUI.TextButton;
 
 import java.util.ArrayList;
 
-public class MapEditor extends  PavScreen{
-    public static Array<GameObject> staticMapObjects;
+public class MapEditor extends  PavScreen {
     public static ArrayList<String> objectList;
     public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
     public static Stepper scaleStepper, elevationStepper;
@@ -48,12 +51,10 @@ public class MapEditor extends  PavScreen{
     public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
     private BitmapFont font;
 
-
     public MapEditor(PavEngine game) {
         super(game);
 
         this.font = gameFont;
-        staticMapObjects = new Array<>();
         objectList = new ArrayList<>();
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 128, 5));
@@ -75,8 +76,6 @@ public class MapEditor extends  PavScreen{
             i++;
         }
 
-
-
     }
 
     public ArrayList<String> listModels(String path) {
@@ -92,6 +91,12 @@ public class MapEditor extends  PavScreen{
             }
         }
         return folders;
+    }
+
+
+    @Override
+    public void setInput() {
+        Gdx.input.setInputProcessor(mapEditorInput);
     }
 
 
@@ -122,11 +127,12 @@ public class MapEditor extends  PavScreen{
         camera.update();
         overlayCamera.update();
 
+        sceneManager.update(delta);
+        sceneManager.render();
+
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();
 
-        sceneManager.update(delta);
-        sceneManager.render();
 
         for (PavLayout layout : mapEditingLayout) {
             layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
@@ -146,10 +152,15 @@ public class MapEditor extends  PavScreen{
 
         for(PavLayout layout : mapEditingLayout) {
             for(PavWidget widget : layout.widgets) {
-                if(widget.isHovered) debugRectangle(widget.box, Color.GREEN);
+                if(widget.isHovered)
+                    debugRectangle(widget.box, Color.GREEN);
             }
         }
 
+
+        for(GameObject obj : staticObjects) {
+            debugCube(obj.box, Color.GREEN);
+        }
 
     }
 }

@@ -3,12 +3,12 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.pavengine.app.PavEngine;
 
 public class LoadingScreen extends PavScreen {
@@ -32,6 +32,13 @@ public class LoadingScreen extends PavScreen {
             images[i] = new TextureRegion(new Texture(files(imageFiles[i])));
         }
     }
+
+
+    @Override
+    public void setInput() {
+        Gdx.input.setInputProcessor(gameWorldInput);
+    }
+
 
     @Override
     public void debug() {

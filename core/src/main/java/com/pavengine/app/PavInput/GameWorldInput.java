@@ -29,7 +29,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.pavengine.app.ObjectType;
@@ -38,7 +37,7 @@ import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
-public class GameInput {
+public class GameWorldInput {
 
     public static InputProcessor gameWorldInput = new InputProcessor() {
         public final float panSpeed = 0.1f;
