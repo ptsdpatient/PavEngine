@@ -1,8 +1,7 @@
 package com.pavengine.app.PavLight;
 
+import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.shadows;
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;

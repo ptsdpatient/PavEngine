@@ -1,7 +1,7 @@
 package com.pavengine.app;
 
 import static com.pavengine.app.Methods.loadModel;
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
+import static com.pavengine.app.PavEngine.sceneManager;
 
 import com.badlogic.gdx.math.Vector3;
 

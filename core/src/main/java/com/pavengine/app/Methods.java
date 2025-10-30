@@ -3,10 +3,10 @@ package com.pavengine.app;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 

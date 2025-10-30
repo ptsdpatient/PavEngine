@@ -1,6 +1,7 @@
 package com.pavengine.app;
 
 import static com.pavengine.app.Methods.extractSprites;
+import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
@@ -12,7 +13,9 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.PavCamera.FirstPersonCamera;
 import com.pavengine.app.PavCamera.IsometricCamera;
@@ -26,6 +29,10 @@ import com.pavengine.app.PavScreen.MapEditor;
 import com.pavengine.app.PavScreen.PauseScreen;
 import com.pavengine.app.PavScreen.UpgradeScreen;
 import com.pavengine.app.PavSound.SoundBox;
+
+import net.mgsx.gltf.scene3d.scene.SceneManager;
+import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
+import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
 
 public class PavEngine extends Game {
@@ -53,10 +60,16 @@ public class PavEngine extends Game {
 
 
     public static PavCursor cursor;
+    public static SceneManager sceneManager;
+
+    public static PBRShaderConfig pbrConfig;
+    public static DepthShaderProvider depthShader;
 
     public static BitmapFont
         gameFont,
         bigGameFont ;
+
+    public PavSkyBox skyBox;
 
     public static TextureRegion[]
         uiBG ,
@@ -88,6 +101,19 @@ public class PavEngine extends Game {
             275f
         );
 
+        pbrConfig = PBRShaderProvider.createDefaultConfig();
+        pbrConfig.numSpotLights = 2;
+        pbrConfig.numBones = 32;
+
+        depthShader = new DepthShaderProvider();
+        depthShader.config.numSpotLights = 2;
+        depthShader.config.numBones = 32;
+
+        if(cel_shading) {
+            pbrConfig.vertexShader = files("shaders/cel/vs.glsl").readString();
+            pbrConfig.fragmentShader = files("shaders/cel/fs.glsl").readString();
+        }
+
         batch = new SpriteBatch();
 
         overlayCamera =new OrthographicCamera();
@@ -108,6 +134,16 @@ public class PavEngine extends Game {
 
         initializeCamera();
 
+        sceneManager = new SceneManager(
+            new PBRShaderProvider(pbrConfig),
+            depthShader
+        );
+
+        sceneManager.setCamera(camera);
+
+        skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
+
+
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
 
@@ -121,8 +157,6 @@ public class PavEngine extends Game {
         upgradeScreen = new UpgradeScreen(this);
         pauseScreen = new PauseScreen(this);
         mapEditor = new MapEditor(this);
-
-
 
 
         if(enableMapEditor){

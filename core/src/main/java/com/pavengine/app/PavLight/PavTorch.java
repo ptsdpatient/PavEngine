@@ -1,6 +1,6 @@
 package com.pavengine.app.PavLight;
 
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
+import static com.pavengine.app.PavEngine.sceneManager;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.environment.SpotLight;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -18,6 +19,7 @@ public class PavCursor {
     float sensitivity;
     Vector2 position;
     public static Rectangle clickArea;
+    private final Vector2 tmp = new Vector2();
 
     public PavCursor(String name, float sensitivity) {
         cursors = extractSprites(name, 32, 32);
@@ -35,20 +37,23 @@ public class PavCursor {
         cursor.setPosition(position.x, position.y);
     }
 
-    public void move(Vector2 translate) {
-
-    }
-
     public void draw(SpriteBatch sb, float delta) {
         cursor.draw(sb);
+
         position.add(
-            Gdx.input.getDeltaX() * delta * sensitivity,
-            -Gdx.input.getDeltaY() * delta * sensitivity
+            (Math.abs(Gdx.input.getDeltaX()) < 80? Gdx.input.getDeltaX() : 0f) * delta * sensitivity,
+            (Math.abs(Gdx.input.getDeltaY()) < 80? -Gdx.input.getDeltaY() : 0f)  * delta * sensitivity
         );
+
         cursor.setPosition(position.x, position.y);
-        clickArea.setPosition(
-            position.cpy().add(0,cursor.getHeight() - 10f)
-        );
+
+        tmp.set(position.x, position.y + cursor.getHeight() - 10f);
+
+        clickArea.setPosition(tmp);
+
+//        clickArea.setPosition(
+//            position.cpy().add(0,cursor.getHeight() - 10f)
+//        );
     }
 
     public boolean clicked(Rectangle box) {

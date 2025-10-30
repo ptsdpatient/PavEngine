@@ -1,15 +1,25 @@
 package com.pavengine.app.PavScreen;
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
+import static com.pavengine.app.PavEngine.overlayCamera;
+import static com.pavengine.app.PavEngine.overlayViewport;
+import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
+import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -37,7 +47,7 @@ public class MapEditor extends  PavScreen{
     public Vector3[] rotationOffset = new Vector3[]{new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)};
     public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
     private BitmapFont font;
-    
+
 
     public MapEditor(PavEngine game) {
         super(game);
@@ -64,6 +74,8 @@ public class MapEditor extends  PavScreen{
             rotationSteppers.add(new Stepper(192 * (i + 1) + 32, 50 - 20, offset, ClickBehavior.StepperRotation, rotationNames[i], font, uiControl[0], uiControl[1]));
             i++;
         }
+
+
 
     }
 
@@ -95,6 +107,49 @@ public class MapEditor extends  PavScreen{
 
     @Override
     public void world(float delta) {
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glLineWidth(3f);
+
+        Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+        Gdx.gl.glCullFace(GL20.GL_FRONT);
+        Gdx.gl.glCullFace(GL20.GL_BACK);
+
+        pavCamera.update(delta);
+        camera.update();
+        overlayCamera.update();
+
+        batch.setProjectionMatrix(overlayCamera.combined);
+        batch.begin();
+
+        sceneManager.update(delta);
+        sceneManager.render();
+
+        for (PavLayout layout : mapEditingLayout) {
+            layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
+        }
+
+        if (selectedObject != null && enableMapEditor) {
+            scaleStepper.render(batch);
+            elevationStepper.render(batch);
+            roomCheckbox.render(batch);
+            selectedObjectType.render(batch);
+            for (Stepper stepper : rotationSteppers) {
+                stepper.render(batch);
+            }
+        }
+        batch.end();
+
+
+        for(PavLayout layout : mapEditingLayout) {
+            for(PavWidget widget : layout.widgets) {
+                if(widget.isHovered) debugRectangle(widget.box, Color.GREEN);
+            }
+        }
+
 
     }
 }

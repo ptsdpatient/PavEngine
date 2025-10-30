@@ -5,16 +5,14 @@ import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Debug.Draw.debugRing;
 import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavEngine.depthShader;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.pbrConfig;
 import static com.pavengine.app.PavEngine.perspectiveViewport;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.elevationStepper;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.mapEditingLayout;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.roomCheckbox;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.rotationSteppers;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.scaleStepper;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.selectedObjectType;
+import static com.pavengine.app.PavEngine.sceneManager;
+
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
@@ -116,7 +114,6 @@ public class GameWorld {
     public static Array<PavRay> lasers = new Array<>();
     public static PathFinder pathFinder = new PathFinder();
 
-    public static SceneManager sceneManager;
     public static ShapeRenderer shapeRenderer;
     public static TextButton levelStatusButton;
     public PavLayout levelStatusLayout, levelStartTextLayout;
@@ -125,66 +122,20 @@ public class GameWorld {
     public ModelBatch batch;
     public TextButton levelStartText;
     public SpriteBatch spriteBatch;
-    public PavLight pavLight;
 
     public BitmapFont font = new BitmapFont();
-    public PavSkyBox skyBox;
-
-    Vector2 resolution;
 
 
     public GameWorld (
-        PavEngine game,
-        Vector2 resolution,
-        PavLightProfile lightProfile,
-        PBRShaderProvider shaderProvider,
-        DepthShaderProvider depthShaderProvider
+        PavEngine game
     ) {
-        this.resolution = resolution;
+
         this.game = game;
         this.spriteBatch = game.batch;
         shapeRenderer = new ShapeRenderer();
         batch = new ModelBatch();
-        sceneManager = new SceneManager(shaderProvider, depthShaderProvider);
-        pavLight = new PavLight(sceneManager.environment, lightProfile);
-
-
-
-        sceneManager.setCamera(camera);
-
-//        overlayCamera.position.set(camera.position.cpy());
-
-//        for (int k = 0;k<=7;k++) {
-//        for (int i = 0; i <= 7; i++) {
-//            for (int j = 0; j <= 7; j++) {
-//                pathFinder.addCell(new Vector3(0, i, j));
-//            }
-//        }
-//        }
-
-        for (Cell cell : pathFinder.grid) {
-//            addObject("cell" ,"cube",cell.position,20,0,ObjectType.TARGET,new String[]{"scale"});
-        }
-
-        skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
-
-//        levelStatusLayout = new PavLayout(PavAnchor.CENTER, PavFlex.COLUMN, 5, 720, 64);
-//        levelStatusButton = new TextButton("You Won! (Click to Continue)", gameFont, ClickBehavior.Nothing);
-//        levelStatusLayout.addSprite(levelStatusButton);
-
-
-//        levelStartTextLayout = new PavLayout(PavAnchor.TOP_CENTER, PavFlex.COLUMN, 5, 720, 64);
-//        levelStartText = new TextButton("Level 1", bigGameFont, ClickBehavior.Nothing);
-//        levelStartTextLayout.addSprite(levelStartText);
-
-//        creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont, ClickBehavior.Nothing);
-//        gameWorldLayout.add(new PavLayout(PavAnchor.TOP_RIGHT, PavFlex.COLUMN, 0, 192, 16, 8));
-//        gameWorldLayout.peek().addSprite(creditShow);
 
     }
-
-
-
 
     public GameObject getGameObject(String name) {
         for (GameObject obj : groundObjects) {
@@ -298,17 +249,11 @@ public class GameWorld {
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl.glCullFace(GL20.GL_FRONT);
         Gdx.gl.glCullFace(GL20.GL_BACK);
+
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setPauseScreen();
         }
-
-        if(!enableMapEditor) {
-//            creditShow.text = ((int) credits) + " Credits";
-        }
-
-//        if (!gamePause) {
-//            levelManager.update(delta);
-//        }
 
         if (health <= 0) {
 
@@ -396,10 +341,7 @@ public class GameWorld {
 //            }
 //        }
 
-        for (Stepper stepper : rotationSteppers) {
-//            debugRectangle(stepper.box,Color.BLUE);
 
-        }
 //        debugRectangle(roomCheckbox.box,Color.BLUE);
 //        for (GameObject obj : staticObjects) {
 //            if (!obj.isRoom) debugCube(obj.box,obj.debugColor);
@@ -410,9 +352,9 @@ public class GameWorld {
 //                for (PavBounds b : obj.walls) {
 //                    debugCube(b);
 //                }
-////                for(Entrance b : obj.entrances) {
-////                    debugCube(b.bounds);
-////                }
+//                for(Entrance b : obj.entrances) {
+//                    debugCube(b.bounds);
+//                }
 //            }
 //        }
 
@@ -505,28 +447,18 @@ public class GameWorld {
             }
         }
 
-        for (PavLayout layout : mapEditingLayout) {
-            layout.draw(spriteBatch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
-        }
+
         messageBoxLayout.draw(spriteBatch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
 
 
-        if (selectedObject != null && enableMapEditor) {
-            scaleStepper.render(spriteBatch);
-            elevationStepper.render(spriteBatch);
-            roomCheckbox.render(spriteBatch);
-            selectedObjectType.render(spriteBatch);
-            for (Stepper stepper : rotationSteppers) {
-                stepper.render(spriteBatch);
-            }
-        }
+
 
         for (Bullet b : bullets) {
             b.update(delta);
             b.draw(spriteBatch, camera);
         }
 
-        cursor.draw(spriteBatch, delta);
+//        cursor.draw(spriteBatch, delta);
 
         spriteBatch.end();
 
@@ -536,13 +468,7 @@ public class GameWorld {
             }
         }
 
-        if(enableMapEditor) {
-            for(PavLayout layout : mapEditingLayout) {
-                for(PavWidget widget : layout.widgets) {
-                    if(widget.isHovered) debugRectangle(widget.box,Color.GREEN);
-                }
-            }
-        }
+
 
 
 
@@ -552,57 +478,5 @@ public class GameWorld {
 //        debugRay(playerRay);
     }
 
-    public static class MapEditor {
-        public static Array<GameObject> staticMapObjects;
-        public static ArrayList<String> objectList;
-        public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
-        public static Stepper scaleStepper, elevationStepper;
-        public static Checkbox roomCheckbox;
-        public static Dropdown selectedObjectType;
-        public static ArrayList<Stepper> rotationSteppers = new ArrayList<>();
-        public static PavWidget exportModelInfo;
-        public Vector3[] rotationOffset = new Vector3[]{new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)};
-        public String[] rotationNames = new String[]{"Rotation Yaw", "Rotation Roll", "Rotation Pitch"};
 
-        public MapEditor(BitmapFont font) {
-            staticMapObjects = new Array<>();
-            objectList = new ArrayList<>();
-
-            mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 128, 5));
-            for (String model : listModels("assets/models/"))
-                mapEditingLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
-
-
-            scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
-            elevationStepper = new Stepper(192 * 2 + 32, 140 - 20, new Vector3(0f, 0.05f, 0f), ClickBehavior.StepperElevation, "Elevation", font, uiControl[0], uiControl[1]);
-            roomCheckbox = new Checkbox(192 * 3 + 32, 140 - 20, false, ClickBehavior.CheckboxRoom, "Room", font, uiControl[4], uiControl[5]);
-            selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
-            mapEditingLayout.add(new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5));
-            mapEditingLayout.get(1).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
-
-
-            int i = 0;
-            for (Vector3 offset : rotationOffset) {
-                rotationSteppers.add(new Stepper(192 * (i + 1) + 32, 50 - 20, offset, ClickBehavior.StepperRotation, rotationNames[i], font, uiControl[0], uiControl[1]));
-                i++;
-            }
-
-        }
-
-        public ArrayList<String> listModels(String path) {
-            ArrayList<String> folders = new ArrayList<>();
-
-            FileHandle dir = Gdx.files.internal(path);
-
-            if (dir.exists()) {
-                for (FileHandle file : dir.list()) {
-                    if (file.isDirectory()) {
-                        folders.add(file.name());
-                    }
-                }
-            }
-            return folders;
-        }
-
-    }
 }

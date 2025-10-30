@@ -6,9 +6,8 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.perspectiveViewport;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.mapEditingLayout;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.roomCheckbox;
-import static com.pavengine.app.PavScreen.GameWorld.MapEditor.selectedObjectType;
+import static com.pavengine.app.PavEngine.sceneManager;
+
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.dragAndDrop;
 import static com.pavengine.app.PavEngine.enableCursor;
@@ -18,9 +17,12 @@ import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.pathFinder;
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
+
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
+import static com.pavengine.app.PavScreen.MapEditor.mapEditingLayout;
+import static com.pavengine.app.PavScreen.MapEditor.roomCheckbox;
+import static com.pavengine.app.PavScreen.MapEditor.selectedObjectType;
 
 
 import com.badlogic.gdx.Gdx;
@@ -254,8 +256,7 @@ public class GameInput {
                     return false;
                 }
 
-                Vector2 dir = new Vector2(screenX - lastX, screenY - lastY);
-                cursor.move(dir);
+
 
                 lastX = screenX;
                 lastY = screenY;

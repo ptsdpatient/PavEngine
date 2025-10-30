@@ -5,15 +5,17 @@ import static com.pavengine.app.Methods.getJson;
 import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.PavEngine.cel_shading;
+import static com.pavengine.app.PavEngine.depthShader;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayCamera;
+import static com.pavengine.app.PavEngine.pbrConfig;
+import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
-import static com.pavengine.app.PavScreen.GameWorld.sceneManager;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
@@ -75,7 +77,6 @@ public class GameScreen extends PavScreen {
         muzzleFlash = new PavParticle2D("particles/muzzle/muzzle.p", "particles/muzzle");
 
     public static PavRay playerRay;
-    public static GameWorld.MapEditor mapEditor;
     public static PavLayout
         messageBoxLayout,
         interactableLayout;
@@ -101,25 +102,9 @@ public class GameScreen extends PavScreen {
 
         lockCursor(!enableCursor);
 
-        PBRShaderConfig pbrConfig = PBRShaderProvider.createDefaultConfig();
-        pbrConfig.numSpotLights = 2;
-        pbrConfig.numBones = 32;
-
-        DepthShaderProvider depthShader = new DepthShaderProvider();
-        depthShader.config.numSpotLights = 2;
-        depthShader.config.numBones = 32;
-
-        if(cel_shading) {
-            pbrConfig.vertexShader = files("shaders/cel/vs.glsl").readString();
-            pbrConfig.fragmentShader = files("shaders/cel/fs.glsl").readString();
-        }
 
         world = new GameWorld(
-            game,
-            resolution,
-            PavLightProfile.DAY,
-            new PBRShaderProvider(pbrConfig),
-            depthShader
+            game
         );
 
 
