@@ -99,6 +99,14 @@ public class Draw {
         shapeRenderer.end();
     }
 
+    public static void debugLine(Vector3 start, Vector3 end,Color color) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(color);
+        shapeRenderer.line(start, end);
+        shapeRenderer.end();
+    }
+
     public static void debugCell(Cell obj) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);

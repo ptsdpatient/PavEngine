@@ -6,20 +6,14 @@ import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
-// ==================== Isometric ====================
 public class IsometricCamera extends PavCamera {
-    private Vector3 focus;   // camera focus point
-    private float dist;      // distance from focus
-    private float yaw;       // fixed isometric yaw
-    private float pitch;     // fixed isometric pitch
-
+    private Vector3 focus;
     private float minDist = 5f;
     private float maxDist = 50f;
 
     public IsometricCamera(float fov) {
         super(fov);
 
-        // default iso setup
         dist = 20f;
         yaw = 45f;
         pitch = 35f;
@@ -30,12 +24,10 @@ public class IsometricCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
-        // if playerCenter mode, track player
         if (playerCenter && player != null) {
             focus.set(player.pos);
         }
 
-        // calculate new camera position from iso orientation
         pos.set(
             focus.x - (float) (dist * Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw))),
             focus.y + (float) (dist * Math.sin(Math.toRadians(pitch))),

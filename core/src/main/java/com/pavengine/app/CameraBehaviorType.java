@@ -12,5 +12,5 @@ public enum CameraBehaviorType {
     Cinematic,
     Fixed,
     VR,
-    SplitScreen
+    MapEditorCamera, SplitScreen
 }

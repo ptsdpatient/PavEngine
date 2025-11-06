@@ -2,9 +2,11 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavEngine.cursor;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.pavengine.app.CameraBehaviorType;
+import com.pavengine.app.PavCamera.MapEditorCamera;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 
@@ -55,7 +59,11 @@ public abstract class PavScreen implements Screen {
 
         batch.begin();
 
-        cursor.draw(batch, delta);
+        if (
+            cameraBehavior != CameraBehaviorType.MapEditorCamera &&
+                !Gdx.input.isButtonPressed(Input.Buttons.MIDDLE)
+        )
+            cursor.draw(batch, delta);
 
         draw(delta);
 

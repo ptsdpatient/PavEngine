@@ -4,6 +4,7 @@ import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Debug.Draw.debugRing;
+import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.depthShader;
 import static com.pavengine.app.PavEngine.overlayCamera;
@@ -92,6 +93,7 @@ import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
+import com.pavengine.app.ReferenceOriginRay;
 
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
@@ -332,6 +334,9 @@ public class GameWorld {
         for (GameObject obj : groundObjects) {
             debugCube(obj.box,obj.debugColor);
         }
+
+
+
 
 
 //        for(PavLayout layout : mapEditingLayout) {

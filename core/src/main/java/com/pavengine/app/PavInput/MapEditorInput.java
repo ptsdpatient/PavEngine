@@ -280,6 +280,7 @@ public class MapEditorInput {
                                 }
                             }
                         }
+
                     }
 //                    if (ray.direction.y != 0) {
 //                        float t = -ray.origin.y / ray.direction.y;

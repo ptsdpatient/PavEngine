@@ -8,6 +8,7 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,9 +17,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.PavCamera.FirstPersonCamera;
 import com.pavengine.app.PavCamera.IsometricCamera;
+import com.pavengine.app.PavCamera.MapEditorCamera;
 import com.pavengine.app.PavCamera.PavCamera;
 import com.pavengine.app.PavCamera.ThirdPersonCamera;
 import com.pavengine.app.PavCamera.TopDownCamera;
@@ -36,7 +39,6 @@ import net.mgsx.gltf.scene3d.scene.SceneManager;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
-
 public class PavEngine extends Game {
     public static CameraBehaviorType cameraBehavior;
     public static boolean dragAndDrop = true;
@@ -49,6 +51,7 @@ public class PavEngine extends Game {
     public static float credits = 1000f, health = 100f;
     public static SoundBox soundBox = new SoundBox();
 
+    public static Array<ReferenceOriginRay> centerReferenceOriginRays = new Array<>();
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
     public UpgradeScreen upgradeScreen;
@@ -91,9 +94,15 @@ public class PavEngine extends Game {
 
     @Override
     public void create() {
+
         Gdx.input.setCursorCatched(true);
 
+        centerReferenceOriginRays.add(new ReferenceOriginRay(new Vector3(0,20,0), Color.RED));
+        centerReferenceOriginRays.add(new ReferenceOriginRay(new Vector3(20,0,0), Color.BLUE));
+        centerReferenceOriginRays.add(new ReferenceOriginRay(new Vector3(0,0,20), Color.GREEN));
+
         if(!enableMapEditor) {
+
         } else {
             dragAndDrop = true;
         }
@@ -127,7 +136,8 @@ public class PavEngine extends Game {
 
         overlayViewport.apply();
 
-        cameraBehavior = enableMapEditor ? CameraBehaviorType.TopDown : CameraBehaviorType.ThirdPerson;
+        cameraBehavior = enableMapEditor ? CameraBehaviorType.MapEditorCamera : CameraBehaviorType.ThirdPerson;
+
 
         camera = new PerspectiveCamera(67, resolution.x, resolution.y);
         camera.near = 0.1f;
@@ -199,9 +209,12 @@ public class PavEngine extends Game {
 
     private void initializeCamera() {
         switch (cameraBehavior) {
+            case MapEditorCamera:
+                pavCamera = new MapEditorCamera(67);
+                break;
+
             case FirstPerson:
                 pavCamera = new FirstPersonCamera(67);
-
                 break;
 
             case ThirdPerson:

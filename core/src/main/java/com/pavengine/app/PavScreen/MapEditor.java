@@ -4,6 +4,7 @@ import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
@@ -36,7 +37,9 @@ import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
+import com.pavengine.app.ReferenceOriginRay;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 
 public class MapEditor extends  PavScreen {
@@ -160,6 +163,11 @@ public class MapEditor extends  PavScreen {
 
         for(GameObject obj : staticObjects) {
             debugCube(obj.box, Color.GREEN);
+        }
+
+
+        for(ReferenceOriginRay or : centerReferenceOriginRays) {
+            or.draw();
         }
 
     }
