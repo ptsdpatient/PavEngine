@@ -4,13 +4,9 @@ import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Debug.Draw.debugRing;
-import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
-import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavEngine.depthShader;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
-import static com.pavengine.app.PavEngine.pbrConfig;
 import static com.pavengine.app.PavEngine.perspectiveViewport;
 import static com.pavengine.app.PavEngine.sceneManager;
 
@@ -18,16 +14,12 @@ import static com.pavengine.app.Methods.loadModel;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.ThirdPersonCamera.camera;
-import static com.pavengine.app.PavEngine.credits;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gamePause;
 import static com.pavengine.app.PavEngine.health;
-import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.levelStatus;
 import static com.pavengine.app.PavEngine.soundBox;
-import static com.pavengine.app.PavEngine.uiBG;
-import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavScreen.GameScreen.bloodEffect;
 import static com.pavengine.app.PavScreen.GameScreen.bullets;
 import static com.pavengine.app.PavScreen.GameScreen.damageSpark;
@@ -40,37 +32,20 @@ import static com.pavengine.app.PavScreen.GameScreen.messageBoxLayout;
 import static com.pavengine.app.PavScreen.GameScreen.muzzleFlash;
 import static com.pavengine.app.PavScreen.GameScreen.playerRay;
 import static com.pavengine.app.PavScreen.GameScreen.robots;
-import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
-import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
-import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
-import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.pavengine.app.CameraBehaviorType;
-import com.pavengine.app.Cell;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PathFinder;
-import com.pavengine.app.PavCamera.FirstPersonCamera;
-import com.pavengine.app.PavCamera.IsometricCamera;
-import com.pavengine.app.PavCamera.PavCamera;
-import com.pavengine.app.PavCamera.ThirdPersonCamera;
-import com.pavengine.app.PavCamera.TopDownCamera;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.DynamicObject;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -78,28 +53,17 @@ import com.pavengine.app.PavGameObject.GroundObject;
 import com.pavengine.app.PavGameObject.KinematicObject;
 import com.pavengine.app.PavGameObject.StaticObject;
 import com.pavengine.app.PavGameObject.TargetObject;
-import com.pavengine.app.PavLight.PavLight;
-import com.pavengine.app.PavLight.PavLightProfile;
 import com.pavengine.app.PavLight.PavTorch;
 import com.pavengine.app.PavPlayer.PavPlayer;
 import com.pavengine.app.PavRay;
 import com.pavengine.app.PavScript.Bullet;
 import com.pavengine.app.PavScript.Enemies.Enemy;
-import com.pavengine.app.PavSkyBox;
-import com.pavengine.app.PavUI.Checkbox;
-import com.pavengine.app.PavUI.ClickBehavior;
-import com.pavengine.app.PavUI.Dropdown;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
-import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
-import com.pavengine.app.ReferenceOriginRay;
 
 import net.mgsx.gltf.scene3d.scene.Scene;
-import net.mgsx.gltf.scene3d.scene.SceneManager;
-import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameWorld {
@@ -409,7 +373,11 @@ public class GameWorld {
         if(!enableMapEditor) {
             if (levelStartTextTime >= 0f && !gamePause) {
                 levelStartTextTime -= delta;
-                levelStartTextLayout.draw(spriteBatch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
+                levelStartTextLayout.draw(
+                    spriteBatch,
+                    overlayViewport.getWorldWidth(),
+                    overlayViewport.getWorldHeight()
+                );
             }
         }
 

@@ -1,17 +1,23 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
+import static com.pavengine.app.Debug.Draw.debugLine;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.perspectiveTouchRay;
+import static com.pavengine.app.PavEngine.perspectiveViewport;
+import static com.pavengine.app.PavEngine.referenceEditorRays;
 import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavEngine.sprayCooldown;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
@@ -27,7 +33,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.collision.Ray;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.Checkbox;
@@ -37,9 +43,9 @@ import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
-import com.pavengine.app.ReferenceOriginRay;
+import com.pavengine.app.ReferenceEditorLine;
+import com.pavengine.app.ReferenceOriginLine;
 
-import java.sql.Ref;
 import java.util.ArrayList;
 
 public class MapEditor extends  PavScreen {
@@ -59,6 +65,7 @@ public class MapEditor extends  PavScreen {
 
         this.font = gameFont;
         objectList = new ArrayList<>();
+
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 128, 5));
         for (String model : listModels("assets/models/"))
@@ -116,7 +123,7 @@ public class MapEditor extends  PavScreen {
     @Override
     public void world(float delta) {
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
@@ -132,6 +139,17 @@ public class MapEditor extends  PavScreen {
 
         sceneManager.update(delta);
         sceneManager.render();
+
+
+        for(ReferenceOriginLine or : centerReferenceOriginRays) {
+            or.draw();
+        }
+
+        for(ReferenceEditorLine or : referenceEditorRays) {
+            or.draw();
+        }
+
+
 
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();
@@ -162,13 +180,34 @@ public class MapEditor extends  PavScreen {
 
 
         for(GameObject obj : staticObjects) {
-            debugCube(obj.box, Color.GREEN);
+            debugCube(obj.box, obj.debugColor);
         }
 
 
-        for(ReferenceOriginRay or : centerReferenceOriginRays) {
-            or.draw();
-        }
+
+
+//        float screenX = cursor.cursor.getX();
+//        float screenY = cursor.cursor.getY();
+//
+//        screenY = perspectiveViewport.getWorldHeight() - screenY;
+//
+//        Ray ray = perspectiveViewport.getPickRay(screenX, screenY);
+//
+//        Vector3 end = new Vector3(ray.direction).nor().scl(20).add(ray.origin);
+
+//        Vector3 cameraPosition = new Vector3(camera.position.cpy());
+//        print(cameraPosition + " : " + camera.position);
+
+//        Ray ray = camera.getPickRay();
+
+//        cameraPosition.add(0);
+//        debugLine(cameraPosition, new Vector3(0,0,0), Color.CHARTREUSE);
+//
+//        debugLine(new Vector3(0,0,0), new Vector3(3,-5,6), Color.CHARTREUSE);
+
+        Vector3 end   = new Vector3(perspectiveTouchRay.direction).nor().scl(200f).add(perspectiveTouchRay.origin.cpy());
+
+        debugLine(perspectiveTouchRay.origin, end, Color.CHARTREUSE);
 
     }
 }

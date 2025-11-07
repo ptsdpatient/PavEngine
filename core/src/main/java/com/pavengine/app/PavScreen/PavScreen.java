@@ -4,6 +4,7 @@ import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavEngine.pavCamera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,7 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.CameraBehaviorType;
-import com.pavengine.app.PavCamera.MapEditorCamera;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 
@@ -26,7 +26,7 @@ public abstract class PavScreen implements Screen {
     public PavEngine game;
     public SpriteBatch batch;
     private OrthographicCamera camera;
-    private FitViewport viewport;
+    private FitViewport overlayViewport, perspectiveViewport;
 
 
     public PavScreen(PavEngine game) {
@@ -34,8 +34,8 @@ public abstract class PavScreen implements Screen {
         this.batch = game.batch;
 
         this.camera = PavEngine.overlayCamera;
-        this.viewport = PavEngine.overlayViewport;
-
+        this.overlayViewport = PavEngine.overlayViewport;
+        this.perspectiveViewport = PavEngine.perspectiveViewport;
 
         resize((int) resolution.x, (int) resolution.y);
 
@@ -60,8 +60,9 @@ public abstract class PavScreen implements Screen {
         batch.begin();
 
         if (
-            cameraBehavior != CameraBehaviorType.MapEditorCamera &&
-                !Gdx.input.isButtonPressed(Input.Buttons.MIDDLE)
+            !(cameraBehavior == CameraBehaviorType.MapEditorCamera &&
+                (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+            )
         )
             cursor.draw(batch, delta);
 
@@ -86,10 +87,13 @@ public abstract class PavScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-//        cursor.cursor.setPosition(resolution.x/2f,resolution.y/2f);
-//        print(cursor.cursor.getX() + " : " + cursor.cursor.getY());
-        viewport.update(width, height, true);
-        viewport.apply();
+
+        overlayViewport.update(width, height, true);
+        overlayViewport.apply();
+
+        perspectiveViewport.update(width, height, false);
+        perspectiveViewport.apply();
+
     }
 
     @Override

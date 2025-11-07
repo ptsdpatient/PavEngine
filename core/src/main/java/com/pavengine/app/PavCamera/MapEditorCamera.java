@@ -16,6 +16,7 @@ public class MapEditorCamera extends PavCamera {
     private final Vector3 direction = new Vector3();
     private final Vector3 right = new Vector3();
     private final Vector3 up = new Vector3();
+    float move = 0, acc = 0, deltaX = 0, deltaY = 0;
 
     public MapEditorCamera(float fov) {
         super(fov);
@@ -35,13 +36,19 @@ public class MapEditorCamera extends PavCamera {
     }
 
     private void handleInput(float delta) {
-        float move = moveSpeed * delta;
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE)) {
-            float deltaX = -Gdx.input.getDeltaX() * mouseSensitivity;
-            float deltaY = -Gdx.input.getDeltaY() * mouseSensitivity;
+        acc = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ? 3 : 1;
+        move = moveSpeed * delta * acc;
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            deltaX = -Gdx.input.getDeltaX() * mouseSensitivity;
+            deltaY = -Gdx.input.getDeltaY() * mouseSensitivity;
             yaw += deltaX;
-            pitch = MathUtils.clamp(pitch + deltaY, -89f, 89f);
+            pitch = MathUtils.clamp(
+                pitch + deltaY,
+                -89f,
+                89f
+            );
         }
 
         direction.set(
@@ -63,11 +70,12 @@ public class MapEditorCamera extends PavCamera {
             camera.position.mulAdd(right, move);
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE))
             camera.position.mulAdd(up, move);
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT))
             camera.position.mulAdd(up, -move);
 
         camera.direction.set(direction);
         camera.update();
+
     }
 
     @Override

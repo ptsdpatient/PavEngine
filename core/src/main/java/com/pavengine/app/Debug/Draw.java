@@ -5,7 +5,9 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavScreen.GameWorld.shapeRenderer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -102,9 +104,16 @@ public class Draw {
     public static void debugLine(Vector3 start, Vector3 end,Color color) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
         shapeRenderer.setColor(color);
         shapeRenderer.line(start, end);
         shapeRenderer.end();
+
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
     }
 
     public static void debugCell(Cell obj) {
