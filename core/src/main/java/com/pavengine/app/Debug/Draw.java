@@ -67,6 +67,14 @@ public class Draw {
         shapeRenderer.end();
     }
 
+    public static void debugRectangle(Rectangle rect, boolean fill, Color color) {
+        shapeRenderer.setProjectionMatrix(overlayCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(color);
+        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+        shapeRenderer.end();
+    }
+
     public static void debugRay(PavRay ray) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);

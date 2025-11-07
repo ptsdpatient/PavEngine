@@ -5,6 +5,7 @@ import static com.pavengine.app.Debug.Draw.debugLine;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableMapEditor;
@@ -191,6 +192,10 @@ public class MapEditor extends  PavScreen {
             if(obj == selectedObject)
                 debugCube(obj.box, obj.debugColor);
         }
+
+        axisGizmo.update();
+        axisGizmo.draw();
+        axisGizmo.handleInput();
 
 
 

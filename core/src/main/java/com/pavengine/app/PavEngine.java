@@ -65,7 +65,7 @@ public class PavEngine extends Game {
     public static PavCamera pavCamera;
     public static OrthographicCamera overlayCamera  = new OrthographicCamera();
 
-
+    public static AxisGizmo axisGizmo;
     public static PavCursor cursor;
     public static SceneManager sceneManager;
 
@@ -137,6 +137,8 @@ public class PavEngine extends Game {
         overlayViewport = new FitViewport(resolution.x,resolution.y, overlayCamera);
 
         overlayViewport.apply();
+
+        axisGizmo = new AxisGizmo(overlayCamera);
 
         cameraBehavior = enableMapEditor ?
             CameraBehaviorType.MapEditorCamera :
