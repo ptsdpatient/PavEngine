@@ -73,7 +73,7 @@ public abstract class PavScreen implements Screen {
 
         debug();
 
-        debugRectangle(PavCursor.clickArea, Color.CYAN);
+//        debugRectangle(PavCursor.clickArea, Color.CYAN);
 
     }
 

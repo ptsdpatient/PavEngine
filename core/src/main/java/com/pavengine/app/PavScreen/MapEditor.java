@@ -133,9 +133,17 @@ public class MapEditor extends  PavScreen {
         Gdx.gl.glCullFace(GL20.GL_FRONT);
         Gdx.gl.glCullFace(GL20.GL_BACK);
 
+        for(GameObject obj : staticObjects) {
+            obj.update(delta);
+        }
+
+
         pavCamera.update(delta);
         camera.update();
         overlayCamera.update();
+
+
+
 
         sceneManager.update(delta);
         sceneManager.render();
@@ -180,34 +188,11 @@ public class MapEditor extends  PavScreen {
 
 
         for(GameObject obj : staticObjects) {
-            debugCube(obj.box, obj.debugColor);
+            if(obj == selectedObject)
+                debugCube(obj.box, obj.debugColor);
         }
 
 
-
-
-//        float screenX = cursor.cursor.getX();
-//        float screenY = cursor.cursor.getY();
-//
-//        screenY = perspectiveViewport.getWorldHeight() - screenY;
-//
-//        Ray ray = perspectiveViewport.getPickRay(screenX, screenY);
-//
-//        Vector3 end = new Vector3(ray.direction).nor().scl(20).add(ray.origin);
-
-//        Vector3 cameraPosition = new Vector3(camera.position.cpy());
-//        print(cameraPosition + " : " + camera.position);
-
-//        Ray ray = camera.getPickRay();
-
-//        cameraPosition.add(0);
-//        debugLine(cameraPosition, new Vector3(0,0,0), Color.CHARTREUSE);
-//
-//        debugLine(new Vector3(0,0,0), new Vector3(3,-5,6), Color.CHARTREUSE);
-
-        Vector3 end   = new Vector3(perspectiveTouchRay.direction).nor().scl(200f).add(perspectiveTouchRay.origin.cpy());
-
-        debugLine(perspectiveTouchRay.origin, end, Color.CHARTREUSE);
 
     }
 }
