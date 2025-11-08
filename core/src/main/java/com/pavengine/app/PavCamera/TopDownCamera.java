@@ -5,6 +5,7 @@ import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavPlayer.PavPlayer.player;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 
 
 public class TopDownCamera extends PavCamera {
@@ -23,6 +24,7 @@ public class TopDownCamera extends PavCamera {
     public void pan(float dx, float dy) {
         pos.add(dx, 0, -dy);
     }
+
 
     public void update(float delta) {
 

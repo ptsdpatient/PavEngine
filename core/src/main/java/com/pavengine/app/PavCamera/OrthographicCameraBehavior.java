@@ -15,6 +15,7 @@ public class OrthographicCameraBehavior extends PavCamera {
         this.size = size;
     }
 
+
     public void update(float delta) {
         Vector3 focus = (player != null) ? player.pos : Vector3.Zero;
 

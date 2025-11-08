@@ -2,6 +2,7 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.pavCamera;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.CameraBehaviorType;
+import com.pavengine.app.PavCamera.PavCamera;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 
@@ -74,7 +76,8 @@ public abstract class PavScreen implements Screen {
         debug();
 
 //        debugRectangle(PavCursor.clickArea, Color.CYAN);
-
+        print(PavCamera.camera.position);
+        print(PavCamera.camera.direction);
     }
 
     public abstract void setInput();

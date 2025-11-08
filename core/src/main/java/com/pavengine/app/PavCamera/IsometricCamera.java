@@ -22,6 +22,7 @@ public class IsometricCamera extends PavCamera {
         update(0);
     }
 
+
     @Override
     public void update(float delta) {
         if (playerCenter && player != null) {

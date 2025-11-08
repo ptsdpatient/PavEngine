@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 
-public class ModelEditorCamera {
+public class ModelEditorCamera extends PavCamera{
 
     public PerspectiveCamera camera;
     private float yaw = 0f;
@@ -23,8 +23,24 @@ public class ModelEditorCamera {
         camera.update();
     }
 
+
     public void update(float delta) {
         handleInput(delta);
+    }
+
+    @Override
+    public void rotate(float dx, float dy) {
+
+    }
+
+    @Override
+    public void pan(float dx, float dy) {
+
+    }
+
+    @Override
+    public void zoom(float y) {
+
     }
 
     private void handleInput(float delta) {

@@ -27,6 +27,8 @@ public class ThirdPersonCamera extends PavCamera {
         print("third ps");
     }
 
+
+
     public void getCameraRotation(Quaternion rotation) {
         Vector3 dir = new Vector3(camera.direction).set(camera.direction.x, 0, camera.direction.z).nor();
 

@@ -24,11 +24,14 @@ public class MapEditorCamera extends PavCamera {
         camera.position.set(6, 6, 6);
         camera.direction.set(-0.6376863f, -0.41910368f, -0.6463035f).nor();
 
+        print("new camera");
+
         yaw = MathUtils.atan2(camera.direction.x, camera.direction.z) * MathUtils.radiansToDegrees;
         pitch = MathUtils.asin(camera.direction.y) * MathUtils.radiansToDegrees;
 
         camera.update();
     }
+
 
     @Override
     public void update(float delta) {
