@@ -1,14 +1,17 @@
 package com.pavengine.app.PavInput;
 
+  import static com.pavengine.app.Debug.Draw.debugLine;
+  import static com.pavengine.app.Debug.Draw.debugRay;
   import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavEngine.enableCursor;
+  import static com.pavengine.app.PavEngine.cursor;
+  import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
+  import static com.pavengine.app.PavEngine.editorSelectedObjectText;
+  import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.overlayViewport;
-import static com.pavengine.app.PavEngine.perspectiveTouchRay;
-import static com.pavengine.app.PavEngine.perspectiveViewport;
-import static com.pavengine.app.PavEngine.sceneManager;
+  import static com.pavengine.app.PavEngine.perspectiveTouchRay;
+  import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
@@ -25,10 +28,11 @@ import com.badlogic.gdx.graphics.Color;
   import com.badlogic.gdx.math.Intersector;
   import com.badlogic.gdx.math.Plane;
   import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
-import com.pavengine.app.ObjectType;
+  import com.pavengine.app.EditorSelectedObjectBehavior;
+  import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavCursor;
-import com.pavengine.app.PavGameObject.GameObject;
+  import com.pavengine.app.PavEngine;
+  import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
@@ -38,6 +42,9 @@ public class MapEditorInput {
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
         Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
+        Vector3 dragStartPos = new Vector3();
+
+        Vector3 temp = new Vector3();
 
         @Override
         public boolean keyDown(int keycode) {
@@ -46,6 +53,26 @@ public class MapEditorInput {
 
         @Override
         public boolean keyUp(int keycode) {
+
+            if(keycode == Input.Keys.G) {
+                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
+                if(selectedObject != null) {
+                    dragPlane = new Plane(camera.direction, selectedObject.pos);
+                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
+                }
+            }
+
+            if(keycode == Input.Keys.R) {
+                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
+            }
+
+            if(keycode == Input.Keys.Z) {
+                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
+            }
+
+            if(keycode == Input.Keys.X) {
+                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+            }
 
             if (keycode == Input.Keys.ESCAPE) {
                 Gdx.input.setCursorCatched(!enableCursor);
@@ -72,10 +99,27 @@ public class MapEditorInput {
 
             setPerspectiveTouch();
 
+
+
+//            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
+//                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
+//
+//                    print("gizmo drag");
+//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
+//                    return true;
+////                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
+////                    dragAxis.set(box.direction);
+////                    axisOffset = clickToCenter.dot(dragAxis);
+////
+////                    dragPlane = new Plane(camera.direction, dragStartPos);
+////                    gizmoDrag = true;
+////                    return true;
+//                }
+//            }
+
             for (GameObject obj : staticObjects) {
                 if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-
-                    selectedObject = obj;
+                    setSelectedObject(obj);
                     dragPlane = new Plane(camera.direction, selectedObject.pos);
                     dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
                     roomCheckbox.value = selectedObject.isRoom;
@@ -85,7 +129,8 @@ public class MapEditorInput {
 
             for (GameObject obj : targetObjects) {
                 if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-                    selectedObject = obj;
+                    setSelectedObject(obj);
+                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
                 }
             }
 
@@ -98,13 +143,15 @@ public class MapEditorInput {
             cursor.setCursor(1);
 
             if (!enableCursor) {
-
                 lockCursor(false);
                 Gdx.input.setCursorCatched(true);
-
             }
 
             setPerspectiveTouch();
+
+            if(editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
+                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+            }
 
             overlayTouch = new Vector3(screenX, screenY, 0);
             overlayViewport.unproject(overlayTouch);
@@ -130,14 +177,15 @@ public class MapEditorInput {
                                     roomCheckbox.value = false;
                                     selectedObjectType.selectedIndex = 0;
 
-                                    selectedObject = staticObjects.get(staticObjects.size - 1);
+                                    setSelectedObject(staticObjects.get(staticObjects.size - 1));
+
                                     print(selectedObject == null ? "null" : "exists");
                                     return true;
                                 }
                                 case ExitGame: {
                                     Gdx.app.exit();
                                 }
-                                ;
+
                                 break;
                             }
                         }
@@ -171,25 +219,25 @@ public class MapEditorInput {
             if (enableCursor) cursor.setCursor(2);
 
 
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                if (selectedObject != null) {
-                    for (PavLayout layout : mapEditingLayout) {
-                        if (cursor.clicked(layout.box))
-                            return true;
-                    }
-
-                    if (cursor.clicked(mapEditorPanel))
-                        return true;
-
-                    if (PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch))
-                        selectedObject.pos.set(perspectiveTouch.x, perspectiveTouch.y - selectedObject.getHeight()/2f, perspectiveTouch.z);
-                    Vector3 intersection = new Vector3();
-                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-                        selectedObject.pos.set(intersection.add(dragOffset));
-                    }
-
-                }
-            }
+//            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+//                if (selectedObject != null) {
+//                    for (PavLayout layout : mapEditingLayout) {
+//                        if (cursor.clicked(layout.box))
+//                            return true;
+//                    }
+//
+//                    if (cursor.clicked(mapEditorPanel))
+//                        return true;
+//
+//                    if (PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch))
+//                        selectedObject.pos.set(perspectiveTouch.x, perspectiveTouch.y - selectedObject.getHeight()/2f, perspectiveTouch.z);
+//                    Vector3 intersection = new Vector3();
+//
+//                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
+//                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
+//                    }
+//                }
+//            }
 
             return false;
         }
@@ -197,21 +245,35 @@ public class MapEditorInput {
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
 
-
             setPerspectiveTouch();
 
+            switch(editorSelectedObjectBehavior) {
+                case Grab:
+                    if (selectedObject != null) {
+                        Vector3 intersection = new Vector3();
+
+                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
+                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
+                        }
+                    }
+                    break;
+                case Rotate:
+                    break;
+                case Scale:
+                    break;
+                case FreeLook:
+                    break;
+            }
 
             for (GameObject obj : staticObjects) {
                 boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
-                obj.debugColor = hit ? Color.CYAN : Color.YELLOW;
-                if (hit) System.out.println("Hit object: " + obj.name);
+                obj.debugColor = hit ? Color.ORANGE : Color.YELLOW;
             }
 
-            if (selectedObject != null) selectedObject.debugColor = Color.CYAN;
-
+            if (selectedObject != null) selectedObject.debugColor = Color.ORANGE;
 
             for (GameObject obj : targetObjects) {
-                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.CYAN : Color.YELLOW;
+                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
             }
 
             for (PavLayout layout : mapEditingLayout) {
@@ -261,6 +323,17 @@ public class MapEditorInput {
         }
     };
 
+    private static void setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior value) {
+//        PavEngine.editorSelectedObjectBehavior = PavEngine.editorSelectedObjectBehavior == value? EditorSelectedObjectBehavior.FreeLook: value;
+        PavEngine.editorSelectedObjectBehavior = value;
+        editorSelectedObjectText.text = PavEngine.editorSelectedObjectBehavior.name();
+    }
+
+    private static void setSelectedObject(GameObject obj) {
+//        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+        selectedObject = obj;
+    }
+
     private static void setPerspectiveTouch() {
 
         Vector3 screenPos = overlayViewport.project(new Vector3(
@@ -273,4 +346,5 @@ public class MapEditorInput {
 
         perspectiveTouchRay.set(camera.getPickRay(screenPos.x, screenPos.y));
     }
+
 }

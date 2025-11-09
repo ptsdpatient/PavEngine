@@ -28,8 +28,6 @@ public abstract class PavCamera {
 
         camera.direction.set(dir);
         camera.update();
-        camera.update();
-
     }
 
     public abstract void update(float delta);

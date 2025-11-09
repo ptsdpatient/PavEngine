@@ -47,7 +47,7 @@ public abstract class GameObject {
     public Array<Actions> actions = new Array<>();
     public String[] animationNames;
     public GameObject attachObject;
-    public Color debugColor = new Color(Color.GREEN);
+    public Color debugColor = new Color(Color.ORANGE);
     public Quaternion rotation = new Quaternion(), deltaRotation = new Quaternion();
     public String name;
     public boolean isStatic = false;

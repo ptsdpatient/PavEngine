@@ -308,14 +308,14 @@ public class GameWorldInput {
                     if (dragAndDrop) {
                         if (enableMapEditor) {
                             for (GameObject obj : staticObjects) {
-                                obj.debugColor = PavIntersector.intersect(ray, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.CYAN : Color.YELLOW;
+                                obj.debugColor = PavIntersector.intersect(ray, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
                             }
                             if (selectedObject != null) {
-                                selectedObject.debugColor = Color.CYAN;
+                                selectedObject.debugColor = Color.ORANGE;
                             }
                         }
                         for (GameObject obj : targetObjects) {
-                            obj.debugColor = PavIntersector.intersect(ray, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.CYAN : Color.YELLOW;
+                            obj.debugColor = PavIntersector.intersect(ray, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE  : Color.YELLOW;
                         }
                     }
                 }

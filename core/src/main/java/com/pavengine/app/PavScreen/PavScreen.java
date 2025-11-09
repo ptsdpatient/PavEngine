@@ -76,8 +76,9 @@ public abstract class PavScreen implements Screen {
         debug();
 
 //        debugRectangle(PavCursor.clickArea, Color.CYAN);
-        print(PavCamera.camera.position);
-        print(PavCamera.camera.direction);
+//        print(PavCamera.camera.position);
+//        print(PavCamera.camera.direction);
+
     }
 
     public abstract void setInput();

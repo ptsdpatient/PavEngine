@@ -35,6 +35,7 @@ import com.pavengine.app.PavScreen.MapEditor;
 import com.pavengine.app.PavScreen.PauseScreen;
 import com.pavengine.app.PavScreen.UpgradeScreen;
 import com.pavengine.app.PavSound.SoundBox;
+import com.pavengine.app.PavUI.TextButton;
 
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
@@ -71,6 +72,7 @@ public class PavEngine extends Game {
 
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
+//    public static AxisGizmo3D perspectiveAxisGizmo;
 
     public static BitmapFont
         gameFont,
@@ -79,7 +81,8 @@ public class PavEngine extends Game {
     public PavSkyBox skyBox;
 
     public PavLight pavLight;
-
+    public static EditorSelectedObjectBehavior editorSelectedObjectBehavior = EditorSelectedObjectBehavior.FreeLook;
+    public static TextButton editorSelectedObjectText;
     public static TextureRegion[]
         uiBG ,
         uiControl,
@@ -150,12 +153,12 @@ public class PavEngine extends Game {
         camera.far = 1000f;
         perspectiveViewport = new FitViewport(resolution.x, resolution.y, camera);
 
-        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
+//        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
 
         perspectiveViewport.apply();
 
-        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
+//        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
 
         initializeCamera();
@@ -196,21 +199,24 @@ public class PavEngine extends Game {
 
     private void setUpMapEditorLines(int size,int step,Color gridColor) {
 
-        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(0,5,0), Color.RED));
-        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(5,0,0), Color.BLUE));
-        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(0,0,5), Color.GREEN));
+//        perspectiveAxisGizmo = new AxisGizmo3D();
+
+
+//        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(0,5,0), Color.RED));
+//        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(5,0,0), Color.BLUE));
+//        centerReferenceOriginRays.add(new ReferenceOriginLine(new Vector3(0,0,5), Color.GREEN));
 
         for (int i = -size; i <= size; i++) {
             referenceEditorRays.add(new ReferenceEditorLine(
                 new Vector3(-size * step, 0, i * step),
                 new Vector3(size * step, 0, i * step),
-                gridColor
+                i==0?Color.RED:gridColor
             ));
 
             referenceEditorRays.add(new ReferenceEditorLine(
                 new Vector3(i * step, 0, -size * step),
                 new Vector3(i * step, 0, size * step),
-                gridColor
+                i==0?Color.GREEN:gridColor
             ));
         }
     }

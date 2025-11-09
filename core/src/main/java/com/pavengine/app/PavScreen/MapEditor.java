@@ -2,18 +2,22 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugLine;
+import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavEngine.editorSelectedObjectText;
 import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
+//import static com.pavengine.app.PavEngine.perspectiveAxisGizmo;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.perspectiveViewport;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
@@ -25,6 +29,7 @@ import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
+import static com.pavengine.app.PavUI.PavAnchor.TOP_CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
@@ -35,6 +40,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.Checkbox;
@@ -51,7 +58,7 @@ import java.util.ArrayList;
 
 public class MapEditor extends  PavScreen {
     public static ArrayList<String> objectList;
-    public static ArrayList<PavLayout> mapEditingLayout = new ArrayList<>();
+    public static Array<PavLayout> mapEditingLayout = new Array<>();
     public static Stepper scaleStepper, elevationStepper;
     public static Checkbox roomCheckbox;
     public static Dropdown selectedObjectType;
@@ -80,6 +87,9 @@ public class MapEditor extends  PavScreen {
         mapEditingLayout.add(new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5));
         mapEditingLayout.get(1).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
 
+        PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
+
+        addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
         int i = 0;
         for (Vector3 offset : rotationOffset) {
@@ -197,6 +207,20 @@ public class MapEditor extends  PavScreen {
         axisGizmo.draw();
         axisGizmo.handleInput();
 
+        if(selectedObject!=null) {
+//            perspectiveAxisGizmo.update();
+//            perspectiveAxisGizmo.draw();
+        }
+
+
+//        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
+//        debugCube(new PavBounds(perspectiveAxisGizmo.yOBB),Color.RED);
+//
+//        debugCube(new PavBounds(perspectiveAxisGizmo.zOBB),Color.RED);
+
+        debugRay(perspectiveTouchRay);
+
+//        perspectiveAxisGizmo.handleInput();
 
 
     }

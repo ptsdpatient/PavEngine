@@ -63,12 +63,12 @@ public class AxisGizmo {
             centerX + xDir.x * axisLength,
             centerY + xDir.y * axisLength);
 
-        shapeRenderer.setColor(Color.GREEN);
+        shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.line(centerX, centerY,
             centerX + yDir.x * axisLength,
             centerY + yDir.y * axisLength);
 
-        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.line(centerX, centerY,
             centerX + zDir.x * axisLength,
             centerY + zDir.y * axisLength);
@@ -83,15 +83,15 @@ public class AxisGizmo {
     public void handleInput() {
         if (Gdx.input.justTouched()) {
             if (cursor.clicked(xRect)) {
-                System.out.println("X");
+//                System.out.println("X");
                 lookFromAxis(Vector3.X);
 
             } else if (cursor.clicked(yRect)) {
-                System.out.println("Y");
+//                System.out.println("Y");
                 lookFromAxis(Vector3.Y);
 
             } else if (cursor.clicked(zRect)) {
-                System.out.println("Z");
+//                System.out.println("Z");
                 lookFromAxis(Vector3.Z);
             }
         }
@@ -99,17 +99,14 @@ public class AxisGizmo {
 
     private void lookFromAxis(Vector3 axis) {
         float distance = 10f;
-//        Vector3 pos = selectedObject==null? new Vector3(0,0,0) : selectedObject.pos;
-//
-//        Vector3 newPos = new Vector3(pos).add(new Vector3(axis).scl(distance));
+        Vector3 pos = (selectedObject == null) ? new Vector3(0, 0, 0) : selectedObject.pos;
 
-//        camera.position.set(newPos);
-//        camera.lookAt(pos);
+        Vector3 newPos = new Vector3(pos).add(new Vector3(axis).scl(distance));
+        camera.position.set(newPos);
 
-        camera.position.set(new Vector3(10,0,0));
-//        camera.direction.set(new Vector3(-1,0,0).nor());
-//        camera.update();
-        pavCamera.setDirection(new Vector3(-1, 0, 0));
+        Vector3 dir = new Vector3(pos).sub(camera.position).nor();
+
+        pavCamera.setDirection(dir);
 
     }
 
