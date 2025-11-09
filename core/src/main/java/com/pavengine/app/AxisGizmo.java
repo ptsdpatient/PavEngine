@@ -52,8 +52,8 @@ public class AxisGizmo {
     public void draw() {
 
         debugRectangle(xRect,true,Color.RED);
-        debugRectangle(yRect,true,Color.GREEN);
-        debugRectangle(zRect,true,Color.BLUE);
+        debugRectangle(yRect,true,Color.BLUE);
+        debugRectangle(zRect,true,Color.GREEN);
 
         shapeRenderer.setProjectionMatrix(orthoCam.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);

@@ -27,6 +27,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
   import com.badlogic.gdx.math.Intersector;
   import com.badlogic.gdx.math.Plane;
+  import com.badlogic.gdx.math.Quaternion;
   import com.badlogic.gdx.math.Vector3;
   import com.pavengine.app.EditorSelectedObjectBehavior;
   import com.pavengine.app.ObjectType;
@@ -247,23 +248,41 @@ public class MapEditorInput {
 
             setPerspectiveTouch();
 
-            switch(editorSelectedObjectBehavior) {
-                case Grab:
-                    if (selectedObject != null) {
+            if (selectedObject != null) {
+                switch(editorSelectedObjectBehavior) {
+                    case Grab:
                         Vector3 intersection = new Vector3();
 
                         if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
                             selectedObject.pos.set(intersection.cpy().add(dragOffset));
                         }
-                    }
-                    break;
-                case Rotate:
-                    break;
-                case Scale:
-                    break;
-                case FreeLook:
-                    break;
+                        break;
+
+                    case Rotate:
+
+                        float sensitivity = 1.5f;
+
+                        Quaternion q = new Quaternion();
+
+                        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                            q.set(Vector3.X, -Gdx.input.getDeltaY() * sensitivity);
+                            selectedObject.rotation.mulLeft(q);
+                        } else {
+                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * sensitivity);
+                            selectedObject.rotation.mulLeft(q);
+                        }
+
+                        selectedObject.rotation.nor();
+
+                        break;
+
+                    case Scale:
+                        break;
+                    case FreeLook:
+                        break;
+                }
             }
+
 
             for (GameObject obj : staticObjects) {
                 boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
