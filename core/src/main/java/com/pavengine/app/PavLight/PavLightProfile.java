@@ -8,7 +8,7 @@ public enum PavLightProfile {
 
     DAY(
         new Color(5f, 5f, 5f, 1f), // soft daylight
-        new Vector3(new Vector3(0f, -1, 0)).nor()           // medium ambient
+        new Vector3(new Vector3(-4f, -1, -4)).nor()           // medium ambient
     ),
     NIGHT(
         new Color(0.3f, 0.3f, 0.4f, 1f), // bluish dim light

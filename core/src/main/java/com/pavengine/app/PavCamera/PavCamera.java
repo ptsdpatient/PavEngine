@@ -1,5 +1,7 @@
 package com.pavengine.app.PavCamera;
 
+import static com.pavengine.app.Methods.print;
+
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -27,6 +29,7 @@ public abstract class PavCamera {
         pitch = MathUtils.asin(dir.y) * MathUtils.radiansToDegrees;
 
         camera.direction.set(dir);
+        print(dir);
         camera.update();
     }
 

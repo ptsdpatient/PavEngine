@@ -20,13 +20,14 @@ public class PavLight {
     public PavLight(Environment environment, PavLightProfile profile) {
         this.environment = environment;
         this.profile = profile;
-        sceneManager.setAmbientLight(0.02f);
+        sceneManager.setAmbientLight(0.01f);
 
-        environment.add(new DirectionalLight().set(profile.color, profile.direction));
         if(shadows){
-            environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(4, -1, 0).nor()));
+            environment.add(new DirectionalShadowLight().set(Color.WHITE, new Vector3(4, -1, 4).nor()));
+            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(new Vector3(-4f, -1, -4)).nor()));
         } else {
-            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(4, -1, 0).nor()));
+            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(new Vector3(-4f, -1, -4)).nor()));
+            environment.add(new DirectionalLight().set(Color.WHITE, new Vector3(4, -1, 4).nor()));
         }
 
     }

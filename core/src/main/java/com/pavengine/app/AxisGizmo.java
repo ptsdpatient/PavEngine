@@ -21,7 +21,9 @@ import com.badlogic.gdx.math.Vector3;
 
 public class AxisGizmo {
     private OrthographicCamera orthoCam;
-    private Rectangle xRect, yRect, zRect;
+    public Rectangle xRect;
+    public Rectangle yRect;
+    public Rectangle zRect;
     private float centerX, centerY, axisLength;
     private Vector3 xDir = new Vector3(1, 0, 0);
     private Vector3 yDir = new Vector3(0, 1, 0);
@@ -80,31 +82,14 @@ public class AxisGizmo {
         zRect.set(centerX + zDir.x * axisLength - 10, centerY + zDir.y * axisLength - 10, 20, 20);
     }
 
-    public void handleInput() {
-        if (Gdx.input.justTouched()) {
-            if (cursor.clicked(xRect)) {
-//                System.out.println("X");
-                lookFromAxis(Vector3.X);
-
-            } else if (cursor.clicked(yRect)) {
-//                System.out.println("Y");
-                lookFromAxis(Vector3.Y);
-
-            } else if (cursor.clicked(zRect)) {
-//                System.out.println("Z");
-                lookFromAxis(Vector3.Z);
-            }
-        }
-    }
-
-    private void lookFromAxis(Vector3 axis) {
+    public void lookFromAxis(Vector3 axis) {
         float distance = 10f;
         Vector3 pos = (selectedObject == null) ? new Vector3(0, 0, 0) : selectedObject.pos;
 
         Vector3 newPos = new Vector3(pos).add(new Vector3(axis).scl(distance));
         camera.position.set(newPos);
 
-        Vector3 dir = new Vector3(pos).sub(camera.position).nor();
+        Vector3 dir = new Vector3(pos).sub(camera.position);
 
         pavCamera.setDirection(dir);
 

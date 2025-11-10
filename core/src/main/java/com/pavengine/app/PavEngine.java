@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.pavengine.app.PavCamera.BoundsEditorCamera;
 import com.pavengine.app.PavCamera.FirstPersonCamera;
 import com.pavengine.app.PavCamera.IsometricCamera;
 import com.pavengine.app.PavCamera.MapEditorCamera;
@@ -29,6 +30,7 @@ import com.pavengine.app.PavCamera.ThirdPersonCamera;
 import com.pavengine.app.PavCamera.TopDownCamera;
 import com.pavengine.app.PavLight.PavLight;
 import com.pavengine.app.PavLight.PavLightProfile;
+import com.pavengine.app.PavScreen.BoundsEditor;
 import com.pavengine.app.PavScreen.GameScreen;
 import com.pavengine.app.PavScreen.LoadingScreen;
 import com.pavengine.app.PavScreen.MapEditor;
@@ -60,7 +62,7 @@ public class PavEngine extends Game {
     public UpgradeScreen upgradeScreen;
     public PauseScreen pauseScreen;
     public MapEditor mapEditor;
-
+    public BoundsEditor boundsEditor;
     public SpriteBatch batch;
     public static FitViewport overlayViewport, perspectiveViewport;
     public static PavCamera pavCamera;
@@ -98,6 +100,10 @@ public class PavEngine extends Game {
         "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
         "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"
     };
+
+    public PavEngine() {
+
+    }
 
     @Override
     public void create() {
@@ -144,7 +150,7 @@ public class PavEngine extends Game {
         axisGizmo = new AxisGizmo(overlayCamera);
 
         cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.MapEditorCamera :
+            CameraBehaviorType.BoundsEditor :
             CameraBehaviorType.ThirdPerson;
 
 
@@ -187,10 +193,10 @@ public class PavEngine extends Game {
         upgradeScreen = new UpgradeScreen(this);
         pauseScreen = new PauseScreen(this);
         mapEditor = new MapEditor(this);
-
+        boundsEditor = new BoundsEditor(this);
 
         if(enableMapEditor){
-            setScreen(mapEditor);
+            setScreen(boundsEditor);
         } else {
             setGameScreen();
         }
@@ -250,6 +256,10 @@ public class PavEngine extends Game {
         switch (cameraBehavior) {
             case MapEditorCamera:
                 pavCamera = new MapEditorCamera(67);
+                break;
+
+            case BoundsEditor:
+                pavCamera = new BoundsEditorCamera(67);
                 break;
 
             case FirstPerson:

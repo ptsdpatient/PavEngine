@@ -21,8 +21,7 @@ import static com.pavengine.app.PavScreen.GameWorld.pathFinder;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 import static com.pavengine.app.PavScreen.MapEditor.mapEditingLayout;
-import static com.pavengine.app.PavScreen.MapEditor.roomCheckbox;
-import static com.pavengine.app.PavScreen.MapEditor.selectedObjectType;
+
 
 
 import com.badlogic.gdx.Gdx;
@@ -98,7 +97,6 @@ public class GameWorldInput {
                             for (GameObject obj : staticObjects) {
                                 if (PavIntersector.intersect(ray, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
                                     selectedObject = obj;
-                                    roomCheckbox.value = selectedObject.isRoom;
                                     lastX = screenX;
                                     lastY = screenY;
                                     return true;
@@ -158,9 +156,6 @@ public class GameWorldInput {
                                                 case AddStaticObjectToMapEditor: {
                                                     print("add : " + widget.text);
                                                     world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                                    roomCheckbox.value = false;
-                                                    selectedObjectType.selectedIndex = 0;
-
                                                     selectedObject = staticObjects.get(staticObjects.size - 1);
                                                     print(selectedObject == null ? "null" : "exists");
                                                     return true;
@@ -176,7 +171,7 @@ public class GameWorldInput {
                                 }
                                 if (selectedObject != null)
                                     if (!PavIntersector.intersect(ray, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-                                        print("deselect");
+//                                        print("deselect");
                                         selectedObject.debugColor = Color.YELLOW;
                                         selectedObject = null;
                                     }

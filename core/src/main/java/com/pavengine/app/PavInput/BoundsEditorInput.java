@@ -1,45 +1,43 @@
 package com.pavengine.app.PavInput;
 
-  import static com.pavengine.app.Debug.Draw.debugLine;
-  import static com.pavengine.app.Debug.Draw.debugRay;
-  import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-  import static com.pavengine.app.PavEngine.axisGizmo;
-  import static com.pavengine.app.PavEngine.cursor;
-  import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
-  import static com.pavengine.app.PavEngine.editorSelectedObjectText;
-  import static com.pavengine.app.PavEngine.enableCursor;
+import static com.pavengine.app.PavEngine.axisGizmo;
+import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
+import static com.pavengine.app.PavEngine.editorSelectedObjectText;
+import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.overlayViewport;
-  import static com.pavengine.app.PavEngine.perspectiveTouchRay;
-  import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.perspectiveTouchRay;
+import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
-import static com.pavengine.app.PavScreen.MapEditor.mapEditingLayout;
-
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-  import com.badlogic.gdx.math.Intersector;
-  import com.badlogic.gdx.math.Plane;
-  import com.badlogic.gdx.math.Quaternion;
-  import com.badlogic.gdx.math.Vector3;
-  import com.pavengine.app.EditorSelectedObjectBehavior;
-  import com.pavengine.app.ObjectType;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.pavengine.app.EditorSelectedObjectBehavior;
+import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavCursor;
-  import com.pavengine.app.PavEngine;
-  import com.pavengine.app.PavGameObject.GameObject;
+import com.pavengine.app.PavEngine;
+import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
-public class MapEditorInput {
-    public static InputProcessor mapEditorInput = new InputProcessor() {
+public class BoundsEditorInput {
+    public static InputProcessor boundsEditorInput = new InputProcessor() {
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
         Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
@@ -196,7 +194,7 @@ public class MapEditorInput {
                 if (cursor.clicked(mapEditorPanel))
                     return true;
 
-                for (PavLayout layout : mapEditingLayout) {
+                for (PavLayout layout : boundsEditorLayout) {
 
 
                     for (PavWidget widget : layout.widgets) {
@@ -252,7 +250,7 @@ public class MapEditorInput {
 
 //            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
 //                if (selectedObject != null) {
-//                    for (PavLayout layout : mapEditingLayout) {
+//                    for (PavLayout layout : boundsEditorLayout) {
 //                        if (cursor.clicked(layout.box))
 //                            return true;
 //                    }
@@ -275,6 +273,8 @@ public class MapEditorInput {
 
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
+
+//            print("mouse moving");
 
             setPerspectiveTouch();
 
@@ -341,7 +341,7 @@ public class MapEditorInput {
                 obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
             }
 
-            for (PavLayout layout : mapEditingLayout) {
+            for (PavLayout layout : boundsEditorLayout) {
                 layout.isHovered = cursor.clicked(layout.box);
 
                 if (layout.isHovered) {
@@ -357,14 +357,17 @@ public class MapEditorInput {
                 }
             }
 
-
             return false;
         }
 
         @Override
         public boolean scrolled(float amountX, float amountY) {
 
-            for (PavLayout layout : mapEditingLayout)
+//            print("scrolled");
+
+            pavCamera.zoom(amountY);
+
+            for (PavLayout layout : boundsEditorLayout) {
                 if (layout.isHovered) {
                     float layoutScrollAmount = amountY * 25;
 
@@ -383,6 +386,10 @@ public class MapEditorInput {
                     }
 
                 }
+            }
+
+
+
 
             return false;
         }
