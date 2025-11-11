@@ -55,8 +55,8 @@ public class TargetObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
 
     }
@@ -80,8 +80,8 @@ public class TargetObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
 
     }
@@ -105,8 +105,8 @@ public class TargetObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
         update(0);
     }
@@ -129,7 +129,7 @@ public class TargetObject extends GameObject {
     }
 
     public boolean checkCollision(GameObject otherObject) {
-        return box.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.box.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
+        return boxes.get(0).getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.boxes.get(0).getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
     }
 
 
@@ -138,7 +138,7 @@ public class TargetObject extends GameObject {
     }
 
     public void updateCenter() {
-        this.box.getBounds().getCenter(center);
+        this.boxes.get(0).getBounds().getCenter(center);
         center.mul(this.scene.modelInstance.transform);
     }
 
@@ -245,11 +245,6 @@ public class TargetObject extends GameObject {
                 ),
                 new Matrix4(pos.cpy().add(attackOffset.cpy().rot(new Matrix4().set(rotation))), rotation, new Vector3(1, 1, 1))) : new PavBounds();
 
-            if (attackBox.intersects(player.box)) {
-//                print("hit player");
-                player.forces.add(new Force(player.pos.cpy().sub(pos).nor().scl(5f), 1));
-            }
-
         }
 
         updateCenter();
@@ -337,12 +332,12 @@ public class TargetObject extends GameObject {
     }
 
     public boolean contains(Vector3 point) {
-        return box.contains(point);
+        return boxes.get(0).contains(point);
     }
 
     public void updateBox() {
         scene.modelInstance.calculateBoundingBox(bounds);
-        box.set(
+        boxes.get(0).set(
             new BoundingBox(
                 bounds.min.add(padding),
                 bounds.max.add(padding)

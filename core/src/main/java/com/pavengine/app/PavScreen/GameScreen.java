@@ -28,8 +28,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.pavengine.app.ObjectType;
-import com.pavengine.app.PavBounds.Entrance;
-import com.pavengine.app.PavBounds.EntranceBluprint;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.DynamicObject;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -259,23 +257,6 @@ public class GameScreen extends PavScreen {
                                 new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
                             )
                         );
-                        if (room.getBoolean("isRoom")) {
-                            ArrayList<EntranceBluprint> entrances = new ArrayList<>();
-                            for (JsonValue entrance : room.get("entrances")) {
-                                JsonValue
-                                    roomOffset = entrance.get("offset"),
-                                    roomSize = entrance.get("offset");
-                                String roomType = entrance.getString("type"),
-                                    roomSide = entrance.getString("side");
-                                entrances.add(new EntranceBluprint() {{
-                                    offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
-                                    size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
-                                    type = Entrance.Type.valueOf(roomType);
-                                    side = EntranceBluprint.Side.valueOf(roomSide);
-                                }});
-                            }
-                            staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
-                        }
                     }
                     break;
                     case "GROUND": {

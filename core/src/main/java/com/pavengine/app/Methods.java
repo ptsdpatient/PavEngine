@@ -22,8 +22,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.pavengine.app.PavBounds.Entrance;
-import com.pavengine.app.PavBounds.EntranceBluprint;
 import com.pavengine.app.PavGameObject.DynamicObject;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavGameObject.GroundObject;
@@ -238,23 +236,23 @@ public class Methods {
                         )
                     );
 
-                    if (room.getBoolean("isRoom")) {
-                        ArrayList<EntranceBluprint> entrances = new ArrayList<>();
-                        for (JsonValue entrance : room.get("entrances")) {
-                            JsonValue
-                                roomOffset = entrance.get("offset"),
-                                roomSize = entrance.get("offset");
-                            String roomType = entrance.getString("type"),
-                                roomSide = entrance.getString("side");
-                            entrances.add(new EntranceBluprint() {{
-                                offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
-                                size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
-                                type = Entrance.Type.valueOf(roomType);
-                                side = EntranceBluprint.Side.valueOf(roomSide);
-                            }});
-                        }
-                        staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
-                    }
+//                    if (room.getBoolean("isRoom")) {
+//                        ArrayList<EntranceBluprint> entrances = new ArrayList<>();
+//                        for (JsonValue entrance : room.get("entrances")) {
+//                            JsonValue
+//                                roomOffset = entrance.get("offset"),
+//                                roomSize = entrance.get("offset");
+//                            String roomType = entrance.getString("type"),
+//                                roomSide = entrance.getString("side");
+//                            entrances.add(new EntranceBluprint() {{
+//                                offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
+//                                size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
+//                                type = Entrance.Type.valueOf(roomType);
+//                                side = EntranceBluprint.Side.valueOf(roomSide);
+//                            }});
+//                        }
+//                        staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
+//                    }
 
                     objectList.add(staticObjects.get(staticObjects.size - 1));
 

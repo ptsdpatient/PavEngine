@@ -66,8 +66,8 @@ public class KinematicObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
     }
 
@@ -90,8 +90,8 @@ public class KinematicObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
     }
 
@@ -114,8 +114,8 @@ public class KinematicObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        box = new PavBounds(bounds);
-        box.setBounds(bounds);
+        boxes.add(new PavBounds(bounds));
+        boxes.get(0).setBounds(bounds);
 
         update(0);
     }
@@ -148,7 +148,7 @@ public class KinematicObject extends GameObject {
     }
 
     public boolean checkCollision(GameObject otherObject) {
-        return box.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.box.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
+        return boxes.get(0).getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.boxes.get(0).getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
     }
 
 
@@ -157,7 +157,7 @@ public class KinematicObject extends GameObject {
     }
 
     public void updateCenter() {
-        this.box.getBounds().getCenter(center);
+        this.boxes.get(0).getBounds().getCenter(center);
         center.mul(this.scene.modelInstance.transform);
     }
 
@@ -238,15 +238,15 @@ public class KinematicObject extends GameObject {
     }
 
     public void reboundForce() {
-        for (GameObject obj : targetObjects) {
-            if (
-                box.intersects(obj.box)
-            ) {
-//                print("rebound");
-                forces.clear();
-//                forces.add(new Force(pos.cpy().sub(obj.pos).nor(), 2));
-            }
-        }
+//        for (GameObject obj : targetObjects) {
+//            if (
+//                boxes.get(0).intersects(obj.box)
+//            ) {
+////                print("rebound");
+//                forces.clear();
+////                forces.add(new Force(pos.cpy().sub(obj.pos).nor(), 2));
+//            }
+//        }
     }
 
     public void update(float delta) {
@@ -345,15 +345,15 @@ public class KinematicObject extends GameObject {
         this.ringRadius = ringRadius;
         this.ringHeightOffset = ringHeightOffset;
 
-        box.heightOffset = ringHeightOffset;
-        box.ringRadius = ringRadius;
+        boxes.get(0).heightOffset = ringHeightOffset;
+        boxes.get(0).ringRadius = ringRadius;
 
         footBox.heightOffset = ringHeightOffset-2;
         footBox.ringRadius = ringRadius;
     }
 
     private void updateBottom() {
-        this.box.getBounds().getCenter(bottom);
+        this.boxes.get(0).getBounds().getCenter(bottom);
         bottom.mul(this.scene.modelInstance.transform);
         bottom.sub(new Vector3(0, getHeight(), 0));
     }
@@ -373,13 +373,13 @@ public class KinematicObject extends GameObject {
     }
 
     public boolean contains(Vector3 point) {
-        return box.contains(point);
+        return boxes.get(0).contains(point);
     }
 
     public void updateBox() {
         scene.modelInstance.calculateBoundingBox(bounds);
 
-        box.set(
+        boxes.get(0).set(
             new BoundingBox(
                 new Vector3(
                     bounds.min.x,
@@ -396,7 +396,7 @@ public class KinematicObject extends GameObject {
         );
 
         if (ringDetection) {
-            box.updateRings(pos.cpy(),rotation.cpy());
+            boxes.get(0).updateRings(pos.cpy(),rotation.cpy());
             footBox.updateRings(pos.cpy(),rotation.cpy());
         }
 

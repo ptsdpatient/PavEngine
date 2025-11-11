@@ -29,7 +29,7 @@ public abstract class PavCamera {
         pitch = MathUtils.asin(dir.y) * MathUtils.radiansToDegrees;
 
         camera.direction.set(dir);
-        print(dir);
+
         camera.update();
     }
 

@@ -53,62 +53,11 @@ public class BoundsEditorInput {
         @Override
         public boolean keyUp(int keycode) {
 
-            if(keycode == Input.Keys.G) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
-                if(selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if(keycode == Input.Keys.R) {
-
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
-                if(selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if(keycode == Input.Keys.Z) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
-                if(selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if(keycode == Input.Keys.X) {
-                if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
-                    if(selectedObject != null) {
-                        selectedObject.rotation = initialRotation;
-                        selectedObject.size = new Vector3(initialSize,initialSize,initialSize);
-                        selectedObject.pos = initialPosition;
-                    }
-                }
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-            }
-
             if (keycode == Input.Keys.ESCAPE) {
                 Gdx.input.setCursorCatched(!enableCursor);
                 lockCursor(enableCursor);
             }
 
-            if (keycode == Input.Keys.DEL || keycode == Input.Keys.FORWARD_DEL) {
-                if (selectedObject != null) {
-                    sceneManager.removeScene(selectedObject.scene);
-                    staticObjects.removeValue(selectedObject, true);
-                }
-            }
 
             return false;
         }
@@ -123,39 +72,37 @@ public class BoundsEditorInput {
 
             setPerspectiveTouch();
 
-
-
 //            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
 //                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
 //
 //                    print("gizmo drag");
 //                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
 //                    return true;
-////                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
-////                    dragAxis.set(box.direction);
-////                    axisOffset = clickToCenter.dot(dragAxis);
-////
-////                    dragPlane = new Plane(camera.direction, dragStartPos);
-////                    gizmoDrag = true;
-////                    return true;
+//                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
+//                    dragAxis.set(box.direction);
+//                    axisOffset = clickToCenter.dot(dragAxis);
+//
+//                    dragPlane = new Plane(camera.direction, dragStartPos);
+//                    gizmoDrag = true;
+//                    return true;
 //                }
 //            }
 
-            for (GameObject obj : staticObjects) {
-                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-                    setSelectedObject(obj);
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                    return true;
-                }
-            }
+//            for (GameObject obj : staticObjects) {
+//                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
+//                    setSelectedObject(obj);
+//                    dragPlane = new Plane(camera.direction, selectedObject.pos);
+//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
+//                    return true;
+//                }
+//            }
 
-            for (GameObject obj : targetObjects) {
-                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-                    setSelectedObject(obj);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
+//            for (GameObject obj : targetObjects) {
+//                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
+//                    setSelectedObject(obj);
+//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
+//                }
+//            }
 
             return false;
         }
@@ -184,7 +131,7 @@ public class BoundsEditorInput {
                     axisGizmo.lookFromAxis(Vector3.X);
                     return true;
                 } else if (cursor.clicked(axisGizmo.yRect)) {
-                    axisGizmo.lookFromAxis(new Vector3(0,0.8f,0.1f));
+                    axisGizmo.lookFromAxis(new Vector3(0,-0.8f,0.1f));
                     return true;
                 } else if (cursor.clicked(axisGizmo.zRect)) {
                     axisGizmo.lookFromAxis(Vector3.Z);
@@ -220,12 +167,12 @@ public class BoundsEditorInput {
                         }
                     }
                 }
-                if (selectedObject != null)
-                    if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-//                        print("deselect");
-                        selectedObject.debugColor = Color.YELLOW;
-                        selectedObject = null;
-                    }
+//                if (selectedObject != null)
+//                    if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
+////                        print("deselect");
+//                        selectedObject.debugColor = Color.YELLOW;
+//                        selectedObject = null;
+//                    }
             }
             return false;
         }
@@ -280,66 +227,13 @@ public class BoundsEditorInput {
 
             if (selectedObject != null) {
                 switch(editorSelectedObjectBehavior) {
-                    case Grab:
-                        Vector3 intersection = new Vector3();
 
-                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
-                        }
-                        break;
-
-                    case Rotate:
-
-                        float sensitivity = 1.5f;
-
-                        Quaternion q = new Quaternion();
-
-                        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                            q.set(Vector3.X, -Gdx.input.getDeltaY() * sensitivity);
-                            selectedObject.rotation.mulLeft(q);
-                        } else {
-                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * sensitivity);
-                            selectedObject.rotation.mulLeft(q);
-                        }
-
-                        selectedObject.rotation.nor();
-
-                        break;
-
-                    case Scale:
-                        Vector3 scaleIntersection = new Vector3();
-                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, scaleIntersection)) {
-
-                            float distance = scaleIntersection.dst(selectedObject.pos);
-
-                            float minScale = 0.1f;
-
-                            float scalePower = 0.3f;
-
-                            float scaleFactor = minScale + (distance * scalePower);
-
-                            scaleFactor = Math.min(scaleFactor, 50f);
-
-                            selectedObject.size.set(new Vector3(scaleFactor,scaleFactor,scaleFactor));
-
-                        }
-                        break;
                     case FreeLook:
                         break;
                 }
             }
 
 
-            for (GameObject obj : staticObjects) {
-                boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
-                obj.debugColor = hit ? Color.ORANGE : Color.YELLOW;
-            }
-
-            if (selectedObject != null) selectedObject.debugColor = Color.ORANGE;
-
-            for (GameObject obj : targetObjects) {
-                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
-            }
 
             for (PavLayout layout : boundsEditorLayout) {
                 layout.isHovered = cursor.clicked(layout.box);

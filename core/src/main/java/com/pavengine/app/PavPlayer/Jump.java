@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.GameObject;
 
 public class Jump implements PlayerBehavior {
@@ -49,18 +50,17 @@ public class Jump implements PlayerBehavior {
         boolean grounded = false;
 
         for (GameObject obj : groundObjects) {
-            if (player.footBox.ringOverlaps(obj.box,player.pos)) {
+            for(PavBounds box : obj.boxes)
+                if (player.footBox.ringOverlaps(box,player.pos)) {
 
-                grounded = true;
+                    grounded = true;
 
-
-
-                if (velocityY <= 0) {
-                    velocityY = 0f;
-                    jumping = false;
+                    if (velocityY <= 0) {
+                        velocityY = 0f;
+                        jumping = false;
+                    }
+                    break;
                 }
-                break;
-            }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && grounded) {

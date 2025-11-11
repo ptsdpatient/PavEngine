@@ -12,7 +12,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.pavengine.app.CameraBehaviorType;
-import com.pavengine.app.PavBounds.Entrance;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.GameObject;
 
@@ -32,59 +31,9 @@ public class Movement implements PlayerBehavior {
         for (GameObject obj : targetObjects) {
             if (obj == player) continue;
 
-            if (
-                player.box.ringOverlaps(obj.box, nextPos) &&
-                    // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
-                    (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
-            ) {
-
-                return true;
-            }
-        }
-
-        for (GameObject obj : groundObjects) {
-            if (obj == player) continue;
-
-            if (
-                player.footBox.ringOverlaps(obj.box, nextPos)) {
-                // --- smooth ramp climbing ---
-                Vector3 d = tmpV1.set(nextPos).sub(player.pos);
-                float h = (float)Math.sqrt(d.x * d.x + d.z * d.z);
-                if (h > 0f) d.scl(0.85f / h);
-                futurePos.set(player.pos.x + d.x * h, player.pos.y + MathUtils.lerp(0, h * 0.35f, 5f), player.pos.z + d.z * h);
-
-
-                return false;
-            }
-        }
-
-        for (GameObject obj : staticObjects) {
-
-            if (obj == player) continue;
-
-            if (obj.isRoom) {
-                for (PavBounds bounds : obj.walls) {
-
-                    if (
-                        !bounds.isGround &&
-                            player.box.ringOverlaps(bounds,nextPos) &&
-                            // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
-                            (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
-                    ) {
-                        if(!obj.entrances.isEmpty()){
-                            for(Entrance e : obj.entrances) {
-                                if(e.bounds.containsRing(player.box.rings,nextPos)) {
-                                    print("contains");
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                }
-            } else {
+            for(PavBounds box : obj.boxes) {
                 if (
-                    player.box.ringOverlaps(obj.box, nextPos) &&
+                    player.boxes.get(0).ringOverlaps(box, nextPos) &&
                         // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
                         (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
                 ) {
@@ -92,6 +41,41 @@ public class Movement implements PlayerBehavior {
                     return true;
                 }
             }
+        }
+
+        for (GameObject obj : groundObjects) {
+            if (obj == player) continue;
+
+            for(PavBounds box : obj.boxes) {
+                if (
+                    player.footBox.ringOverlaps(box, nextPos)) {
+                    // --- smooth ramp climbing ---
+                    Vector3 d = tmpV1.set(nextPos).sub(player.pos);
+                    float h = (float)Math.sqrt(d.x * d.x + d.z * d.z);
+                    if (h > 0f) d.scl(0.85f / h);
+                    futurePos.set(player.pos.x + d.x * h, player.pos.y + MathUtils.lerp(0, h * 0.35f, 5f), player.pos.z + d.z * h);
+
+
+                    return false;
+                }
+            }
+        }
+
+        for (GameObject obj : staticObjects) {
+
+            if (obj == player) continue;
+
+            for(PavBounds box : obj.boxes) {
+                if (
+                    player.boxes.get(0).ringOverlaps(box, nextPos) &&
+                        // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
+                        (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
+                ) {
+
+                    return true;
+                }
+            }
+
         }
         return false;
     }

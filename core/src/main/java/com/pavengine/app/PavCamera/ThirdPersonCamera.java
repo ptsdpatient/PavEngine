@@ -48,30 +48,18 @@ public class ThirdPersonCamera extends PavCamera {
     public boolean isColliding(GameObject player, Quaternion nextRot) {
         for (GameObject obj : targetObjects) {
             if (obj == player) continue;
-            if (
-                new OrientedBoundingBox(player.bounds, new Matrix4(player.pos, nextRot, player.size)).intersects(obj.box.box) &&
-                    // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
-                    (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
-            ) {
-                return true;
-            }
-        }
-
-        for (GameObject obj : staticObjects) {
-            if (obj == player) continue;
-            if (obj.isRoom) {
-                for (PavBounds bounds : obj.walls) {
-                    if (
-                        !bounds.isGround &&
-                            new OrientedBoundingBox(player.bounds, new Matrix4(player.pos, nextRot, player.size)).intersects(bounds.box) &&
-                            // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
-                            (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
-                    ) {
-                        return true;
-                    }
+            for(PavBounds box : obj.boxes) {
+                if (
+                    new OrientedBoundingBox(player.bounds, new Matrix4(player.pos, nextRot, player.size)).intersects(box.box) &&
+                        // player get height / 2f is a way to keep the player pos vector to bottom most for player bottom center position
+                        (player.pos.y - player.getHeight() / 2f <= obj.pos.y + obj.getHeight())
+                ) {
+                    return true;
                 }
             }
         }
+
+
         return false;
     }
 

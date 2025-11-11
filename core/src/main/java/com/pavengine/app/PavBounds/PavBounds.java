@@ -9,9 +9,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 
+
 public class PavBounds {
     public OrientedBoundingBox box = new OrientedBoundingBox();
-    public boolean isGround = false;
+    public PavBoundsType type = PavBoundsType.Bound;
     public Vector3 offset = new Vector3(), min = new Vector3(), max = new Vector3();
     public Vector3[] rings = new Vector3[24];
 
@@ -28,13 +29,13 @@ public class PavBounds {
     public PavBounds(BoundingBox bounds, boolean isGround) {
         min = bounds.min;
         max = bounds.max;
-        this.isGround = isGround;
+        type = !isGround? PavBoundsType.Bound :PavBoundsType.Ground;
     }
 
     public PavBounds(Vector3 min, Vector3 max, boolean isGround) {
         this.min = min;
         this.max = max;
-        this.isGround = isGround;
+        type = !isGround? PavBoundsType.Bound :PavBoundsType.Ground;
     }
 
     public PavBounds(BoundingBox bounds) {

@@ -85,7 +85,7 @@ public class MapEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-        
+
     }
 
     public ArrayList<String> listModels(String path) {
@@ -181,7 +181,8 @@ public class MapEditor extends  PavScreen {
 
         for(GameObject obj : staticObjects) {
             if(obj == selectedObject)
-                debugCube(obj.box, obj.debugColor);
+                for(PavBounds box : obj.boxes)
+                    debugCube(box, obj.debugColor);
         }
 
         axisGizmo.update();

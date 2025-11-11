@@ -46,6 +46,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PathFinder;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.DynamicObject;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -287,16 +288,19 @@ public class GameWorld {
 
 //        Debug Target object
         for (GameObject obj : targetObjects) {
-            debugCube(obj.box, obj.debugColor);
+            for(PavBounds box : obj.boxes)
+                debugCube(box, obj.debugColor);
         }
 
         for (GameObject obj : staticObjects) {
-            debugCube(obj.box, obj.debugColor);
+            for(PavBounds box : obj.boxes)
+                debugCube(box, obj.debugColor);
 
         }
 
         for (GameObject obj : groundObjects) {
-            debugCube(obj.box,obj.debugColor);
+            for(PavBounds box : obj.boxes)
+                debugCube(box, obj.debugColor);
         }
 
 
@@ -334,11 +338,14 @@ public class GameWorld {
 
 
         for (GameObject obj : kinematicObjects) {
-            debugCube(obj.box);
-            if (obj.ringDetection) {
-                debugRing(obj.box.rings);
-                debugRing(obj.footBox.rings);
+            for(PavBounds box : obj.boxes){
+                debugCube(box, obj.debugColor);
+                if (obj.ringDetection) {
+                    debugRing(box.rings);
+                    debugRing(obj.footBox.rings);
+                }
             }
+
             if(obj.detectSlope) {
 //                for(SlopeRay ray : obj.slopeRays){
 //                    debugRay(ray);

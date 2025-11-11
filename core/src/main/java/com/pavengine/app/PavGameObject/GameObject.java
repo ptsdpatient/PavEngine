@@ -15,8 +15,6 @@ import com.pavengine.app.InputBehavior.InputBehavior;
 import com.pavengine.app.InteractType;
 import com.pavengine.app.ObjectBehaviorType;
 import com.pavengine.app.ObjectType;
-import com.pavengine.app.PavBounds.Entrance;
-import com.pavengine.app.PavBounds.EntranceBluprint;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.SlopeRay;
 
@@ -28,7 +26,6 @@ import java.util.Random;
 public abstract class GameObject {
     public final float VELOCITY_THRESHOLD = 10f;
     public final Random random = new Random();
-    public boolean draggable = false;
     public boolean gravity = false;
     public boolean ringDetection = false;
     public int currentAnimation = 0;
@@ -47,7 +44,7 @@ public abstract class GameObject {
     public Array<Actions> actions = new Array<>();
     public String[] animationNames;
     public GameObject attachObject;
-    public Color debugColor = new Color(Color.ORANGE);
+    public Color debugColor = new Color(Color.LIGHT_GRAY);
     public Quaternion rotation = new Quaternion(), deltaRotation = new Quaternion();
     public String name;
     public boolean isStatic = false;
@@ -56,7 +53,8 @@ public abstract class GameObject {
     public boolean interacted = false;
     public Scene scene;
     public BoundingBox bounds;
-    public PavBounds box, footBox = new PavBounds(), attackBox = new PavBounds();
+    public Array<PavBounds> boxes = new Array<>();
+    public PavBounds footBox = new PavBounds(), attackBox = new PavBounds();
     public Vector3 center = new Vector3(), bottom = new Vector3(), dir = new Vector3();
     public ObjectType objectType;
     public ObjectBehaviorType objectBehaviorType = ObjectBehaviorType.Static;
@@ -69,95 +67,9 @@ public abstract class GameObject {
     public ArrayList<InputBehavior> inputBehaviorList = new ArrayList<>();
     public boolean detectSlope = false;
 
-    public ArrayList<PavBounds> walls = new ArrayList<>();
-    public ArrayList<Entrance> entrances = new ArrayList<>();
-
-
     public GameObject() {
+
     }
-
-
-    public void createEntrance(PavBounds wall, Vector3 offset, Vector3 size, Entrance.Type type) {
-        // Create local entrance bounds (relative to wall’s local space)
-        BoundingBox localBox = new BoundingBox(
-            new Vector3(offset),
-            new Vector3(offset).add(size)
-        );
-
-        // Build entrance OBB in wall’s space
-        OrientedBoundingBox entranceBox = new OrientedBoundingBox(localBox, wall.box.transform);
-
-        entrances.add(new Entrance(type, entranceBox, false));
-    }
-
-
-    public void setRoom(float thickness, ArrayList<EntranceBluprint> entrances) {
-        isRoom = true;
-        walls.clear();
-
-        float hw = getWidth() * 0.5f;
-        float hd = getDepth() * 0.5f;
-        float hh = getHeight() * 0.5f;
-
-
-        Vector3 min = bounds.min.cpy();
-        Vector3 max = bounds.max.cpy();
-
-        // LEFT wall
-        PavBounds leftWall = new PavBounds(new OrientedBoundingBox(
-            new BoundingBox(min.cpy(),
-                min.cpy().add(thickness, bounds.getHeight(), bounds.getDepth())),
-            new Matrix4(pos, rotation, size)));
-
-        // FRONT wall
-        PavBounds frontWall = new PavBounds(new OrientedBoundingBox(
-            new BoundingBox(min.cpy(),
-                min.cpy().add(bounds.getWidth(), bounds.getHeight(), thickness)),
-            new Matrix4(pos, rotation, size)));
-
-        // BACK wall
-        PavBounds backWall = new PavBounds(new OrientedBoundingBox(
-            new BoundingBox(min.cpy().add(0, 0, bounds.getDepth() - thickness),
-                min.cpy().add(bounds.getWidth(), bounds.getHeight(), bounds.getDepth())),
-            new Matrix4(pos, rotation, size)));
-
-        // RIGHT wall
-        PavBounds rightWall = new PavBounds(new OrientedBoundingBox(
-            new BoundingBox(min.cpy().add(bounds.getWidth() - thickness, 0, 0),
-                min.cpy().add(bounds.getWidth(), bounds.getHeight(), bounds.getDepth())),
-            new Matrix4(pos, rotation, size)));
-
-        for (EntranceBluprint entrance : entrances) {
-            switch (entrance.side) {
-                case FRONT: {
-                    createEntrance(frontWall, entrance.offset, entrance.size, entrance.type);
-                }
-                ;
-                break;
-                case RIGHT: {
-                    createEntrance(rightWall, entrance.offset, entrance.size, entrance.type);
-                }
-                ;
-                break;
-                case LEFT: {
-                    createEntrance(leftWall, entrance.offset, entrance.size, entrance.type);
-                }
-                ;
-                break;
-                case BACK: {
-                    createEntrance(backWall, entrance.offset, entrance.size, entrance.type);
-                }
-                ;
-                break;
-            }
-        }
-
-        walls.add(leftWall);
-        walls.add(frontWall);
-        walls.add(backWall);
-        walls.add(rightWall);
-    }
-
 
     public abstract void setRing(float ringRadius, float ringHeightOffset);
 

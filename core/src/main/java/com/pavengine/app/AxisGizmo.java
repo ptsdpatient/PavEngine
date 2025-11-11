@@ -92,6 +92,7 @@ public class AxisGizmo {
         Vector3 dir = new Vector3(pos).sub(camera.position);
 
         pavCamera.setDirection(dir);
+        print("direction to set");
 
     }
 

@@ -19,6 +19,7 @@ import static com.pavengine.app.PavInput.BoundsEditorInput.boundsEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
+import static com.pavengine.app.PavUI.PavAnchor.CENTER_RIGHT;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_CENTER;
 import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
@@ -29,8 +30,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
+import com.pavengine.app.PavUI.BoundsLister;
 import com.pavengine.app.PavUI.ClickBehavior;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
@@ -69,6 +72,8 @@ public class BoundsEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(boundsEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
+
+        addAndGet(boundsEditorLayout,new PavLayout(CENTER_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new BoundsLister(font));
 
     }
 
@@ -165,7 +170,8 @@ public class BoundsEditor extends  PavScreen {
 
         for(GameObject obj : staticObjects) {
             if(obj == selectedObject)
-                debugCube(obj.box, obj.debugColor);
+                for(PavBounds box : obj.boxes)
+                    debugCube(box, obj.debugColor);
         }
 
         axisGizmo.update();

@@ -15,8 +15,6 @@ import com.badlogic.gdx.math.Vector3;
 public class BoundsEditorCamera extends PavCamera {
     private final Vector3 target = new Vector3(0, 0, 0); // focus/orbit point
     private float distance = 10f; // distance from target
-    private float yaw = 45f; // rotation around Y
-    private float pitch = 30f; // rotation around X
     private float sensitivity = 0.3f;
     private float zoomSpeed = 10f;
     private float panSpeed = 0.01f;
