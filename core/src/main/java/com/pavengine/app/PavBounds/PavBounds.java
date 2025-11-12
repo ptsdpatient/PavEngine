@@ -11,12 +11,14 @@ import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 
 
 public class PavBounds {
+
     public OrientedBoundingBox box = new OrientedBoundingBox();
     public PavBoundsType type = PavBoundsType.Bound;
     public Vector3 offset = new Vector3(), min = new Vector3(), max = new Vector3();
     public Vector3[] rings = new Vector3[24];
+    public Quaternion rotation = new Quaternion();
 
-    public float ringRadius=2f ,heightOffset =0f;
+    public float ringRadius=2f , heightOffset =0f;
 
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;
@@ -142,6 +144,21 @@ public class PavBounds {
     public void set(BoundingBox bounds, Matrix4 transform) {
         box.set(bounds, transform);
     }
+
+    public void set(Vector3 position) {
+        BoundingBox bounds = new BoundingBox(min, max);
+
+        Vector3 center = new Vector3();
+        bounds.getCenter(center);
+
+        Vector3 finalPos = new Vector3(position).add(offset).add(center);
+
+        Matrix4 transform = new Matrix4()
+            .set(finalPos, rotation, new Vector3(1, 1, 1));
+
+        box.set(bounds, transform);
+    }
+
 
     public boolean intersects(PavBounds orientedBoundingBox) {
         return orientedBoundingBox.box.intersects(box);

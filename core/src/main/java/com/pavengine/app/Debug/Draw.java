@@ -3,6 +3,7 @@ package com.pavengine.app.Debug;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.overlayCamera;
+import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
 import static com.pavengine.app.PavScreen.GameWorld.shapeRenderer;
 
 import com.badlogic.gdx.Gdx;
@@ -174,7 +175,22 @@ public class Draw {
     public static void debugCube(PavBounds box) {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.YELLOW);
+        switch (box.type) {
+            case Bound:
+                shapeRenderer.setColor(Color.ORANGE);
+                break;
+            case Ground:
+                shapeRenderer.setColor(Color.GREEN);
+                break;
+            case HurtBounds:
+                shapeRenderer.setColor(Color.RED);
+                break;
+            case Enterance:
+                shapeRenderer.setColor(Color.BLUE);
+                break;
+        }
+
+        if(box == selectedBound) shapeRenderer.setColor(Color.CYAN);
 
         Vector3[] corners = box.getVertices();
 

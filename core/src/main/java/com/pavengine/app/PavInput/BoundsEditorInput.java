@@ -12,8 +12,10 @@ import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavScreen.BoundsEditor.bounds;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
+import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
@@ -30,6 +32,7 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -38,7 +41,11 @@ import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
 public class BoundsEditorInput {
+    enum TransformMode { NONE, MOVE, SCALE, ROTATE }
+
     public static InputProcessor boundsEditorInput = new InputProcessor() {
+        private TransformMode transformMode = TransformMode.NONE;
+        private Vector3 activeAxis = Vector3.X;
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
         Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
@@ -48,7 +55,38 @@ public class BoundsEditorInput {
 
         @Override
         public boolean keyDown(int keycode) {
-            return false;
+            switch (keycode) {
+                case Input.Keys.G: // Move
+                    transformMode = TransformMode.MOVE;
+                    print("Mode: MOVE");
+                    break;
+                case Input.Keys.S: // Scale
+                    transformMode = TransformMode.SCALE;
+                    print("Mode: SCALE");
+                    break;
+                case Input.Keys.R: // Rotate
+                    transformMode = TransformMode.ROTATE;
+                    print("Mode: ROTATE");
+                    break;
+                case Input.Keys.X:
+                    activeAxis = Vector3.X;
+                    print("Axis: X");
+                    break;
+                case Input.Keys.Y:
+                    activeAxis = Vector3.Y;
+                    print("Axis: Y");
+                    break;
+                case Input.Keys.Z:
+                    activeAxis = Vector3.Z;
+                    print("Axis: Z");
+                    break;
+                case Input.Keys.ESCAPE:
+                    transformMode = TransformMode.NONE;
+                    activeAxis = Vector3.Zero;
+                    print("Mode: NONE");
+                    break;
+            }
+            return true;
         }
 
         @Override
@@ -73,37 +111,17 @@ public class BoundsEditorInput {
 
             setPerspectiveTouch();
 
-//            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
-//                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
-//
-//                    print("gizmo drag");
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                    return true;
-//                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
-//                    dragAxis.set(box.direction);
-//                    axisOffset = clickToCenter.dot(dragAxis);
-//
-//                    dragPlane = new Plane(camera.direction, dragStartPos);
-//                    gizmoDrag = true;
-//                    return true;
-//                }
-//            }
-
-//            for (GameObject obj : staticObjects) {
-//                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-//                    setSelectedObject(obj);
-//                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                    return true;
-//                }
-//            }
-
-//            for (GameObject obj : targetObjects) {
-//                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-//                    setSelectedObject(obj);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                }
-//            }
+            if(button == Input.Buttons.LEFT) {
+                for (PavBounds obj : bounds) {
+                    if (Intersector.intersectRayOrientedBounds(perspectiveTouchRay, obj.box, perspectiveTouch)) {
+                        selectedBound = obj;
+                        Vector3 center = obj.box.getBounds().getCenter(new Vector3());
+                        dragPlane = new Plane(camera.direction, center);
+                        dragOffset.set(new Vector3());
+                        return true;
+                    }
+                }
+            }
 
             return false;
         }
@@ -124,10 +142,13 @@ public class BoundsEditorInput {
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
             }
 
-            overlayTouch = new Vector3(screenX, screenY, 0);
-            overlayViewport.unproject(overlayTouch);
 
             if (button == Input.Buttons.LEFT) {
+
+                if (selectedBound != null)
+                    if (!Intersector.intersectRayOrientedBounds(perspectiveTouchRay, selectedBound.box, perspectiveTouch)) {
+                        selectedBound = null;
+                    }
 
                 if (cursor.clicked(axisGizmo.xRect)) {
                     axisGizmo.lookFromAxis(Vector3.X);
@@ -152,7 +173,6 @@ public class BoundsEditorInput {
 
                             switch (widget.clickBehavior) {
 
-
                                 case AddStaticObjectToMapEditor: {
                                     print("add : " + widget.text);
                                     world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
@@ -169,12 +189,7 @@ public class BoundsEditorInput {
                         }
                     }
                 }
-//                if (selectedObject != null)
-//                    if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-////                        print("deselect");
-//                        selectedObject.debugColor = Color.YELLOW;
-//                        selectedObject = null;
-//                    }
+
             }
             return false;
         }
@@ -189,41 +204,28 @@ public class BoundsEditorInput {
 
             setPerspectiveTouch();
 
-
-            overlayTouch = new Vector3(screenX, screenY, 0);
-            overlayViewport.unproject(overlayTouch);
-
-
             if (enableCursor) cursor.setCursor(2);
 
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (selectedBound != null) {
+                    for (PavLayout layout : boundsEditorLayout) {
+                        if (cursor.clicked(layout.box))
+                            return true;
+                    }
 
-//            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//                if (selectedObject != null) {
-//                    for (PavLayout layout : boundsEditorLayout) {
-//                        if (cursor.clicked(layout.box))
-//                            return true;
-//                    }
-//
-//                    if (cursor.clicked(mapEditorPanel))
-//                        return true;
-//
-//                    if (PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch))
-//                        selectedObject.pos.set(perspectiveTouch.x, perspectiveTouch.y - selectedObject.getHeight()/2f, perspectiveTouch.z);
-//                    Vector3 intersection = new Vector3();
-//
-//                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-//                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
-//                    }
-//                }
-//            }
+                    Vector3 intersection = new Vector3();
+                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
+                        Vector3 newPos = intersection.add(dragOffset);
+                        selectedBound.set(newPos);
+                    }
+                }
+            }
 
             return false;
         }
 
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
-
-//            print("mouse moving");
 
             setPerspectiveTouch();
 
@@ -235,7 +237,6 @@ public class BoundsEditorInput {
                 }
             }
 
-//            if(cursor.clicked(boundsLister.buttonRect)) {
 
             boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
 
@@ -245,7 +246,6 @@ public class BoundsEditorInput {
             } else if (boundsLister.dropDownExpand) {
                 boundsLister.dropDownExpand = false;
             }
-//            }
 
             for (PavLayout layout : boundsEditorLayout) {
                 layout.isHovered = cursor.clicked(layout.box);
@@ -268,10 +268,6 @@ public class BoundsEditorInput {
 
         @Override
         public boolean scrolled(float amountX, float amountY) {
-
-//            print("scrolled");
-
-
 
             if(cursor.clicked(boundsLister.box) && !boundsLister.dropDownExpand) {
                 boundsLister.scrollOffset += amountY * 10;
@@ -307,13 +303,11 @@ public class BoundsEditorInput {
     };
 
     private static void setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior value) {
-//        PavEngine.editorSelectedObjectBehavior = PavEngine.editorSelectedObjectBehavior == value? EditorSelectedObjectBehavior.FreeLook: value;
         PavEngine.editorSelectedObjectBehavior = value;
         editorSelectedObjectText.text = PavEngine.editorSelectedObjectBehavior.name();
     }
 
     private static void setSelectedObject(GameObject obj) {
-//        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
         selectedObject = obj;
     }
 

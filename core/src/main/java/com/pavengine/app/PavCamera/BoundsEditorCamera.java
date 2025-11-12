@@ -41,7 +41,6 @@ public class BoundsEditorCamera extends PavCamera {
         if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector3 right = new Vector3(MathUtils.sinDeg(yaw - 90), 0, MathUtils.cosDeg(yaw - 90));
             Vector3 up = Vector3.Y.cpy();
-
             target.mulAdd(right, -dx * panSpeed * distance);
             target.mulAdd(up, -dy * panSpeed * distance);
         }

@@ -50,6 +50,7 @@ public class BoundsEditor extends  PavScreen {
     private BitmapFont font;
     public static BoundsLister boundsLister;
     public static Array<PavBounds> bounds = new Array<>();
+    public static PavBounds selectedBound = new PavBounds();
     public BoundsEditor(PavEngine game) {
         super(game);
 
