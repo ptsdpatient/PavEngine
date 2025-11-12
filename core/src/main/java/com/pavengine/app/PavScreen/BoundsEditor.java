@@ -48,7 +48,8 @@ public class BoundsEditor extends  PavScreen {
     public static Array<PavLayout> boundsEditorLayout = new Array<>();
     public static PavWidget exportModelInfo;
     private BitmapFont font;
-
+    public static BoundsLister boundsLister;
+    public static Array<PavBounds> bounds = new Array<>();
     public BoundsEditor(PavEngine game) {
         super(game);
 
@@ -58,7 +59,7 @@ public class BoundsEditor extends  PavScreen {
 
         boundsEditorLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
         for (String model : listModels("assets/models/"))
-            boundsEditorLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+            boundsEditorLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[2], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
 
 
 //        scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
@@ -67,13 +68,14 @@ public class BoundsEditor extends  PavScreen {
 //        selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
 
 
-        addAndGet(boundsEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+        boundsLister = new BoundsLister(font, uiBG[1], hoverUIBG[2]);
+        addAndGet(boundsEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Save", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(boundsEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
-        addAndGet(boundsEditorLayout,new PavLayout(CENTER_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new BoundsLister(font));
+        addAndGet(boundsEditorLayout,new PavLayout(CENTER_RIGHT, COLUMN, 5, 220, 350, 5)).addSprite(boundsLister);
 
     }
 
@@ -160,18 +162,22 @@ public class BoundsEditor extends  PavScreen {
         batch.end();
 
 
-        for(PavLayout layout : boundsEditorLayout) {
-            for(PavWidget widget : layout.widgets) {
-                if(widget.isHovered)
-                    debugRectangle(widget.box, Color.GREEN);
-            }
-        }
+//        for(PavLayout layout : boundsEditorLayout) {
+//            for(PavWidget widget : layout.widgets) {
+//                if(widget.isHovered)
+//                    debugRectangle(widget.box, Color.GREEN);
+//            }
+//        }
 
 
         for(GameObject obj : staticObjects) {
             if(obj == selectedObject)
                 for(PavBounds box : obj.boxes)
                     debugCube(box, obj.debugColor);
+        }
+
+        for(PavBounds box : bounds) {
+            debugCube(box);
         }
 
         axisGizmo.update();

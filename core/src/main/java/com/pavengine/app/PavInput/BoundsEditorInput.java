@@ -13,6 +13,7 @@ import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
+import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
@@ -127,6 +128,7 @@ public class BoundsEditorInput {
             overlayViewport.unproject(overlayTouch);
 
             if (button == Input.Buttons.LEFT) {
+
                 if (cursor.clicked(axisGizmo.xRect)) {
                     axisGizmo.lookFromAxis(Vector3.X);
                     return true;
@@ -233,7 +235,17 @@ public class BoundsEditorInput {
                 }
             }
 
+//            if(cursor.clicked(boundsLister.buttonRect)) {
 
+            boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
+
+            if (cursor.clicked(boundsLister.box)) {
+                if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
+                    boundsLister.dropDownExpand = true;
+            } else if (boundsLister.dropDownExpand) {
+                boundsLister.dropDownExpand = false;
+            }
+//            }
 
             for (PavLayout layout : boundsEditorLayout) {
                 layout.isHovered = cursor.clicked(layout.box);
@@ -259,7 +271,12 @@ public class BoundsEditorInput {
 
 //            print("scrolled");
 
-            pavCamera.zoom(amountY);
+
+
+            if(cursor.clicked(boundsLister.box) && !boundsLister.dropDownExpand) {
+                boundsLister.scrollOffset += amountY * 10;
+                return true;
+            }
 
             for (PavLayout layout : boundsEditorLayout) {
                 if (layout.isHovered) {
@@ -282,7 +299,7 @@ public class BoundsEditorInput {
                 }
             }
 
-
+            pavCamera.zoom(amountY);
 
 
             return false;

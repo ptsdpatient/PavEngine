@@ -14,7 +14,7 @@ import com.pavengine.app.AnimationCurve;
 
 public class TextButton extends PavWidget {
     GlyphLayout layout;
-    TextureRegion hoverTexture = new TextureRegion();
+    TextureRegion hoverTexture;
     AnimationCurve curve = AnimationCurve.EASE_IN_OUT;
 
     public TextButton(String text, BitmapFont font, ClickBehavior clickBehavior) {
@@ -68,9 +68,9 @@ public class TextButton extends PavWidget {
         float textX = box.x + (box.width - layout.width) / 2f;
         float textY = box.y + (box.height + layout.height) / 2f;
 
-//        if (isHovered && hoverTexture != null) {
-//            sb.draw(hoverTexture, box.x, box.y, box.width, box.height);
-//        }
+        if (isHovered && hoverTexture != null) {
+            sb.draw(hoverTexture, box.x, box.y, box.width, box.height);
+        }
 
         font.draw(sb, layout, textX, textY);
 

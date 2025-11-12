@@ -32,6 +32,13 @@ public class PavBounds {
         type = !isGround? PavBoundsType.Bound :PavBoundsType.Ground;
     }
 
+    public PavBounds(PavBoundsType type) {
+        min = new Vector3(-1f,-1f,-1f);
+        max = new Vector3(1f,1f,1f);
+        box = new OrientedBoundingBox(new BoundingBox(min,max));
+        this.type = type;
+    }
+
     public PavBounds(Vector3 min, Vector3 max, boolean isGround) {
         this.min = min;
         this.max = max;

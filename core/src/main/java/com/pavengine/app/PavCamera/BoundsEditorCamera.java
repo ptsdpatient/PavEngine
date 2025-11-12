@@ -38,7 +38,7 @@ public class BoundsEditorCamera extends PavCamera {
             pitch = MathUtils.clamp(pitch - dy, -89, 89);
         }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT) && Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector3 right = new Vector3(MathUtils.sinDeg(yaw - 90), 0, MathUtils.cosDeg(yaw - 90));
             Vector3 up = Vector3.Y.cpy();
 
