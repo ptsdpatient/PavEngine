@@ -17,6 +17,7 @@ public class PavBounds {
     public Vector3 offset = new Vector3(), min = new Vector3(), max = new Vector3();
     public Vector3[] rings = new Vector3[24];
     public Quaternion rotation = new Quaternion();
+    public Vector3 center = new Vector3(0,0,0);
 
     public float ringRadius=2f , heightOffset =0f;
 
@@ -163,4 +164,32 @@ public class PavBounds {
     public boolean intersects(PavBounds orientedBoundingBox) {
         return orientedBoundingBox.box.intersects(box);
     }
+
+    public void setSize(Vector3 newSize) {
+
+        float sx = Math.max(0.0001f, newSize.x);
+        float sy = Math.max(0.0001f, newSize.y);
+        float sz = Math.max(0.0001f, newSize.z);
+
+        min.set(center.x - sx / 2f, center.y - sy / 2f, center.z - sz / 2f);
+        max.set(center.x + sx / 2f, center.y + sy / 2f, center.z + sz / 2f);
+
+        updateBox();
+
+        box.transform.idt();
+        box.transform.translate(center);
+        box.transform.rotate(rotation);
+        box.transform.scale(sx, sy, sz);
+
+    }
+
+    private void updateBox() {
+        box.setBounds(new BoundingBox(min,max));
+    }
+
+
+//    public Vector3 getPosition() {
+//        box.getTransform().getTranslation(center);
+//        return center;
+//    }
 }
