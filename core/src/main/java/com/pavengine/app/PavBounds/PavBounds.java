@@ -14,7 +14,9 @@ public class PavBounds {
 
     public OrientedBoundingBox box = new OrientedBoundingBox();
     public PavBoundsType type = PavBoundsType.Bound;
-    public Vector3 position = new Vector3(0,0,0), scale = new Vector3(1f,1f,1f);
+    public Vector3
+        position = new Vector3(0,0,0),
+        scale = new Vector3(1f,1f,1f);
     public Vector3 ringOffset = new Vector3();
     public Vector3[] rings = new Vector3[24];
     public Quaternion rotation = new Quaternion();
@@ -24,9 +26,9 @@ public class PavBounds {
         new BoundingBox(new Vector3(-0.5f, -0.5f, -0.5f),
             new Vector3( 0.5f,  0.5f,  0.5f));
 
-    Matrix4 transform = new Matrix4();
+    public Matrix4 transform = new Matrix4();
 
-    public float ringRadius=2f , heightOffset =0f;
+    public float ringRadius=2f , heightOffset = 0f;
 
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;

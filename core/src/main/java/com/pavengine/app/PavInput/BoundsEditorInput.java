@@ -33,6 +33,7 @@ import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
+import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
@@ -145,7 +146,10 @@ public class BoundsEditorInput {
 
             if (button == Input.Buttons.LEFT) {
                 for (PavBounds obj : bounds) {
-                    if (Intersector.intersectRayOrientedBounds(perspectiveTouchRay, obj.box, perspectiveTouch)) {
+                    if (
+//                        Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, obj.box.getBounds(), obj.transform)
+                        PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
+                    ) {
                         if(selectedBound != null) {
                             initialPosition = selectedBound.getCenter();
                             dragPlane = new Plane(camera.direction, initialPosition);
@@ -156,7 +160,7 @@ public class BoundsEditorInput {
                         selectedBound = selectedBound == null ? obj : null;
 //                        selectedBound = obj;
 //                        activeAxis.set(Vector3.Zero);
-                        transformMode = TransformMode.MOVE;
+                        transformMode = TransformMode.NONE;
 
                         return true;
                     }
@@ -181,7 +185,11 @@ public class BoundsEditorInput {
             if (button == Input.Buttons.LEFT) {
 
                 if (selectedBound != null) {
-                    if (!Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, selectedBound.box)) {
+                    if (
+//                        !Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, selectedBound.box)
+                        !PavIntersector.intersect(perspectiveTouchRay,selectedBound.box.getBounds(),selectedBound.transform,perspectiveTouch)
+
+                    ) {
 //                        initialPosition = selectedBound.getCenter();
                         if(selectedBound != null) {
                             initialPosition = selectedBound.getCenter();
@@ -190,7 +198,7 @@ public class BoundsEditorInput {
                         }
                         selectedBound = null;
 //                        activeAxis.set(Vector3.Zero);
-                        transformMode = TransformMode.MOVE;
+                        transformMode = TransformMode.NONE;
 
                     }
                 }
