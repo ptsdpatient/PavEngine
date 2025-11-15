@@ -153,7 +153,7 @@ public class PavBounds {
         rebuild();
     }
 
-    private void rebuild() {
+    public void rebuild() {
 
         transform.idt()
             .translate(position)

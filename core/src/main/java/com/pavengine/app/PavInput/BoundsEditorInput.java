@@ -57,39 +57,42 @@ public class BoundsEditorInput {
             if(selectedBound != null) switch (keycode) {
                 case Input.Keys.G:
                     if (transformMode != TransformMode.NONE) {
-//                        print("not none");
                         transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
                     initialPosition = selectedBound.getCenter();
                     transformMode = TransformMode.MOVE;
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
                     activeAxis = Vector3.Zero;
-//                    print("Mode: MOVE");
                     break;
                 case Input.Keys.S:
                     if (transformMode != TransformMode.NONE) {
-//                        print("not none");
                         transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.SCALE;
                     initialPosition = selectedBound.getCenter();
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
-//                    print("Mode: SCALE");
                     break;
                 case Input.Keys.R:
                     if (transformMode != TransformMode.NONE) {
-//                        print("not none");
                         transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.ROTATE;
-//                    print("Mode: ROTATE");
+                    initialPosition = selectedBound.getCenter();
+                    dragPlane = new Plane(camera.direction, initialPosition);
+                    dragOffset.set(new Vector3());
                     break;
                 case Input.Keys.X:
                     if (activeAxis == Vector3.X) {
@@ -98,7 +101,6 @@ public class BoundsEditorInput {
                     }
 
                     activeAxis = Vector3.X;
-//                    print("Axis: X");
                     break;
                 case Input.Keys.Y:
                     if (activeAxis == Vector3.Y) {
@@ -106,7 +108,6 @@ public class BoundsEditorInput {
                         break;
                     }
                     activeAxis = Vector3.Y;
-//                    print("Axis: Y");
                     break;
                 case Input.Keys.Z:
                     if (activeAxis == Vector3.Z) {
@@ -117,7 +118,7 @@ public class BoundsEditorInput {
                     break;
                 case Input.Keys.ESCAPE:
                     transformMode = TransformMode.NONE;
-                    activeAxis = Vector3.Zero;
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                     break;
             }
             return true;
@@ -147,7 +148,6 @@ public class BoundsEditorInput {
             if (button == Input.Buttons.LEFT) {
                 for (PavBounds obj : bounds) {
                     if (
-//                        Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, obj.box.getBounds(), obj.transform)
                         PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
                     ) {
                         if(selectedBound != null) {
@@ -155,12 +155,10 @@ public class BoundsEditorInput {
                             dragPlane = new Plane(camera.direction, initialPosition);
                             dragOffset.set(new Vector3());
                         }
-//                        if(selectedObject != null) initialPosition = selectedBound.getCenter();
 
                         selectedBound = selectedBound == null ? obj : null;
-//                        selectedBound = obj;
-//                        activeAxis.set(Vector3.Zero);
                         transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
 
                         return true;
                     }
@@ -186,19 +184,17 @@ public class BoundsEditorInput {
 
                 if (selectedBound != null) {
                     if (
-//                        !Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, selectedBound.box)
                         !PavIntersector.intersect(perspectiveTouchRay,selectedBound.box.getBounds(),selectedBound.transform,perspectiveTouch)
 
                     ) {
-//                        initialPosition = selectedBound.getCenter();
                         if(selectedBound != null) {
                             initialPosition = selectedBound.getCenter();
                             dragPlane = new Plane(camera.direction, initialPosition);
                             dragOffset.set(new Vector3());
                         }
                         selectedBound = null;
-//                        activeAxis.set(Vector3.Zero);
                         transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
 
                     }
                 }
@@ -284,7 +280,6 @@ public class BoundsEditorInput {
                     case MOVE:
                         Vector3 intersection = new Vector3();
                         if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-//                            print(intersection + " : " + initialPosition);
                             if (!activeAxis.isZero()) {
                                 if (activeAxis.equals(Vector3.X))
                                     intersection.set(intersection.x, initialPosition.y, initialPosition.z);
@@ -292,7 +287,6 @@ public class BoundsEditorInput {
                                     intersection.set(initialPosition.x, intersection.y, initialPosition.z);
                                 else if (activeAxis.equals(Vector3.Z))
                                     intersection.set(initialPosition.x, initialPosition.y, intersection.z);
-//                                print(intersection);
                             }
 
                             selectedBound.setPosition(intersection);
@@ -317,6 +311,20 @@ public class BoundsEditorInput {
 
                         break;
                     case ROTATE:
+                        float sensitivity = 1.5f;
+
+                        Quaternion q = new Quaternion();
+
+                        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                            q.set(Vector3.X, -Gdx.input.getDeltaY() * sensitivity);
+                            selectedBound.rotation.mulLeft(q);
+                        } else {
+                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * sensitivity);
+                            selectedBound.rotation.mulLeft(q);
+                        }
+
+                        selectedBound.rotation.nor();
+                        selectedBound.rebuild();
                         break;
                 }
             }

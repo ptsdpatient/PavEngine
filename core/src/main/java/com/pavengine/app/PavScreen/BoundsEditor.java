@@ -73,7 +73,7 @@ public class BoundsEditor extends  PavScreen {
         boundsLister = new BoundsLister(font, uiBG[1], hoverUIBG[2]);
         addAndGet(boundsEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Save", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
 
-        PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
+        PavEngine.editorSelectedObjectText = new TextButton("Free Look", font, ClickBehavior.Nothing);
 
         addAndGet(boundsEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
