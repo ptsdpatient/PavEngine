@@ -3,15 +3,16 @@ package com.pavengine.app.PavInput;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
+import static com.pavengine.app.PavCrypt.PavCrypt.writeArray;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
-import static com.pavengine.app.PavScreen.BoundsEditor.bounds;
+import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
 import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
@@ -23,10 +24,15 @@ import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
@@ -36,6 +42,10 @@ import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BoundsEditorInput {
     enum TransformMode {NONE, MOVE, SCALE, ROTATE}
@@ -120,6 +130,11 @@ public class BoundsEditorInput {
                     transformMode = TransformMode.NONE;
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                     break;
+                case Input.Keys.FORWARD_DEL:
+                    print("delete");
+                    selectedObject.boxes.removeValue(selectedBound,true);
+                    selectedBound = null;
+                    break;
             }
             return true;
         }
@@ -143,24 +158,26 @@ public class BoundsEditorInput {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            setPerspectiveTouch();
+            if(selectedObject != null) {
+                setPerspectiveTouch();
 
-            if (button == Input.Buttons.LEFT) {
-                for (PavBounds obj : bounds) {
-                    if (
-                        PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
-                    ) {
-                        if(selectedBound != null) {
-                            initialPosition = selectedBound.getCenter();
-                            dragPlane = new Plane(camera.direction, initialPosition);
-                            dragOffset.set(new Vector3());
+                if (button == Input.Buttons.LEFT) {
+                    for (PavBounds obj : selectedObject.boxes) {
+                        if (
+                            PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
+                        ) {
+                            if(selectedBound != null) {
+                                initialPosition = selectedBound.getCenter();
+                                dragPlane = new Plane(camera.direction, initialPosition);
+                                dragOffset.set(new Vector3());
+                            }
+
+                            selectedBound = selectedBound == null ? obj : null;
+                            transformMode = TransformMode.NONE;
+                            setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+
+                            return true;
                         }
-
-                        selectedBound = selectedBound == null ? obj : null;
-                        transformMode = TransformMode.NONE;
-                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-
-                        return true;
                     }
                 }
             }
@@ -176,6 +193,42 @@ public class BoundsEditorInput {
             if (!enableCursor) {
                 lockCursor(false);
                 Gdx.input.setCursorCatched(true);
+            }
+
+            for (PavLayout layout : boundsEditorLayout) {
+
+                for (PavWidget widget : layout.widgets) {
+
+                    if (cursor.clicked(widget.box)) {
+
+                        switch (widget.clickBehavior) {
+                            case SaveBoundsArray : {
+                                if(selectedObject != null) {
+                                    writeArray(selectedObject.name,selectedObject.boxes);
+                                }
+
+                            } break;
+                            case AddStaticObjectToMapEditor: {
+                                if(selectedObject != null) {
+                                    staticObjects.peek().boxes.clear();
+                                    sceneManager.removeScene(staticObjects.peek().scene);
+                                }
+//                                print("add : " + widget.text);
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                setSelectedObject(staticObjects.get(staticObjects.size - 1));
+                                selectedObject.boxes.addAll(readArray(selectedObject.name));
+//                                print(selectedObject == null ? "null" : "exists");
+                                return true;
+                            }
+                            case ExitGame: {
+                                Gdx.app.exit();
+                            }
+
+                            break;
+                        }
+                        return true;
+                    }
+                }
             }
 
             setPerspectiveTouch();
@@ -195,7 +248,6 @@ public class BoundsEditorInput {
                         selectedBound = null;
                         transformMode = TransformMode.NONE;
                         setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-
                     }
                 }
 
@@ -214,31 +266,7 @@ public class BoundsEditorInput {
                 if (cursor.clicked(mapEditorPanel))
                     return true;
 
-                for (PavLayout layout : boundsEditorLayout) {
 
-
-                    for (PavWidget widget : layout.widgets) {
-
-                        if (cursor.clicked(widget.box)) {
-
-                            switch (widget.clickBehavior) {
-
-                                case AddStaticObjectToMapEditor: {
-                                    print("add : " + widget.text);
-                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                    setSelectedObject(staticObjects.get(staticObjects.size - 1));
-                                    print(selectedObject == null ? "null" : "exists");
-                                    return true;
-                                }
-                                case ExitGame: {
-                                    Gdx.app.exit();
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-                }
 
             }
             return false;
@@ -271,72 +299,72 @@ public class BoundsEditorInput {
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
 
-            setPerspectiveTouch();
+            if(selectedObject != null) {
+                setPerspectiveTouch();
 
-            if (selectedBound != null) {
-                switch (transformMode) {
-                    case NONE:
-                        break;
-                    case MOVE:
-                        Vector3 intersection = new Vector3();
-                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-                            if (!activeAxis.isZero()) {
-                                if (activeAxis.equals(Vector3.X))
-                                    intersection.set(intersection.x, initialPosition.y, initialPosition.z);
-                                else if (activeAxis.equals(Vector3.Y))
-                                    intersection.set(initialPosition.x, intersection.y, initialPosition.z);
-                                else if (activeAxis.equals(Vector3.Z))
-                                    intersection.set(initialPosition.x, initialPosition.y, intersection.z);
+                if (selectedBound != null) {
+                    switch (transformMode) {
+                        case NONE:
+                            break;
+                        case MOVE:
+                            Vector3 intersection = new Vector3();
+                            if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
+                                if (!activeAxis.isZero()) {
+                                    if (activeAxis.equals(Vector3.X))
+                                        intersection.set(intersection.x, initialPosition.y, initialPosition.z);
+                                    else if (activeAxis.equals(Vector3.Y))
+                                        intersection.set(initialPosition.x, intersection.y, initialPosition.z);
+                                    else if (activeAxis.equals(Vector3.Z))
+                                        intersection.set(initialPosition.x, initialPosition.y, intersection.z);
+                                }
+
+                                selectedBound.setPosition(intersection);
+                            }
+                            break;
+                        case SCALE:
+                            Vector3 intersection_scale = new Vector3();
+                            if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
+                                if (!activeAxis.isZero()) {
+                                    Vector3 delta = new Vector3(intersection_scale).sub(initialPosition);
+
+                                    float axisDelta = delta.dot(activeAxis);
+
+                                    Vector3 scaleVec = getVector3(axisDelta);
+
+                                    selectedBound.setSize(scaleVec);
+                                } else {
+                                    float scaleFactor = intersection_scale.dst(initialPosition);
+                                    selectedBound.setSize(new Vector3(scaleFactor,scaleFactor,scaleFactor));
+                                }
                             }
 
-                            selectedBound.setPosition(intersection);
-                        }
-                        break;
-                    case SCALE:
-                        Vector3 intersection_scale = new Vector3();
-                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
-                            if (!activeAxis.isZero()) {
-                                Vector3 delta = new Vector3(intersection_scale).sub(initialPosition);
+                            break;
+                        case ROTATE:
 
-                                float axisDelta = delta.dot(activeAxis);
+                            Quaternion q = new Quaternion();
 
-                                Vector3 scaleVec = getVector3(axisDelta);
-
-                                selectedBound.setSize(scaleVec);
+                            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                                q.set(Vector3.X, -Gdx.input.getDeltaY() * 0.75f);
+                                selectedBound.rotation.mulLeft(q);
                             } else {
-                                float scaleFactor = intersection_scale.dst(initialPosition);
-                                selectedBound.setSize(new Vector3(scaleFactor,scaleFactor,scaleFactor));
+                                q.set(Vector3.Y, -Gdx.input.getDeltaX() * 0.75f);
+                                selectedBound.rotation.mulLeft(q);
                             }
-                        }
 
-                        break;
-                    case ROTATE:
-                        float sensitivity = 1.5f;
-
-                        Quaternion q = new Quaternion();
-
-                        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                            q.set(Vector3.X, -Gdx.input.getDeltaY() * sensitivity);
-                            selectedBound.rotation.mulLeft(q);
-                        } else {
-                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * sensitivity);
-                            selectedBound.rotation.mulLeft(q);
-                        }
-
-                        selectedBound.rotation.nor();
-                        selectedBound.rebuild();
-                        break;
+                            selectedBound.rotation.nor();
+                            selectedBound.rebuild();
+                            break;
+                    }
                 }
-            }
 
+                boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
 
-            boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
-
-            if (cursor.clicked(boundsLister.box)) {
-                if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
-                    boundsLister.dropDownExpand = true;
-            } else if (boundsLister.dropDownExpand) {
-                boundsLister.dropDownExpand = false;
+                if (cursor.clicked(boundsLister.box)) {
+                    if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
+                        boundsLister.dropDownExpand = true;
+                } else if (boundsLister.dropDownExpand) {
+                    boundsLister.dropDownExpand = false;
+                }
             }
 
             for (PavLayout layout : boundsEditorLayout) {

@@ -50,7 +50,6 @@ public class BoundsEditor extends  PavScreen {
     public static PavWidget exportModelInfo;
     private BitmapFont font;
     public static BoundsLister boundsLister;
-    public static Array<PavBounds> bounds = new Array<>();
     public static PavBounds selectedBound = new PavBounds();
     public BoundsEditor(PavEngine game) {
         super(game);
@@ -71,7 +70,7 @@ public class BoundsEditor extends  PavScreen {
 
 
         boundsLister = new BoundsLister(font, uiBG[1], hoverUIBG[2]);
-        addAndGet(boundsEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Save", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+        addAndGet(boundsEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Save", font, hoverUIBG[3], uiBG[2], ClickBehavior.SaveBoundsArray));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Look", font, ClickBehavior.Nothing);
 
@@ -178,8 +177,10 @@ public class BoundsEditor extends  PavScreen {
                     debugCube(box, obj.debugColor);
         }
 
-        for(PavBounds box : bounds) {
-            debugCube(box);
+        if(selectedObject!=null) {
+            for(PavBounds box : selectedObject.boxes) {
+                debugCube(box);
+            }
         }
 
         axisGizmo.update();

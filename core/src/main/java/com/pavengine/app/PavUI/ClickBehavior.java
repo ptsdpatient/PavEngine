@@ -9,5 +9,5 @@ public enum ClickBehavior {
     ExitGame,
     AddStaticObjectToMapEditor,
     ExportModelInfo,
-    NextMessage, SkipTextBox
+    NextMessage, SaveBoundsArray, SkipTextBox
 }

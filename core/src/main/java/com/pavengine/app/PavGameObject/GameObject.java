@@ -53,6 +53,7 @@ public abstract class GameObject {
     public boolean interacted = false;
     public Scene scene;
     public BoundingBox bounds;
+    public PavBounds pavBounds = new PavBounds();
     public Array<PavBounds> boxes = new Array<>();
     public PavBounds footBox = new PavBounds(), attackBox = new PavBounds();
     public Vector3 center = new Vector3(), bottom = new Vector3(), dir = new Vector3();

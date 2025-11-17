@@ -2,7 +2,8 @@ package com.pavengine.app.PavUI;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavScreen.BoundsEditor.bounds;
+import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
+import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -111,7 +112,9 @@ public class BoundsLister extends PavWidget {
 
     @Override
     public void render(SpriteBatch sb) {
-        // Draw main button
+
+        if(selectedObject == null) return;
+
         if (background != null) background.draw(sb);
         buttonRect.set(box.x, box.y + box.height - 42, box.width, 48);
         if (buttonHovered) {
@@ -121,7 +124,7 @@ public class BoundsLister extends PavWidget {
         font.draw(sb, buttonLayout, box.x + (box.width - buttonLayout.width) * 0.5f, buttonRect.y + buttonRect.height - 12);
 
 
-        float maxScroll = Math.max(0, bounds.size * itemHeight - visibleHeight);
+        float maxScroll = Math.max(0, selectedObject.boxes.size * itemHeight - visibleHeight);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
 
         if (dropDownExpand) {
@@ -132,7 +135,7 @@ public class BoundsLister extends PavWidget {
                 if (cursor.clicked(rect)) {
                     sb.draw(hoverTexture, rect.x, rect.y, rect.width, rect.height);
                     if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                        bounds.add(new PavBounds(list[i]));
+                        selectedObject.boxes.add(new PavBounds(list[i]));
                         dropDownExpand = false;
                     }
                 }
@@ -148,7 +151,7 @@ public class BoundsLister extends PavWidget {
 
             float startY = visibleTop - itemHeight;
             int startIndex = (int)(scrollOffset / itemHeight);
-            int endIndex = Math.min(bounds.size, startIndex + (int)(visibleHeight / itemHeight) + 1);
+            int endIndex = Math.min(selectedObject.boxes.size, startIndex + (int)(visibleHeight / itemHeight) + 1);
 
             for (int i = startIndex; i < endIndex; i++) {
                 float y = startY - (i * itemHeight - scrollOffset);
@@ -158,7 +161,7 @@ public class BoundsLister extends PavWidget {
                 // Temporary rectangle for hover & click check
                 Rectangle rect = new Rectangle(box.x, y, box.width, itemHeight);
 
-                PavBounds b = bounds.get(i);
+                PavBounds b = selectedObject.boxes.get(i);
                 String label = (i + 1) + ". " + b.type.name();
 
                 // Hover effect
@@ -168,6 +171,7 @@ public class BoundsLister extends PavWidget {
                 // Click detection
                 if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     dropDownExpand = false;
+                    selectedBound = selectedObject.boxes.get(i);
                     System.out.println("Clicked bound: " + label);
                 }
 

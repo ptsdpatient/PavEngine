@@ -2,13 +2,19 @@ package com.pavengine.app.PavBounds;
 
 import static com.pavengine.app.Methods.print;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.OrientedBoundingBox;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.ObjectMap;
 
+import java.util.HashMap;
+import java.util.Map;
 
 public class PavBounds {
 
@@ -17,18 +23,21 @@ public class PavBounds {
     public Vector3
         position = new Vector3(0,0,0),
         scale = new Vector3(1f,1f,1f);
-    public Vector3 ringOffset = new Vector3();
-    public Vector3[] rings = new Vector3[24];
     public Quaternion rotation = new Quaternion();
+    public Matrix4 transform = new Matrix4();
     public Vector3 center = new Vector3(0,0,0);
+
+    public Vector3[] rings = new Vector3[24];
+    public Color debugColor = Color.GRAY;
 
     private static final BoundingBox CANONICAL_BOX =
         new BoundingBox(new Vector3(-0.5f, -0.5f, -0.5f),
             new Vector3( 0.5f,  0.5f,  0.5f));
 
-    public Matrix4 transform = new Matrix4();
-
+    public Vector3 ringOffset = new Vector3();
     public float ringRadius=2f , heightOffset = 0f;
+
+
 
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;

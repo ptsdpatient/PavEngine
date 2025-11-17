@@ -1,0 +1,11 @@
+[
+{
+	"class": "com.pavengine.app.PavBounds.PavBoundsData",
+	"type": "Bound",
+	"scale": {
+		"x": 1,
+		"y": 1,
+		"z": 1
+	}
+}
+]

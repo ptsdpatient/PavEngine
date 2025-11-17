@@ -1,0 +1,203 @@
+[
+{
+	"transform": [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
+	"size": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "Bound"
+	},
+	"rotation": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"w": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"center": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	}
+},
+{
+	"transform": [ 0.68835044, 0.3293209, -0.64631367, 0, 7.4505806E-8, 0.8910023, 0.4539988, 0, 0.7253783, -0.3125103, 0.6133218, 0, 3.8060493, 2.6395774, -1.7405128, 1 ],
+	"size": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "HurtBounds"
+	},
+	"rotation": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": -0.21449149
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": -0.09215351
+		},
+		"w": {
+			"class": "java.lang.Float",
+			"value": -0.89340276
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": -0.3838392
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 3.8060493
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": -1.7405128
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 2.6395774
+		}
+	},
+	"center": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	}
+},
+{
+	"transform": [ 0.7604052, 0, -0.64944905, 0, 0, 1, 0, 0, 0.64944905, 0, 0.7604052, 0, -5.1336417, 1.4719639, 0, 1 ],
+	"size": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "Enterance"
+	},
+	"rotation": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"w": {
+			"class": "java.lang.Float",
+			"value": -0.9381912
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": -0.34611765
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": -5.1336417
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1.4719639
+		}
+	},
+	"center": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	}
+}
+]

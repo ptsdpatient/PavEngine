@@ -137,27 +137,27 @@ public class GameWorld {
         switch (type) {
             case TARGET: {
                 targetObjects.add(new TargetObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(targetObjects.get(targetObjects.size - 1).scene);
+                sceneManager.addScene(targetObjects.peek().scene);
             }
             break;
             case STATIC: {
                 staticObjects.add(new StaticObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(staticObjects.get(staticObjects.size - 1).scene);
+                sceneManager.addScene(staticObjects.peek().scene);
             }
             break;
             case DYNAMIC: {
                 dynamicObjects.add(new DynamicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(dynamicObjects.get(dynamicObjects.size - 1).scene);
+                sceneManager.addScene(dynamicObjects.peek().scene);
             }
             break;
             case KINEMATIC: {
                 kinematicObjects.add(new KinematicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(kinematicObjects.get(kinematicObjects.size - 1).scene);
+                sceneManager.addScene(kinematicObjects.peek().scene);
             }
             break;
             case GROUND: {
                 groundObjects.add(new GroundObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(groundObjects.get(groundObjects.size - 1).scene);
+                sceneManager.addScene(groundObjects.peek().scene);
             }
             break;
         }
@@ -167,27 +167,27 @@ public class GameWorld {
         switch (type) {
             case TARGET: {
                 targetObjects.add(new TargetObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(targetObjects.get(targetObjects.size - 1).scene);
+                sceneManager.addScene(targetObjects.peek().scene);
             }
             break;
             case STATIC: {
                 staticObjects.add(new StaticObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(staticObjects.get(staticObjects.size - 1).scene);
+                sceneManager.addScene(staticObjects.peek().scene);
             }
             break;
             case DYNAMIC: {
                 dynamicObjects.add(new DynamicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(dynamicObjects.get(dynamicObjects.size - 1).scene);
+                sceneManager.addScene(dynamicObjects.peek().scene);
             }
             break;
             case KINEMATIC: {
                 kinematicObjects.add(new KinematicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(kinematicObjects.get(kinematicObjects.size - 1).scene);
+                sceneManager.addScene(kinematicObjects.peek().scene);
             }
             break;
             case GROUND: {
                 groundObjects.add(new GroundObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(groundObjects.get(groundObjects.size - 1).scene);
+                sceneManager.addScene(groundObjects.peek().scene);
             }
             break;
         }

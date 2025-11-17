@@ -56,7 +56,7 @@ public class TargetObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
 
     }
@@ -81,7 +81,7 @@ public class TargetObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
 
     }
@@ -106,7 +106,7 @@ public class TargetObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
         update(0);
     }
@@ -129,7 +129,7 @@ public class TargetObject extends GameObject {
     }
 
     public boolean checkCollision(GameObject otherObject) {
-        return boxes.get(0).getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.boxes.get(0).getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
+        return pavBounds.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.pavBounds.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
     }
 
 
@@ -138,7 +138,7 @@ public class TargetObject extends GameObject {
     }
 
     public void updateCenter() {
-        this.boxes.get(0).getBounds().getCenter(center);
+        this.pavBounds.getBounds().getCenter(center);
         center.mul(this.scene.modelInstance.transform);
     }
 
@@ -157,10 +157,6 @@ public class TargetObject extends GameObject {
                     if (forces.size < 1)
                         forces.add(new Force(new Vector3(MathUtils.cos(MathUtils.random(0f, MathUtils.PI2)), 0, MathUtils.sin(MathUtils.random(0f, MathUtils.PI2))).nor(), 2));
 
-//                    float totalMass = this.mass+dynamicObjects.get(i).mass;
-//                    dynamicObjects.get(i).vy=(vy * (this.mass - dynamicObjects.get(i).mass) + 2 * dynamicObjects.get(i).mass * dynamicObjects.get(i).vy) / totalMass;
-//                    this.vy = (dynamicObjects.get(i).vy * (dynamicObjects.get(i).mass - this.mass) + 2 * this.mass * this.vy) / totalMass;
-//                    dynamicObjects.get(i).hasBounced=true;
                     playAnimation(0, false, false);
                     return true;
                 }
@@ -332,12 +328,12 @@ public class TargetObject extends GameObject {
     }
 
     public boolean contains(Vector3 point) {
-        return boxes.get(0).contains(point);
+        return pavBounds.contains(point);
     }
 
     public void updateBox() {
         scene.modelInstance.calculateBoundingBox(bounds);
-        boxes.get(0).set(
+        pavBounds.set(
             new BoundingBox(
                 bounds.min.add(padding),
                 bounds.max.add(padding)

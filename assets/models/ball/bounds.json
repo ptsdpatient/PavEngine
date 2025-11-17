@@ -1,0 +1,158 @@
+[
+{
+	"rotation": {
+		"w": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"scale": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "Bound"
+	}
+},
+{
+	"rotation": {
+		"w": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"scale": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "HurtBounds"
+	}
+},
+{
+	"rotation": {
+		"w": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"scale": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 1
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 1
+		}
+	},
+	"position": {
+		"x": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"y": {
+			"class": "java.lang.Float",
+			"value": 0
+		},
+		"z": {
+			"class": "java.lang.Float",
+			"value": 0
+		}
+	},
+	"type": {
+		"class": "java.lang.String",
+		"value": "Enterance"
+	}
+}
+]

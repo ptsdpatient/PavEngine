@@ -125,8 +125,6 @@ public class MapEditorInput {
 
             setPerspectiveTouch();
 
-
-
 //            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
 //                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
 //

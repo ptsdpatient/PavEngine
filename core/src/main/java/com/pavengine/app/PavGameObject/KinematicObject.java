@@ -67,7 +67,7 @@ public class KinematicObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
     }
 
@@ -91,7 +91,7 @@ public class KinematicObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
     }
 
@@ -115,7 +115,7 @@ public class KinematicObject extends GameObject {
         bounds.min.add(pos);
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
-        boxes.get(0).setBounds(bounds);
+        pavBounds.setBounds(bounds);
 
         update(0);
     }
@@ -148,7 +148,7 @@ public class KinematicObject extends GameObject {
     }
 
     public boolean checkCollision(GameObject otherObject) {
-        return boxes.get(0).getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.boxes.get(0).getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
+        return pavBounds.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.pavBounds.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
     }
 
 
@@ -157,7 +157,7 @@ public class KinematicObject extends GameObject {
     }
 
     public void updateCenter() {
-        this.boxes.get(0).getBounds().getCenter(center);
+        this.pavBounds.getBounds().getCenter(center);
         center.mul(this.scene.modelInstance.transform);
     }
 
@@ -240,7 +240,7 @@ public class KinematicObject extends GameObject {
     public void reboundForce() {
 //        for (GameObject obj : targetObjects) {
 //            if (
-//                boxes.get(0).intersects(obj.box)
+//                pavBounds.intersects(obj.box)
 //            ) {
 ////                print("rebound");
 //                forces.clear();
@@ -345,15 +345,15 @@ public class KinematicObject extends GameObject {
         this.ringRadius = ringRadius;
         this.ringHeightOffset = ringHeightOffset;
 
-        boxes.get(0).heightOffset = ringHeightOffset;
-        boxes.get(0).ringRadius = ringRadius;
+        pavBounds.heightOffset = ringHeightOffset;
+        pavBounds.ringRadius = ringRadius;
 
         footBox.heightOffset = ringHeightOffset-2;
         footBox.ringRadius = ringRadius;
     }
 
     private void updateBottom() {
-        this.boxes.get(0).getBounds().getCenter(bottom);
+        this.pavBounds.getBounds().getCenter(bottom);
         bottom.mul(this.scene.modelInstance.transform);
         bottom.sub(new Vector3(0, getHeight(), 0));
     }
@@ -373,13 +373,13 @@ public class KinematicObject extends GameObject {
     }
 
     public boolean contains(Vector3 point) {
-        return boxes.get(0).contains(point);
+        return pavBounds.contains(point);
     }
 
     public void updateBox() {
         scene.modelInstance.calculateBoundingBox(bounds);
 
-        boxes.get(0).set(
+        pavBounds.set(
             new BoundingBox(
                 new Vector3(
                     bounds.min.x,
@@ -396,7 +396,7 @@ public class KinematicObject extends GameObject {
         );
 
         if (ringDetection) {
-            boxes.get(0).updateRings(pos.cpy(),rotation.cpy());
+            pavBounds.updateRings(pos.cpy(),rotation.cpy());
             footBox.updateRings(pos.cpy(),rotation.cpy());
         }
 
