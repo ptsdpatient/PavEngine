@@ -33,6 +33,7 @@ import com.pavengine.app.PavCamera.TopDownCamera;
 import com.pavengine.app.PavLight.PavLight;
 import com.pavengine.app.PavLight.PavLightProfile;
 import com.pavengine.app.PavScreen.BoundsEditor;
+import com.pavengine.app.PavScreen.CinematicEditor;
 import com.pavengine.app.PavScreen.GameScreen;
 import com.pavengine.app.PavScreen.LoadingScreen;
 import com.pavengine.app.PavScreen.MapEditor;
@@ -61,12 +62,16 @@ public class PavEngine extends Game {
     public static SoundBox soundBox = new SoundBox();
 
     public static Array<ReferenceOriginLine> centerReferenceOriginRays = new Array<>();
+
+//    Screens
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
     public UpgradeScreen upgradeScreen;
     public PauseScreen pauseScreen;
     public MapEditor mapEditor;
     public BoundsEditor boundsEditor;
+    public CinematicEditor cinematicEditor;
+
     public SpriteBatch batch;
     public static FitViewport overlayViewport, perspectiveViewport;
     public static PavCamera pavCamera;
@@ -194,6 +199,7 @@ public class PavEngine extends Game {
         pauseScreen = new PauseScreen(this);
         mapEditor = new MapEditor(this);
         boundsEditor = new BoundsEditor(this);
+        cinematicEditor = new CinematicEditor(this);
 
         if(enableMapEditor){
             setScreen(boundsEditor);

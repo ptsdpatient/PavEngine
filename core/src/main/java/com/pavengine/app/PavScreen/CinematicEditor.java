@@ -1,30 +1,21 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
-import static com.pavengine.app.Debug.Draw.debugLine;
-import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
-import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
-import static com.pavengine.app.PavEngine.enableMapEditor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
-//import static com.pavengine.app.PavEngine.perspectiveAxisGizmo;
-import static com.pavengine.app.PavEngine.perspectiveTouchRay;
-import static com.pavengine.app.PavEngine.perspectiveViewport;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
 import static com.pavengine.app.PavEngine.sceneManager;
-import static com.pavengine.app.PavEngine.sprayCooldown;
 import static com.pavengine.app.PavEngine.uiBG;
-import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -38,31 +29,27 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
-import com.pavengine.app.PavUI.Checkbox;
 import com.pavengine.app.PavUI.ClickBehavior;
-import com.pavengine.app.PavUI.Dropdown;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
-import com.pavengine.app.PavUI.Stepper;
 import com.pavengine.app.PavUI.TextButton;
 import com.pavengine.app.ReferenceEditorLine;
 import com.pavengine.app.ReferenceOriginLine;
 
 import java.util.ArrayList;
 
-public class MapEditor extends  PavScreen {
+public class CinematicEditor extends  PavScreen {
     public static ArrayList<String> objectList;
     public static Array<PavLayout> mapEditingLayout = new Array<>();
     public static PavWidget exportModelInfo;
     private BitmapFont font;
 
-    public MapEditor(PavEngine game) {
+    public CinematicEditor(PavEngine game) {
         super(game);
 
         this.font = gameFont;
@@ -85,7 +72,6 @@ public class MapEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-
     }
 
     public ArrayList<String> listModels(String path) {
@@ -205,6 +191,7 @@ public class MapEditor extends  PavScreen {
 //        print(camera.direction);
 
     }
+
 
 
 }
