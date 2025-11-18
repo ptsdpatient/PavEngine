@@ -13,8 +13,12 @@ import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Cubemap;
+import com.badlogic.gdx.graphics.CubemapData;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FacedCubemapData;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
@@ -36,6 +40,7 @@ import com.pavengine.app.PavScript.Interactable.Interactable;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
+import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 
 import java.util.ArrayList;
 
@@ -202,6 +207,45 @@ public class Methods {
         }
     }
 
+
+    public static SceneSkybox createSkybox(String path) {
+        Pixmap src = new Pixmap(load(path));
+        int w = src.getWidth(), h = src.getHeight();
+        int faceW = w / 4, faceH = h / 3;
+
+        // Allocate Pixmaps only once, use optimal format
+        Pixmap posX = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+        Pixmap negX = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+        Pixmap posY = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+        Pixmap negY = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+        Pixmap posZ = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+        Pixmap negZ = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
+
+        // Fast copying (drawPixmap is GPU-backed when possible)
+        posX.drawPixmap(src, 0, 0, 2 * faceW, faceH, faceW, faceH);
+        negX.drawPixmap(src, 0, 0, 0, faceH, faceW, faceH);
+        posY.drawPixmap(src, 0, 0, faceW, 0, faceW, faceH);
+        negY.drawPixmap(src, 0, 0, faceW, 2 * faceH, faceW, faceH);
+        posZ.drawPixmap(src, 0, 0, faceW, faceH, faceW, faceH);
+        negZ.drawPixmap(src, 0, 0, 3 * faceW, faceH, faceW, faceH);
+
+        src.dispose(); // free immediately
+
+        CubemapData data = new FacedCubemapData(posX, negX, posY, negY, posZ, negZ);
+        Cubemap cubemap = new Cubemap(data);
+        cubemap.load(data);
+
+        // data Pixmaps automatically consumed by CubemapData, so no manual dispose
+
+        return new SceneSkybox(cubemap);
+    }
+
+
+//    private static Pixmap extractFace(Pixmap src, int x, int y, int w, int h) {
+//        Pixmap face = new Pixmap(w, h, src.getFormat());
+//        face.drawPixmap(src, 0, 0, x, y, w, h);
+//        return face;
+//    }
 
 
 

@@ -114,8 +114,8 @@ public class Draw {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+//        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+//        Gdx.gl.glDisable(GL20.GL_BLEND);
 
         shapeRenderer.setColor(color);
         shapeRenderer.line(start, end);

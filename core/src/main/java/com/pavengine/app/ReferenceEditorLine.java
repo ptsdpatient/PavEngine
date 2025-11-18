@@ -17,6 +17,7 @@ public class ReferenceEditorLine {
         this.origin = origin;
         this.color = color;
         this.endpoint = endpoint;
+        this.color.a = 0.5f;
     }
 
     public void draw() {

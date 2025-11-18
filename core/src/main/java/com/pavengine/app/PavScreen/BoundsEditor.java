@@ -51,12 +51,12 @@ public class BoundsEditor extends  PavScreen {
     private BitmapFont font;
     public static BoundsLister boundsLister;
     public static PavBounds selectedBound = new PavBounds();
+
     public BoundsEditor(PavEngine game) {
         super(game);
 
         this.font = gameFont;
         objectList = new ArrayList<>();
-
 
         boundsEditorLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
         for (String model : listModels("assets/models/"))
@@ -141,9 +141,9 @@ public class BoundsEditor extends  PavScreen {
         sceneManager.render();
 
 
-        for(ReferenceOriginLine or : centerReferenceOriginRays) {
-            or.draw();
-        }
+//        for(ReferenceOriginLine or : centerReferenceOriginRays) {
+//            or.draw();
+//        }
 
         for(ReferenceEditorLine or : referenceEditorRays) {
             or.draw();

@@ -29,6 +29,19 @@ public class PavCrypt {
         writeVec3(out, b.center);
     }
 
+    public static void cryptWrite(CryptEnum[] order, String path) {
+        try {
+//            file = Gdx.files.local(path);
+//            out = new DataOutputStream(file.write(false));
+//            out.writeInt(arr.size);
+//            for (PavBounds b : arr) writeBounds(out, b);
+//            out.close();
+        } catch (Exception e) {
+            print("Error ocurred! : " + e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public static PavBounds readBounds(DataInputStream in) throws IOException {
         PavBounds b = new PavBounds();
 
@@ -39,7 +52,7 @@ public class PavCrypt {
         readVec3(in, b.scale);
         readVec3(in, b.center);
         b.rebuild();
-        
+
         return b;
     }
 
@@ -78,6 +91,19 @@ public class PavCrypt {
         out.writeFloat(v.z);
     }
 
+    private static void writeStringArray(DataOutputStream out, String[] s) throws IOException {
+        for(String string : s) {
+            out.writeChars(string);
+        }
+    }
+
+    private static void writeFloatArray(DataOutputStream out, Float[] s) throws IOException {
+        for(Float x : s) {
+            out.writeFloat(x);
+        }
+    }
+
+
     private static void readVec3(DataInputStream in, Vector3 v) throws IOException {
         v.x = in.readFloat();
         v.y = in.readFloat();
@@ -96,6 +122,10 @@ public class PavCrypt {
         q.y = in.readFloat();
         q.z = in.readFloat();
         q.w = in.readFloat();
+    }
+
+    private static void writeInt(DataOutputStream out, int i) throws IOException {
+        out.writeInt(i);
     }
 }
 

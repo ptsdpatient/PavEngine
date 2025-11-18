@@ -1,5 +1,6 @@
 package com.pavengine.app;
 
+import static com.pavengine.app.Methods.createSkybox;
 import static com.pavengine.app.Methods.extractSprites;
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.load;
@@ -9,6 +10,7 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -40,8 +42,10 @@ import com.pavengine.app.PavSound.SoundBox;
 import com.pavengine.app.PavUI.TextButton;
 
 import net.mgsx.gltf.scene3d.scene.SceneManager;
+import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
+import net.mgsx.gltf.scene3d.utils.EnvironmentUtil;
 
 public class PavEngine extends Game {
     public static Ray perspectiveTouchRay = new Ray();
@@ -71,7 +75,7 @@ public class PavEngine extends Game {
     public static AxisGizmo axisGizmo;
     public static PavCursor cursor;
     public static SceneManager sceneManager;
-
+    public static SceneSkybox skybox;
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
 //    public static AxisGizmo3D perspectiveAxisGizmo;
@@ -80,7 +84,7 @@ public class PavEngine extends Game {
         gameFont,
         bigGameFont ;
 
-    public PavSkyBox skyBox;
+    public PavSkyBox deprecatedSkyBox;
 
     public PavLight pavLight;
     public static EditorSelectedObjectBehavior editorSelectedObjectBehavior = EditorSelectedObjectBehavior.FreeLook;
@@ -176,6 +180,11 @@ public class PavEngine extends Game {
 
         sceneManager.setCamera(camera);
         pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
+
+        skybox = new SceneSkybox(EnvironmentUtil.createCubemap(new InternalFileHandleResolver(),
+            "skybox/default/environment/environment_", ".png", EnvironmentUtil.FACE_NAMES_NEG_POS));
+
+        sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
 
 //        skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
 
