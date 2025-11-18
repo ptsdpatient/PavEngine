@@ -213,7 +213,6 @@ public class Methods {
         int w = src.getWidth(), h = src.getHeight();
         int faceW = w / 4, faceH = h / 3;
 
-        // Allocate Pixmaps only once, use optimal format
         Pixmap posX = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
         Pixmap negX = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
         Pixmap posY = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
@@ -221,7 +220,6 @@ public class Methods {
         Pixmap posZ = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
         Pixmap negZ = new Pixmap(faceW, faceH, Pixmap.Format.RGB888);
 
-        // Fast copying (drawPixmap is GPU-backed when possible)
         posX.drawPixmap(src, 0, 0, 2 * faceW, faceH, faceW, faceH);
         negX.drawPixmap(src, 0, 0, 0, faceH, faceW, faceH);
         posY.drawPixmap(src, 0, 0, faceW, 0, faceW, faceH);
@@ -229,23 +227,15 @@ public class Methods {
         posZ.drawPixmap(src, 0, 0, faceW, faceH, faceW, faceH);
         negZ.drawPixmap(src, 0, 0, 3 * faceW, faceH, faceW, faceH);
 
-        src.dispose(); // free immediately
+        src.dispose();
 
         CubemapData data = new FacedCubemapData(posX, negX, posY, negY, posZ, negZ);
         Cubemap cubemap = new Cubemap(data);
         cubemap.load(data);
 
-        // data Pixmaps automatically consumed by CubemapData, so no manual dispose
-
         return new SceneSkybox(cubemap);
     }
 
-
-//    private static Pixmap extractFace(Pixmap src, int x, int y, int w, int h) {
-//        Pixmap face = new Pixmap(w, h, src.getFormat());
-//        face.drawPixmap(src, 0, 0, x, y, w, h);
-//        return face;
-//    }
 
 
 
