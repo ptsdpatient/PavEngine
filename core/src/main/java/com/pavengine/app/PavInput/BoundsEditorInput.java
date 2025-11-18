@@ -59,6 +59,12 @@ public class BoundsEditorInput {
         Quaternion initialRotation = new Quaternion();
         float initialSize = 1;
         Vector3 initialPosition = new Vector3(0, 0, 0);
+        Vector3 startPointerPos = new Vector3();
+        Vector3 initialScale = new Vector3();
+        Vector3 intersection_scale = new Vector3();
+        private final Vector3 tempVec1 = new Vector3();
+        private final Vector3 tempVec2 = new Vector3();
+        private final Vector3 newScale = new Vector3();
 
         @Override
         public boolean keyDown(int keycode) {
@@ -90,6 +96,10 @@ public class BoundsEditorInput {
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
+                    if(Intersector.intersectRayPlane( perspectiveTouchRay, dragPlane, intersection_scale)) {
+                        startPointerPos.set(intersection_scale);
+                        initialScale.set(selectedBound.scale);
+                    }
                     break;
                 case Input.Keys.R:
                     if (transformMode != TransformMode.NONE) {
@@ -322,23 +332,41 @@ public class BoundsEditorInput {
                             }
                             break;
                         case SCALE:
-                            Vector3 intersection_scale = new Vector3();
                             if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
+
                                 if (!activeAxis.isZero()) {
-                                    Vector3 delta = new Vector3(intersection_scale).sub(initialPosition);
 
-                                    float axisDelta = delta.dot(activeAxis);
+                                    // tempVec1 = intersection_scale - startPointerPos
+                                    tempVec1.set(intersection_scale).sub(startPointerPos);
 
-                                    Vector3 scaleVec = getVector3(axisDelta);
+                                    float axisDelta = tempVec1.dot(activeAxis);
+                                    float scaleFactor = 1 + axisDelta;
 
-                                    selectedBound.setSize(scaleVec);
-                                } else {
-                                    float scaleFactor = intersection_scale.dst(initialPosition);
-                                    selectedBound.setSize(new Vector3(scaleFactor,scaleFactor,scaleFactor));
+                                    // Use existing newScale (no new objects)
+                                    newScale.set(initialScale);
+
+                                    if (activeAxis == Vector3.X) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
+                                    if (activeAxis == Vector3.Y) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
+                                    if (activeAxis == Vector3.Z) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+
+                                    selectedBound.setSize(newScale);
+                                }
+                                else {
+                                    float distance = intersection_scale.dst(startPointerPos);
+                                    float sign = (intersection_scale.z > startPointerPos.z) ? 1 : -1;
+                                    float scaleFactor = 1 + (distance * sign);
+
+                                    newScale.set(initialScale).scl(scaleFactor);
+
+                                    newScale.x = Math.max(newScale.x, 0.1f);
+                                    newScale.y = Math.max(newScale.y, 0.1f);
+                                    newScale.z = Math.max(newScale.z, 0.1f);
+
+                                    selectedBound.setSize(newScale);
                                 }
                             }
-
                             break;
+
                         case ROTATE:
 
                             Quaternion q = new Quaternion();

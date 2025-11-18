@@ -151,14 +151,10 @@ public class PavBounds {
     }
 
 
-    public void setSize(Vector3 newSize) {
-
-        scale.set(
-            Math.max(0.0001f, newSize.x),
-            Math.max(0.0001f, newSize.y),
-            Math.max(0.0001f, newSize.z)
-        );
-
+    public void setSize(Vector3 scale) {
+        this.scale.x = Math.max(scale.x, 0.0001f);
+        this.scale.y = Math.max(scale.y, 0.0001f);
+        this.scale.z = Math.max(scale.z, 0.0001f);
         rebuild();
     }
 

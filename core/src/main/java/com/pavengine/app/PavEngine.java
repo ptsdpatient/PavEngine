@@ -181,14 +181,12 @@ public class PavEngine extends Game {
 
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
 
-
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
 
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);
         hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
-
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);
