@@ -75,7 +75,6 @@ public class PavEngine extends Game {
     public static AxisGizmo axisGizmo;
     public static PavCursor cursor;
     public static SceneManager sceneManager;
-    public static SceneSkybox skybox;
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
 //    public static AxisGizmo3D perspectiveAxisGizmo;
@@ -84,7 +83,6 @@ public class PavEngine extends Game {
         gameFont,
         bigGameFont ;
 
-    public PavSkyBox deprecatedSkyBox;
 
     public PavLight pavLight;
     public static EditorSelectedObjectBehavior editorSelectedObjectBehavior = EditorSelectedObjectBehavior.FreeLook;
@@ -181,13 +179,7 @@ public class PavEngine extends Game {
         sceneManager.setCamera(camera);
         pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
 
-        skybox = new SceneSkybox(EnvironmentUtil.createCubemap(new InternalFileHandleResolver(),
-            "skybox/default/environment/environment_", ".png", EnvironmentUtil.FACE_NAMES_NEG_POS));
-
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
-
-//        skyBox = new PavSkyBox("sky", new Vector3(0, 0, 0), 10);
-
 
         gameFont = new BitmapFont(load("font/ubuntu.fnt"));
         bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
@@ -195,7 +187,6 @@ public class PavEngine extends Game {
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);
         hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
-
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);
