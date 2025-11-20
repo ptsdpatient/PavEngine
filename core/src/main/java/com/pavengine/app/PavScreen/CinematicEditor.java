@@ -3,7 +3,6 @@ package com.pavengine.app.PavScreen;
 import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
-import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
@@ -16,7 +15,7 @@ import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
-import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
@@ -30,7 +29,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.pavengine.app.Cinematic.CinematicTimeline;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -45,9 +44,10 @@ import java.util.ArrayList;
 
 public class CinematicEditor extends  PavScreen {
     public static ArrayList<String> objectList;
-    public static Array<PavLayout> mapEditingLayout = new Array<>();
+    public static Array<PavLayout> cinematicEditorLayout = new Array<>();
     public static PavWidget exportModelInfo;
     private BitmapFont font;
+    public static CinematicTimeline cinematicTimeline;
 
     public CinematicEditor(PavEngine game) {
         super(game);
@@ -56,9 +56,9 @@ public class CinematicEditor extends  PavScreen {
         objectList = new ArrayList<>();
 
 
-        mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
-        for (String model : listModels("assets/models/"))
-            mapEditingLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+        cinematicEditorLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
+//        for (String model : listModels("assets/models/"))
+//            cinematicEditorLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
 
 
 //        scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
@@ -67,11 +67,12 @@ public class CinematicEditor extends  PavScreen {
 //        selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
 
 
-        addAndGet(mapEditingLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+        addAndGet(cinematicEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
-        addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
+        addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
+        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[3]);
     }
 
     public ArrayList<String> listModels(String path) {
@@ -92,7 +93,7 @@ public class CinematicEditor extends  PavScreen {
 
     @Override
     public void setInput() {
-        Gdx.input.setInputProcessor(mapEditorInput);
+        Gdx.input.setInputProcessor(cinematicEditorInput);
     }
 
 
@@ -149,15 +150,16 @@ public class CinematicEditor extends  PavScreen {
         batch.begin();
 
 
-        for (PavLayout layout : mapEditingLayout) {
+        for (PavLayout layout : cinematicEditorLayout) {
             layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
         }
 
+        cinematicTimeline.draw(batch);
 
         batch.end();
 
 
-        for(PavLayout layout : mapEditingLayout) {
+        for(PavLayout layout : cinematicEditorLayout) {
             for(PavWidget widget : layout.widgets) {
                 if(widget.isHovered)
                     debugRectangle(widget.box, Color.GREEN);
@@ -171,8 +173,8 @@ public class CinematicEditor extends  PavScreen {
                     debugCube(box, obj.debugColor);
         }
 
-        axisGizmo.update();
-        axisGizmo.draw();
+//        axisGizmo.update();
+//        axisGizmo.draw();
 
         if(selectedObject!=null) {
 //            perspectiveAxisGizmo.update();
@@ -191,7 +193,6 @@ public class CinematicEditor extends  PavScreen {
 //        print(camera.direction);
 
     }
-
 
 
 }

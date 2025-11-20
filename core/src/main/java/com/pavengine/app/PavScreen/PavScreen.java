@@ -62,7 +62,7 @@ public abstract class PavScreen implements Screen {
         batch.begin();
 
         if (
-            !(cameraBehavior == CameraBehaviorType.MapEditorCamera &&
+            !(cameraBehavior == CameraBehaviorType.MapEditorCamera || cameraBehavior == CameraBehaviorType.Cinematic &&
                 (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
             )
         )
@@ -95,9 +95,8 @@ public abstract class PavScreen implements Screen {
         overlayViewport.update(width, height, true);
         overlayViewport.apply();
 
-        perspectiveViewport.update(width, height, false);
+        perspectiveViewport.update(width, height,false);
         perspectiveViewport.apply();
-
     }
 
     @Override

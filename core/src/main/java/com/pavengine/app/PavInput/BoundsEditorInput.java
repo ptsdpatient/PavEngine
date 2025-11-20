@@ -205,7 +205,7 @@ public class BoundsEditorInput {
                 Gdx.input.setCursorCatched(true);
             }
 
-            for (PavLayout layout : boundsEditorLayout) {
+            if(button == Input.Buttons.LEFT) for (PavLayout layout : boundsEditorLayout) {
 
                 for (PavWidget widget : layout.widgets) {
 

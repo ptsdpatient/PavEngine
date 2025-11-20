@@ -10,7 +10,6 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -24,6 +23,7 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pavengine.app.PavCamera.BoundsEditorCamera;
+import com.pavengine.app.PavCamera.CinematicCamera;
 import com.pavengine.app.PavCamera.FirstPersonCamera;
 import com.pavengine.app.PavCamera.IsometricCamera;
 import com.pavengine.app.PavCamera.MapEditorCamera;
@@ -43,10 +43,8 @@ import com.pavengine.app.PavSound.SoundBox;
 import com.pavengine.app.PavUI.TextButton;
 
 import net.mgsx.gltf.scene3d.scene.SceneManager;
-import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
 import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
-import net.mgsx.gltf.scene3d.utils.EnvironmentUtil;
 
 public class PavEngine extends Game {
     public static Ray perspectiveTouchRay = new Ray();
@@ -157,19 +155,19 @@ public class PavEngine extends Game {
         axisGizmo = new AxisGizmo(overlayCamera);
 
         cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.BoundsEditor :
+            CameraBehaviorType.Cinematic :
             CameraBehaviorType.ThirdPerson;
 
 
-        camera = new PerspectiveCamera(67, resolution.x, resolution.y);
+        camera = new PerspectiveCamera(67, resolution.x/2, resolution.y/2);
         camera.near = 0.1f;
         camera.far = 1000f;
-        perspectiveViewport = new FitViewport(resolution.x, resolution.y, camera);
+        perspectiveViewport = new FitViewport(resolution.x/2, resolution.y/2, camera);
 
-//        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
 
         perspectiveViewport.apply();
+//        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
 //        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
@@ -202,7 +200,7 @@ public class PavEngine extends Game {
         cinematicEditor = new CinematicEditor(this);
 
         if(enableMapEditor){
-            setScreen(boundsEditor);
+            setScreen(cinematicEditor);
         } else {
             setGameScreen();
         }
@@ -260,6 +258,9 @@ public class PavEngine extends Game {
 
     private void initializeCamera() {
         switch (cameraBehavior) {
+            case Cinematic:
+                pavCamera = new CinematicCamera(67);
+                break;
             case MapEditorCamera:
                 pavCamera = new MapEditorCamera(67);
                 break;
@@ -302,10 +303,6 @@ public class PavEngine extends Game {
 
             case Orbit:
                 // Handle orbit camera logic
-                break;
-
-            case Cinematic:
-                // Handle cinematic camera logic
                 break;
 
             case Fixed:
