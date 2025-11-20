@@ -34,10 +34,9 @@ public class CinematicTimelineObject {
 
     public void draw(SpriteBatch sb, float scrollX, float scrollY) {
 
-        float drawX = x + scrollX;
         float drawY = y + scrollY;
 
-        float lineStart = drawX + 196 + 50;
+        float lineStart = 196 + 50;
         sb.draw(lineTexture, lineStart, drawY - 16, resolution.x - lineStart - 10, 4);
 
         sb.draw(nameTexture, x, drawY - 32, 196, 40);

@@ -61,8 +61,8 @@ public class CinematicTimeline {
 
         for (int i = 0; i < 200; i++) {
             float markX = startX + i * markSpacing;
-
-            sb.draw(timelineMark, markX, resolution.y / 2.5f - 25, 6, 18);
+            if(markX > timeLineBounds.x-32)
+                sb.draw(timelineMark, markX, resolution.y / 2.5f - 25, 6, 18);
 
         }
 
@@ -98,7 +98,7 @@ public class CinematicTimeline {
         timeBuffer[6] = (char) ('0' + cs / 10);
         timeBuffer[7] = (char) ('0' + cs % 10);
 
-        return String.valueOf(timeBuffer); // returns cached internal string
+        return String.valueOf(timeBuffer);
     }
 
     public void updateScrolling(float deltaX, float deltaY) {
@@ -114,6 +114,7 @@ public class CinematicTimeline {
 
     public void resize(float amountY) {
         size = MathUtils.lerp(size, size + amountY, 0.8f);
-        size = Math.min(size,14);
+        size = Math.min(Math.max(size,0.3f),14);
+        print(size);
     }
 }
