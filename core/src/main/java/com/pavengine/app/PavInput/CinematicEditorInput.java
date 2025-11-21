@@ -27,6 +27,7 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavCursor;
@@ -274,7 +275,11 @@ public class CinematicEditorInput {
 
             setPerspectiveTouch();
 
-
+            if(cursor.clicked(cinematicTimeline.bounds)) {
+                for(CinematicTimelineControl control : cinematicTimeline.timelineControls) {
+                    control.hovered = cursor.clicked(control.obj.getBoundingRectangle());
+                }
+            }
 
             if (selectedObject != null) {
                 switch(editorSelectedObjectBehavior) {

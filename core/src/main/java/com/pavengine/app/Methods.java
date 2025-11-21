@@ -137,8 +137,8 @@ public class Methods {
 
 
 
-    public static TextureRegion[] extractSprites(String name, int width, int height) {
-        TextureRegion sheet = new TextureRegion(new Texture(load(name)));
+    public static TextureRegion[] extractSprites(String path, int width, int height) {
+        TextureRegion sheet = new TextureRegion(new Texture(load(path)));
         return sheet.split(width, height)[0];
     }
 

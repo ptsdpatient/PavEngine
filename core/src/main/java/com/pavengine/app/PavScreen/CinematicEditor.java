@@ -4,7 +4,6 @@ import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
 import static com.pavengine.app.PavEngine.gameFont;
@@ -29,7 +28,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.Cinematic.CinematicTimeline;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -48,6 +47,7 @@ public class CinematicEditor extends  PavScreen {
     public static PavWidget exportModelInfo;
     private BitmapFont font;
     public static CinematicTimeline cinematicTimeline;
+    public static boolean playingScene = false;
 
     public CinematicEditor(PavEngine game) {
         super(game);
@@ -72,7 +72,7 @@ public class CinematicEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[3]);
+        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[6]);
     }
 
     public ArrayList<String> listModels(String path) {

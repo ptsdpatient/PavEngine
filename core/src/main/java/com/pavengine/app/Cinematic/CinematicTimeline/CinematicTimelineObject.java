@@ -1,4 +1,4 @@
-package com.pavengine.app.Cinematic;
+package com.pavengine.app.Cinematic.CinematicTimeline;
 
 import static com.pavengine.app.PavEngine.resolution;
 
@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Align;
 
-public class CinematicTimelineObject {
+public abstract class CinematicTimelineObject {
 
     TextureRegion nameTexture;
     TextureRegion lineTexture;
