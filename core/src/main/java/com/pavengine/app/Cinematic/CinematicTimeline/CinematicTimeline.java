@@ -30,7 +30,7 @@ public class CinematicTimeline {
 
     private float scrollX = 0, scrollY = 0;
     private float size = 10, startX = 0, markSpacing = 0;
-    private float timeSeconds = 0, timelinePointerX = 246;  // 196+50
+    public float timeSeconds = 0, timelinePointerX = 246;
     private final char[] timeBuffer = new char[8];
 
     public CinematicTimeline(TextureRegion background, TextureRegion timelineMark) {
@@ -57,55 +57,53 @@ public class CinematicTimeline {
 
         int i = 0;
         for(TextureRegion tex : extractSprites("sprites/default/timeline_control.png",32,32)) {
-            timelineControls.add(new CinematicTimelineControl(tex, new Vector2(i * 54,resolution.y/2.5f - 50)));
+            timelineControls.add(new CinematicTimelineControl(tex, new Vector2(15 + i * 48,resolution.y/2.5f - 50),i));
             i++;
         }
+
+    }
+
+    public void updateCursor() {
+        timelinePointerX = startX + timeSeconds * markSpacing;
     }
 
     public void draw(SpriteBatch sb) {
         sb.draw(background, 0, 0, resolution.x, resolution.y / 2.5f);
 
-        // Smooth movement when playing
         if (playingScene) {
             print(timeSeconds);
             timeSeconds += Gdx.graphics.getDeltaTime();
-            timelinePointerX = startX + timeSeconds * markSpacing;
+            updateCursor();
         }
 
-        // Draw timeline objects
         for (CinematicTimelineObject obj : timelineObjects) {
             if (obj.y + scrollY + 45 < resolution.y/2.5f)
                 obj.draw(sb, scrollX, scrollY);
         }
 
-        // Pre-calc spacing
         startX = scrollX + 256;
         markSpacing = (resolution.x - 256) / size;
 
-        // Draw timeline marks (no new objects or conditions)
         float baseY = resolution.y / 2.5f - 25;
         for (int i = 0; i < 200; i++) {
             float markX = startX + i * markSpacing;
-            if (markX > 214)  // left boundary
+            if (markX > 214)
                 sb.draw(timelineMark, markX, baseY, 6, 18);
         }
 
-        // Handle click drag
         if (cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             timelinePointerX = cursor.cursor.getX();
             timeSeconds = Math.max((timelinePointerX - startX) / markSpacing, 0);
         }
 
-        // Draw pointer
+        for (CinematicTimelineControl control : timelineControls)
+            control.draw(sb);
+
         float pointerY = resolution.y / 2.5f - 48;
         sb.draw(timelineMark, timelinePointerX, 0, 6, pointerY);
         sb.draw(timelineMark, timelinePointerX - 82, pointerY, 164, 48); // center bar
-
         drawTime(sb);
 
-        // Controls
-        for (CinematicTimelineControl control : timelineControls)
-            control.draw(sb);
     }
 
     private void drawTime(SpriteBatch sb) {
@@ -136,9 +134,11 @@ public class CinematicTimeline {
     private void clampScroll() {
         scrollX = Math.max(Math.min(scrollX, 0), -5000);
         scrollY = Math.max(Math.min(scrollY, timelineObjects.size * 45), 0);
+        updateCursor();
     }
 
     public void resize(float amountY) {
         size = MathUtils.clamp(size + amountY * 0.5f, 0.3f, 14f);
+        updateCursor();
     }
 }

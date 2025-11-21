@@ -72,7 +72,7 @@ public class CinematicEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[6]);
+        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[7]);
     }
 
     public ArrayList<String> listModels(String path) {

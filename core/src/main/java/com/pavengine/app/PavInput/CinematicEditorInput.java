@@ -13,6 +13,7 @@ import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicEditorLayout;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
+import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
@@ -175,6 +176,28 @@ public class CinematicEditorInput {
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
             }
 
+            if(cursor.clicked(cinematicTimeline.bounds)) {
+                for(CinematicTimelineControl control : cinematicTimeline.timelineControls) {
+                    if(cursor.clicked(control.obj.getBoundingRectangle())) {
+                        switch (control.index) {
+                            case 0: {
+                                cinematicTimeline.timeSeconds = 0;
+                                cinematicTimeline.updateCursor();
+                            }
+                            break;
+                            case 1: {
+                                playingScene = !playingScene;
+                            }
+                            break;
+                            case 2: {
+                                cinematicTimeline.timeSeconds = 10;
+                                cinematicTimeline.updateCursor();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
             overlayTouch = new Vector3(screenX, screenY, 0);
             overlayViewport.unproject(overlayTouch);
 
@@ -405,8 +428,8 @@ public class CinematicEditorInput {
 
     private static void setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior value) {
 //        PavEngine.editorSelectedObjectBehavior = PavEngine.editorSelectedObjectBehavior == value? EditorSelectedObjectBehavior.FreeLook: value;
-        PavEngine.editorSelectedObjectBehavior = value;
-        editorSelectedObjectText.text = PavEngine.editorSelectedObjectBehavior.name();
+        editorSelectedObjectBehavior = value;
+        editorSelectedObjectText.text = editorSelectedObjectBehavior.name();
     }
 
     private static void setSelectedObject(GameObject obj) {

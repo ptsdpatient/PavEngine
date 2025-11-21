@@ -10,12 +10,13 @@ public class CinematicTimelineControl {
     public Sprite obj;
     float scale = 1f;
     public boolean hovered = false;
-
-    public CinematicTimelineControl(TextureRegion tex, Vector2 position) {
+    public int index = 0;
+    public CinematicTimelineControl(TextureRegion tex, Vector2 position, int index) {
         obj = new Sprite(tex);
         obj.setPosition(position.x, position.y);
         obj.setOriginCenter();
         obj.setSize(38,38);
+        this.index = index;
     }
 
     public void update() {
