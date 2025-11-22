@@ -65,7 +65,7 @@ public class MapEditor extends  PavScreen {
     public MapEditor(PavEngine game) {
         super(game);
 
-        this.font = gameFont;
+        this.font = gameFont[1];
         objectList = new ArrayList<>();
 
 

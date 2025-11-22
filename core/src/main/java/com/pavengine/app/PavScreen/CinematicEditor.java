@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
@@ -47,12 +48,13 @@ public class CinematicEditor extends  PavScreen {
     public static PavWidget exportModelInfo;
     private BitmapFont font;
     public static CinematicTimeline cinematicTimeline;
+    public static CinematicPanel cinematicPanel;
     public static boolean playingScene = false;
 
     public CinematicEditor(PavEngine game) {
         super(game);
 
-        this.font = gameFont;
+        this.font = gameFont[2];
         objectList = new ArrayList<>();
 
 
@@ -73,6 +75,7 @@ public class CinematicEditor extends  PavScreen {
 
         addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
         cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[7]);
+        cinematicPanel = new CinematicPanel(uiBG[1]);
     }
 
     public ArrayList<String> listModels(String path) {
@@ -155,6 +158,7 @@ public class CinematicEditor extends  PavScreen {
         }
 
         cinematicTimeline.draw(batch);
+        cinematicPanel.draw(batch);
 
         batch.end();
 

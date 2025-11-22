@@ -80,11 +80,9 @@ public class PavEngine extends Game {
     public static SceneManager sceneManager;
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
-//    public static AxisGizmo3D perspectiveAxisGizmo;
 
-    public static BitmapFont
-        gameFont,
-        bigGameFont ;
+    public static BitmapFont[]
+        gameFont = new BitmapFont[7];
 
 
     public PavLight pavLight;
@@ -183,9 +181,13 @@ public class PavEngine extends Game {
         pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
 
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
-
-        gameFont = new BitmapFont(load("font/ubuntu.fnt"));
-        bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
+        float fontScale = 0.5f;
+        for(int i = 0; i < 7 ; i++) {
+            gameFont[i] = new BitmapFont(load("font/ubuntu.fnt"));
+            gameFont[i].getData().setScale(fontScale);
+            print(fontScale);
+            fontScale+=0.25f;
+        }
 
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);

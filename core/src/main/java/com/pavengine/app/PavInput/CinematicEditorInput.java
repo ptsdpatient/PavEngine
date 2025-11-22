@@ -12,6 +12,7 @@ import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicEditorLayout;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
@@ -164,6 +165,8 @@ public class CinematicEditorInput {
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
             cursor.setCursor(1);
+
+            cinematicPanel.dropdown.click();
 
             if (!enableCursor) {
                 lockCursor(false);

@@ -15,8 +15,6 @@ import static com.pavengine.app.PavEngine.playerDamageRate;
 import static com.pavengine.app.PavEngine.sprayLimit;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
-
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -52,18 +50,18 @@ public class UpgradeScreen extends PavScreen {
         super(game);
 
         upgradeLayout.add(new PavLayout(PavAnchor.CENTER, PavFlex.COLUMN, 6, 720, 32, 5));
-        upgradeLayout.peek().addSprite(new TextButton("Click to upgrade the turret", gameFont, ClickBehavior.Nothing));
-        upgradeLayout.peek().addSprite(new UpgradeButton("damage", 50, gameFont, ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
-        upgradeLayout.peek().addSprite(new UpgradeButton("fire rate", 80, gameFont, ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
-        upgradeLayout.peek().addSprite(new UpgradeButton("spray limit", 90, gameFont, ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
-        upgradeLayout.peek().addSprite(new UpgradeButton("blast radius", 60, gameFont, ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
+        upgradeLayout.peek().addSprite(new TextButton("Click to upgrade the turret", gameFont[2], ClickBehavior.Nothing));
+        upgradeLayout.peek().addSprite(new UpgradeButton("damage", 50, gameFont[2], ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
+        upgradeLayout.peek().addSprite(new UpgradeButton("fire rate", 80, gameFont[2], ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
+        upgradeLayout.peek().addSprite(new UpgradeButton("spray limit", 90, gameFont[2], ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
+        upgradeLayout.peek().addSprite(new UpgradeButton("blast radius", 60, gameFont[2], ClickBehavior.Nothing, uiControl[3], uiControl[4], uiControl[6]));
 
         upgradeLayout.add(new PavLayout(PavAnchor.TOP_RIGHT, PavFlex.COLUMN, 0, 192, 16, 8));
-        creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont, ClickBehavior.Nothing);
+        creditShow = new TextButton(String.valueOf(PavEngine.credits), gameFont[2], ClickBehavior.Nothing);
         upgradeLayout.peek().addSprite(creditShow);
 
         upgradeLayout.add(new PavLayout(PavAnchor.BOTTOM_RIGHT, PavFlex.COLUMN, 0, 164, 16, 8));
-        upgradeLayout.peek().addSprite(new TextButton("NEXT LEVEL", gameFont, ClickBehavior.Nothing));
+        upgradeLayout.peek().addSprite(new TextButton("NEXT LEVEL", gameFont[2], ClickBehavior.Nothing));
 
     }
 

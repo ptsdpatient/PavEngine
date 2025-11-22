@@ -26,7 +26,6 @@ public class CinematicTimeline {
     public final Array<CinematicTimelineControl> timelineControls = new Array<>();
     public final Rectangle bounds;
     private final Rectangle timeLineBounds;
-    private final BitmapFont timelineCursorFont;
 
     private float scrollX = 0, scrollY = 0;
     private float size = 10, startX = 0, markSpacing = 0;
@@ -37,12 +36,12 @@ public class CinematicTimeline {
         this.background = background;
         this.timelineMark = timelineMark;
 
-        timelineObjects.add(new CameraTimelineObject("Camera", gameFont, uiBG[2], uiBG[3]));
-        timelineObjects.add(new LightTimelineObject("Light", gameFont, uiBG[2], uiBG[3]));
-        timelineObjects.add(new SubtitleTimelineObject("Subtitle", gameFont, uiBG[2], uiBG[3]));
-        timelineObjects.add(new MusicTimelineObject("Music", gameFont, uiBG[2], uiBG[3]));
-        timelineObjects.add(new TransformTimelineObject("Transform 1", gameFont, uiBG[2], uiBG[3]));
-        timelineObjects.add(new AnimateTimelineObject("Animate 1", gameFont, uiBG[2], uiBG[3]));
+        timelineObjects.add(new CameraTimelineObject("Camera", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new LightTimelineObject("Light", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new SubtitleTimelineObject("Subtitle", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new MusicTimelineObject("Music", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new TransformTimelineObject("Transform", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new AnimateTimelineObject("Animate", gameFont[2], uiBG[1], uiBG[3]));
 
         float posY = resolution.y / 2.5f - 70;
         for (CinematicTimelineObject obj : timelineObjects) {
@@ -52,8 +51,6 @@ public class CinematicTimeline {
 
         bounds = new Rectangle(0, 0, resolution.x, resolution.y / 2.5f);
         timeLineBounds = new Rectangle(246, 0, resolution.x, resolution.y / 2.5f);
-
-        timelineCursorFont = new BitmapFont(load("font/default/cinematic/timeline.fnt"));
 
         int i = 0;
         for(TextureRegion tex : extractSprites("sprites/default/timeline_control.png",32,32)) {
@@ -121,7 +118,7 @@ public class CinematicTimeline {
         timeBuffer[6] = (char) ('0' + cs / 10);
         timeBuffer[7] = (char) ('0' + cs % 10);
 
-        timelineCursorFont.draw(sb, String.valueOf(timeBuffer),
+        gameFont[2].draw(sb, String.valueOf(timeBuffer),
             timelinePointerX - 72, resolution.y / 2.5f - 12);
     }
 
