@@ -39,7 +39,8 @@ public class CinematicPanelDropdown {
         CinematicWidgetType.Animate,
         CinematicWidgetType.Camera,
         CinematicWidgetType.Music,
-        CinematicWidgetType.Light
+        CinematicWidgetType.Light,
+        CinematicWidgetType.Subtitle
     };
 
     Sprite background;
@@ -52,7 +53,7 @@ public class CinematicPanelDropdown {
         this.background = new Sprite(background);
         this.hoverTexture = hover;
 
-        buttonLayout = new GlyphLayout(font, cinematicPanel.currentWidgetType.name());
+        buttonLayout = new GlyphLayout(font, CinematicWidgetType.Subtitle.name());
         this.box = new Rectangle(0, 0, buttonLayout.width + 40, OPTION_HEIGHT);
 
         buttonRect = new Rectangle();
@@ -112,8 +113,8 @@ public class CinematicPanelDropdown {
 
         for (int i = 0; i < list.length; i++) {
             if (cursor.clicked(optionRects[i])) {
-                CinematicPanel.currentWidgetType = list[i];
-                buttonLayout.setText(font, CinematicPanel.currentWidgetType.name());
+                cinematicPanel.currentWidgetType = list[i];
+                buttonLayout.setText(font, cinematicPanel.currentWidgetType.name());
                 dropDownExpand = false;
                 break;
             }

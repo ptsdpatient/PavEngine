@@ -400,8 +400,8 @@ public class MapEditorInput {
     private static void setPerspectiveTouch() {
 
         Vector3 screenPos = overlayViewport.project(new Vector3(
-            PavCursor.clickArea.getX() + PavCursor.clickArea.getWidth() / 2f,
-            PavCursor.clickArea.getY() + PavCursor.clickArea.getHeight() / 2f,
+            cursor.clickArea.getX() + cursor.clickArea.getWidth() / 2f,
+            cursor.clickArea.getY() + cursor.clickArea.getHeight() / 2f,
             0
         ));
 

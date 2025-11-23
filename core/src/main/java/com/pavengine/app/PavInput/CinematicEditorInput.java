@@ -25,11 +25,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelSelectedWidget;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavCursor;
@@ -126,6 +131,16 @@ public class CinematicEditorInput {
 
             setPerspectiveTouch();
 
+            if(cursor.clicked(cinematicPanel.bounds)) {
+                for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+                    if(cursor.clicked(widget.bound) && cinematicPanel.currentWidgetType == widget.type) {
+                        cinematicPanel.widgetDrag = true;
+                        cinematicPanel.selectedWidget.set(widget.texture,widget.name, new Vector2(widget.bound.x - cursor.clickArea.x,widget.bound.y-cursor.clickArea.y),widget.type);
+                        return true;
+                    }
+                }
+            }
+
 //            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
 //                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
 //
@@ -167,6 +182,15 @@ public class CinematicEditorInput {
             cursor.setCursor(1);
 
             cinematicPanel.dropdown.click();
+
+            if(cinematicPanel.widgetDrag) {
+                cinematicPanel.widgetDrag = false;
+                if(cinematicPanel.selectedWidget.snapping) {
+                    cinematicTimeline.timelineWidgets.add(
+                        new CinematicTimelineWidget(cinematicPanel.selectedWidget.bg,cinematicPanel.selectedWidget.text,new Vector2(cinematicPanel.selectedWidget.lineRect.x,cinematicPanel.selectedWidget.lineRect.y),cinematicPanel.selectedWidget.type)
+                    );
+                }
+            }
 
             if (!enableCursor) {
                 lockCursor(false);
@@ -268,6 +292,7 @@ public class CinematicEditorInput {
 
             overlayTouch = new Vector3(screenX, screenY, 0);
             overlayViewport.unproject(overlayTouch);
+
 
 
             if (enableCursor) cursor.setCursor(2);
@@ -443,8 +468,8 @@ public class CinematicEditorInput {
     private static void setPerspectiveTouch() {
 
         Vector3 screenPos = overlayViewport.project(new Vector3(
-            PavCursor.clickArea.getX() + PavCursor.clickArea.getWidth() / 2f,
-            PavCursor.clickArea.getY() + PavCursor.clickArea.getHeight() / 2f,
+            cursor.clickArea.getX() + cursor.clickArea.getWidth() / 2f,
+            cursor.clickArea.getY() + cursor.clickArea.getHeight() / 2f,
             0
         ));
 

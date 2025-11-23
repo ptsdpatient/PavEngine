@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 public class MusicPanelWidget extends CinematicPanelWidget {
 
     public MusicPanelWidget(String name, BitmapFont fnt) {
-        super(name, fnt, uiBG[8]);
+        super(name, fnt, uiBG[8],CinematicWidgetType.Music);
     }
+
 
 }

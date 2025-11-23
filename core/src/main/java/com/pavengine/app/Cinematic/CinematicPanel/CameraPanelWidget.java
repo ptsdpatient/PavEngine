@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class CameraPanelWidget extends CinematicPanelWidget {
 
     public CameraPanelWidget(String name, BitmapFont fnt) {
-        super(name, fnt, uiBG[8]);
+        super(name, fnt, uiBG[8],CinematicWidgetType.Camera);
     }
 
 }

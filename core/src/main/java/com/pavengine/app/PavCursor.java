@@ -18,7 +18,7 @@ public class PavCursor {
     TextureRegion[] cursors;
     float sensitivity;
     Vector2 position;
-    public static Rectangle clickArea;
+    public Rectangle clickArea;
     private final Vector2 tmp = new Vector2();
 
     public PavCursor(String name, float sensitivity) {
@@ -34,6 +34,10 @@ public class PavCursor {
         this.index = index;
         cursor.setRegion(cursors[index]);
         cursor.setPosition(position.x, position.y);
+    }
+
+    public Vector2 getPosition() {
+        return new Vector2(clickArea.x,clickArea.y);
     }
 
     public void draw(SpriteBatch sb, float delta) {

@@ -29,7 +29,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -177,6 +179,11 @@ public class CinematicEditor extends  PavScreen {
                     debugCube(box, obj.debugColor);
         }
 
+        for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+            debugRectangle(widget.bound, Color.GREEN);
+
+        }
+
 //        axisGizmo.update();
 //        axisGizmo.draw();
 
@@ -184,7 +191,15 @@ public class CinematicEditor extends  PavScreen {
 //            perspectiveAxisGizmo.update();
 //            perspectiveAxisGizmo.draw();
         }
+        for(CinematicTimelineObject object : cinematicTimeline.timelineObjects) {
+            debugRectangle(object.lineRect,Color.YELLOW);
+        }
 
+//        for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+//
+//        }
+
+        debugRectangle(cinematicPanel.selectedWidget.lineRect,Color.CYAN);
 
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
 //        debugCube(new PavBounds(perspectiveAxisGizmo.yOBB),Color.RED);

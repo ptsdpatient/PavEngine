@@ -51,6 +51,10 @@ public class Methods {
         Gdx.app.log("Game", value);
     }
 
+    public static void print(Vector2 value) {
+        Gdx.app.log("Game", value + "");
+    }
+
     public static void print(float value) {
         Gdx.app.log("Game", String.valueOf(value));
     }

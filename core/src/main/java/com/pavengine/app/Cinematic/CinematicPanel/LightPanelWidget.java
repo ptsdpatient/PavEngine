@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 public class LightPanelWidget extends CinematicPanelWidget {
 
     public LightPanelWidget(String name, BitmapFont fnt) {
-        super(name, fnt, uiBG[8]);
+        super(name, fnt, uiBG[8],CinematicWidgetType.Light);
     }
 
 }

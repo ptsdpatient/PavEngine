@@ -7,6 +7,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 
 import com.badlogic.gdx.Gdx;
@@ -22,7 +23,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class CinematicTimeline {
     private final TextureRegion background, timelineMark;
-    private final Array<CinematicTimelineObject> timelineObjects = new Array<>();
+    public Array<CinematicTimelineObject> timelineObjects = new Array<>();
+    public Array<CinematicTimelineWidget> timelineWidgets = new Array<>();
     public final Array<CinematicTimelineControl> timelineControls = new Array<>();
     public final Rectangle bounds;
     private final Rectangle timeLineBounds;
@@ -88,7 +90,7 @@ public class CinematicTimeline {
                 sb.draw(timelineMark, markX, baseY, 6, 18);
         }
 
-        if (cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+        if (!cinematicPanel.widgetDrag && cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             timelinePointerX = cursor.cursor.getX();
             timeSeconds = Math.max((timelinePointerX - startX) / markSpacing, 0);
         }
@@ -96,10 +98,16 @@ public class CinematicTimeline {
         for (CinematicTimelineControl control : timelineControls)
             control.draw(sb);
 
+        for(CinematicTimelineWidget widget : timelineWidgets) {
+            widget.draw(sb,196);
+        }
+
         float pointerY = resolution.y / 2.5f - 48;
         sb.draw(timelineMark, timelinePointerX, 0, 6, pointerY);
         sb.draw(timelineMark, timelinePointerX - 82, pointerY, 164, 48); // center bar
+
         drawTime(sb);
+
 
     }
 
@@ -138,4 +146,5 @@ public class CinematicTimeline {
         size = MathUtils.clamp(size + amountY * 0.5f, 0.3f, 14f);
         updateCursor();
     }
+
 }

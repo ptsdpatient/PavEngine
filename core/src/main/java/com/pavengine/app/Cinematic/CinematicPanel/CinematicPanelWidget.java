@@ -1,35 +1,50 @@
 package com.pavengine.app.Cinematic.CinematicPanel;
 
+import static com.pavengine.app.Debug.Draw.debugRectangle;
+import static com.pavengine.app.Methods.print;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
 public abstract class CinematicPanelWidget {
 
-    TextureRegion nameTexture;
-    String name;
+    public TextureRegion texture;
+    public String name;
     BitmapFont font;
-    float x = 0, y = 50;
+    float x = 20, y = 50;
     GlyphLayout layout;
+    public CinematicWidgetType type;
+    public Rectangle bound;
 
-    public CinematicPanelWidget(String name, BitmapFont fnt, TextureRegion nameTexture) {
-        this.nameTexture = nameTexture;
+    public CinematicPanelWidget(String name, BitmapFont fnt, TextureRegion texture, CinematicWidgetType type) {
+        this.texture = texture;
         this.name = name;
         this.font = fnt;
+        this.type = type;
         layout = new GlyphLayout(font, name, Color.BLACK,196, Align.center,true);
+        bound = new Rectangle(0, y,224,40);
     }
 
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+        bound.setPosition(x,y);
+    }
+    public Vector2 getPosition() {
+        return new Vector2(x,y);
     }
 
     public void draw(SpriteBatch sb, float scrollY) {
         float drawY = y + scrollY;
-        sb.draw(nameTexture, x, drawY - 32, 196, 40);
+        bound.setPosition(x, drawY - 32);
+        sb.draw(texture, x, drawY - 32, 224, 40);
+
         font.draw(sb, name, x + 10, drawY);
     }
 }

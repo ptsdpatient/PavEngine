@@ -7,23 +7,30 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Align;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public abstract class CinematicTimelineObject {
 
+    public Rectangle lineRect = new Rectangle();
     TextureRegion nameTexture;
     TextureRegion lineTexture;
     String name;
     BitmapFont font;
     float x = 0, y = 50;
     GlyphLayout layout;
+    public CinematicWidgetType type;
 
     public CinematicTimelineObject(String name, BitmapFont fnt,
-                                   TextureRegion nameTexture, TextureRegion lineTexture) {
+                                   TextureRegion nameTexture,
+                                   TextureRegion lineTexture,
+                                   CinematicWidgetType type) {
         this.nameTexture = nameTexture;
         this.lineTexture = lineTexture;
         this.name = name;
         this.font = fnt;
+        this.type = type;
         layout = new GlyphLayout(font, name, Color.BLACK,196, Align.center,true);
     }
 
@@ -37,6 +44,8 @@ public abstract class CinematicTimelineObject {
         float drawY = y + scrollY;
 
         float lineStart = 196 + 50;
+
+        lineRect.set(lineStart, drawY - 16, resolution.x - lineStart - 10, 4);
         sb.draw(lineTexture, lineStart, drawY - 16, resolution.x - lineStart - 10, 4);
 
         sb.draw(nameTexture, x, drawY - 32, 196, 40);
