@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class PavCursor {
+
     public int index = 0;
     public Sprite cursor;
     TextureRegion[] cursors;

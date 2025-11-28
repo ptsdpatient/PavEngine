@@ -186,9 +186,14 @@ public class CinematicEditorInput {
             if(cinematicPanel.widgetDrag) {
                 cinematicPanel.widgetDrag = false;
                 if(cinematicPanel.selectedWidget.snapping) {
-                    cinematicTimeline.timelineWidgets.add(
-                        new CinematicTimelineWidget(cinematicPanel.selectedWidget.bg,cinematicPanel.selectedWidget.text,new Vector2(cinematicPanel.selectedWidget.lineRect.x,cinematicPanel.selectedWidget.lineRect.y),cinematicPanel.selectedWidget.type)
-                    );
+                    cinematicTimeline.timelineWidgets.add(new CinematicTimelineWidget(
+                        cinematicPanel.selectedWidget.bg,
+                        cinematicPanel.selectedWidget.text,
+                        new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                            cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                        cinematicPanel.selectedWidget.type,
+                        cinematicTimeline.pixelsPerSecond
+                    ));
                 }
             }
 
@@ -326,9 +331,25 @@ public class CinematicEditorInput {
 
             setPerspectiveTouch();
 
+
+
             if(cursor.clicked(cinematicTimeline.bounds)) {
                 for(CinematicTimelineControl control : cinematicTimeline.timelineControls) {
                     control.hovered = cursor.clicked(control.obj.getBoundingRectangle());
+                }
+                boolean dragStarted = false;
+
+                if (cursor.index != 3) {
+                    for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+                        if (cursor.clicked(widget.leftRectangle) || cursor.clicked(widget.rightRectangle)) {
+                            dragStarted = true;
+                            cursor.setCursor(3);
+                            break;
+                        }
+                    }
+                }
+                if (!dragStarted && cursor.index == 3) {
+                    cursor.setCursor(1);
                 }
             }
 

@@ -5,6 +5,7 @@ import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
@@ -12,6 +13,7 @@ import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
+import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
@@ -32,6 +34,7 @@ import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -199,8 +202,13 @@ public class CinematicEditor extends  PavScreen {
 //
 //        }
 
-        debugRectangle(cinematicPanel.selectedWidget.lineRect,Color.CYAN);
+//        debugRectangle(cinematicPanel.selectedWidget.lineRect,Color.CYAN);
 
+        for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+            debugRectangle(widget.leftRectangle,Color.RED);
+            debugRectangle(widget.rightRectangle,Color.RED);
+        }
+        debugRectangle(cursor.clickArea,Color.GREEN);
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
 //        debugCube(new PavBounds(perspectiveAxisGizmo.yOBB),Color.RED);
 //
