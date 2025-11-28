@@ -34,6 +34,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelSelectedWidget;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
@@ -300,7 +301,52 @@ public class CinematicEditorInput {
 
 
 
-            if (enableCursor) cursor.setCursor(2);
+            if (enableCursor && cursor.index != 3) {
+                cursor.setCursor(2);
+                for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+                    if (cursor.clicked(widget.bounds)) {
+
+                        // --- Horizontal movement (time-based) ---
+                        float mouseX = cursor.getX() - cinematicTimeline.scrollX;   // adjust for scrolling
+                        widget.startTime = (mouseX - cinematicTimeline.startX) / cinematicTimeline.pixelsPerSecond;
+                        if (widget.startTime < 0) widget.startTime = 0;  // prevent negative
+
+                        // --- Vertical movement (snap to tracks) ---
+                        float mouseY = cursor.getY() - cinematicTimeline.scrollY;
+
+                        // Find nearest track
+                        for (CinematicTimelineObject track : cinematicTimeline.timelineObjects) {
+                            if (mouseY > track.y && mouseY < track.y + 40) {
+                                widget.trackY = track.y;   // Snap to track
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                float mouseX = cursor.getX();
+                for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+                    if (cursor.clicked(widget.leftRectangle)) {
+                        float newStartTime = (mouseX - cinematicTimeline.startX) / cinematicTimeline.pixelsPerSecond;
+
+                        float delta = widget.startTime - newStartTime;
+
+                        widget.startTime = newStartTime;
+                        widget.duration += delta;
+
+                        if (widget.duration < 1f) widget.duration = 1f;
+                        break;
+                    }
+
+                    if (cursor.clicked(widget.rightRectangle)) {
+                        float newEndTime = (mouseX - cinematicTimeline.startX) / cinematicTimeline.pixelsPerSecond;
+                        widget.duration = newEndTime - widget.startTime;
+
+                        if (widget.duration < 1f) widget.duration = 1f;
+                        break;
+                    }
+                }
+            }
 
 
 //            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
@@ -339,16 +385,14 @@ public class CinematicEditorInput {
                 }
                 boolean dragStarted = false;
 
-                if (cursor.index != 3) {
-                    for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
-                        if (cursor.clicked(widget.leftRectangle) || cursor.clicked(widget.rightRectangle)) {
-                            dragStarted = true;
-                            cursor.setCursor(3);
-                            break;
-                        }
+                for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+                    if (cursor.clicked(widget.leftRectangle) || cursor.clicked(widget.rightRectangle)) {
+                        dragStarted = true;
+                        cursor.setCursor(3);
+                        break;
                     }
                 }
-                if (!dragStarted && cursor.index == 3) {
+                if (!dragStarted) {
                     cursor.setCursor(1);
                 }
             }

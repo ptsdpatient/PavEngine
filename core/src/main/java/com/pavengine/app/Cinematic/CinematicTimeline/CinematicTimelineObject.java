@@ -18,7 +18,8 @@ public abstract class CinematicTimelineObject {
     TextureRegion lineTexture;
     String name;
     BitmapFont font;
-    float x = 0, y = 50;
+    float x = 0;
+    public float y = 50;
     GlyphLayout layout;
     public CinematicWidgetType type;
 

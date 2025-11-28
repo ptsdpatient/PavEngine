@@ -16,7 +16,7 @@ public class CinematicTimelineWidget {
     public float startTime;      // NEW: time-based position
     public float trackY;         // store row Y (unchanged by resize)
     TextureRegion bg;
-    public Rectangle leftRectangle, rightRectangle;
+    public Rectangle leftRectangle, rightRectangle, bounds;
     String text;
     public CinematicWidgetType type;
     float pixelX,yPos,width,rightX;
@@ -27,6 +27,7 @@ public class CinematicTimelineWidget {
         this.type = type;
         leftRectangle = new Rectangle(0,0,32,40);
         rightRectangle = new Rectangle(0,0,32,40);
+        bounds = new Rectangle(0,0,32,40);
         // Convert screen position to time accurately
         this.startTime = (pixelPos.x - 256) / pixelsPerSecond;
         this.trackY = pixelPos.y;
@@ -36,11 +37,12 @@ public class CinematicTimelineWidget {
         pixelX = startX + scrollX + startTime * pps;
         yPos = trackY + scrollY;
         width = duration * pps;
-        rightX = pixelX + width - 8f;
+        rightX = pixelX + width - 16f;
 
+        bounds.set(pixelX + 16f, yPos, width - 32f, 40f);
         batch.draw(bg, pixelX , yPos, width, 40f);
 
-        leftRectangle.setPosition(pixelX - 8f, yPos);
+        leftRectangle.setPosition(pixelX - 16f, yPos);
         rightRectangle.setPosition(rightX, yPos);
     }
 }

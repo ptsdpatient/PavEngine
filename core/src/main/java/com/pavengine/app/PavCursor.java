@@ -20,14 +20,14 @@ public class PavCursor {
     float sensitivity;
     Vector2 position;
     public Rectangle clickArea;
-    private final Vector2 tmp = new Vector2();
 
     public PavCursor(String name, float sensitivity) {
-        cursors = extractSprites(name, 32, 32);
+        cursors = extractSprites(name, 64, 64);
         position = new Vector2(resolution.x / 2f, resolution.y / 2f);
         cursor = new Sprite(cursors[1]);
+
         this.sensitivity = sensitivity;
-        clickArea = new Rectangle(0,0,10,10).setPosition(position);
+        clickArea = new Rectangle(0,0,10,10).setPosition(position.cpy().sub(64,64));
         clickArea.setPosition(position);
     }
 
@@ -49,14 +49,12 @@ public class PavCursor {
             (Math.abs(Gdx.input.getDeltaY()) < 80? -Gdx.input.getDeltaY() : 0f)  * delta * sensitivity
         );
 
-        position.set(MathUtils.clamp(position.x,-32,resolution.x),MathUtils.clamp(position.y,-32,resolution.y));
+        position.set(MathUtils.clamp(position.x,-32,resolution.x),MathUtils.clamp(position.y,- 32,resolution.y));
 
 
         cursor.setPosition(position.x, position.y);
 
-        tmp.set(position.x, position.y + cursor.getHeight() - 10f);
-
-        clickArea.setPosition(tmp);
+        clickArea.setPosition(position.x + 32, position.y + cursor.getHeight() - 42f);
 
     }
 
@@ -64,4 +62,11 @@ public class PavCursor {
         return clickArea.overlaps(box);
     }
 
+    public float getX() {
+        return clickArea.x + 5;
+    }
+
+    public float getY() {
+        return clickArea.y + 5;
+    }
 }

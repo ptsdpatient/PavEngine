@@ -39,7 +39,7 @@ public class CinematicTimeline {
     // Time tracking
     public float timeSeconds = 0;
     public float timelinePointerX = 246;
-    private float startX = 256;
+    public float startX = 256;
 
     private final char[] timeBuffer = new char[8];
 
@@ -101,8 +101,8 @@ public class CinematicTimeline {
         }
 
         // --- Mouse click to reposition timeline cursor accurately ---
-        if (!cinematicPanel.widgetDrag && cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            timelinePointerX = cursor.cursor.getX();
+        if (!cinematicPanel.widgetDrag && cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && (cursor.index == 1 || cursor.index == 2)) {
+            timelinePointerX = cursor.getX();
             timeSeconds = Math.max((timelinePointerX - startX) / pixelsPerSecond, 0);
         }
 

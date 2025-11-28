@@ -33,6 +33,7 @@ import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 import com.pavengine.app.PavBounds.PavBounds;
@@ -207,8 +208,13 @@ public class CinematicEditor extends  PavScreen {
         for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
             debugRectangle(widget.leftRectangle,Color.RED);
             debugRectangle(widget.rightRectangle,Color.RED);
+            debugRectangle(widget.bounds,Color.BLUE);
         }
+
+
         debugRectangle(cursor.clickArea,Color.GREEN);
+
+
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
 //        debugCube(new PavBounds(perspectiveAxisGizmo.yOBB),Color.RED);
 //
