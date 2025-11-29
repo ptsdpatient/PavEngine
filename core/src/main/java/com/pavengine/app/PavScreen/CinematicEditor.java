@@ -13,8 +13,8 @@ import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
-import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
@@ -25,17 +25,18 @@ import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicModal.CinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -56,6 +57,7 @@ public class CinematicEditor extends  PavScreen {
     public static CinematicTimeline cinematicTimeline;
     public static CinematicPanel cinematicPanel;
     public static boolean playingScene = false;
+    public static CinematicModal cinematicModal;
 
     public CinematicEditor(PavEngine game) {
         super(game);
@@ -166,6 +168,14 @@ public class CinematicEditor extends  PavScreen {
         cinematicTimeline.draw(batch);
         cinematicPanel.draw(batch);
 
+        if(cinematicModal != null){
+            cinematicModal.render(batch);
+            if(cursor.clicked(cinematicModal.closeBound) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                Gdx.input.setInputProcessor(cinematicEditorInput);
+                cinematicModal = null;
+            }
+        }
+
         batch.end();
 
 
@@ -184,7 +194,7 @@ public class CinematicEditor extends  PavScreen {
         }
 
         for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
-            debugRectangle(widget.bound, Color.GREEN);
+//            debugRectangle(widget.bound, Color.GREEN);
 
         }
 
@@ -196,7 +206,7 @@ public class CinematicEditor extends  PavScreen {
 //            perspectiveAxisGizmo.draw();
         }
         for(CinematicTimelineObject object : cinematicTimeline.timelineObjects) {
-            debugRectangle(object.lineRect,Color.YELLOW);
+//            debugRectangle(object.lineRect,Color.YELLOW);
         }
 
 //        for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
@@ -206,13 +216,13 @@ public class CinematicEditor extends  PavScreen {
 //        debugRectangle(cinematicPanel.selectedWidget.lineRect,Color.CYAN);
 
         for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
-            debugRectangle(widget.leftRectangle,Color.RED);
-            debugRectangle(widget.rightRectangle,Color.RED);
-            debugRectangle(widget.bounds,Color.BLUE);
+//            debugRectangle(widget.leftRectangle,Color.RED);
+//            debugRectangle(widget.rightRectangle,Color.RED);
+//            debugRectangle(widget.bounds,Color.BLUE);
         }
 
 
-        debugRectangle(cursor.clickArea,Color.GREEN);
+//        debugRectangle(cursor.clickArea,Color.GREEN);
 
 
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);

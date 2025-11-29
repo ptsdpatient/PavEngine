@@ -81,6 +81,8 @@ public class PavEngine extends Game {
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
 
+    public static Subtitle subtitle;
+
     public static BitmapFont[]
         gameFont = new BitmapFont[7];
 
@@ -125,7 +127,7 @@ public class PavEngine extends Game {
 
         cursor = new PavCursor(
             "sprites/default/cursor_sheet.png",
-            175f
+            125f
         );
 
         pbrConfig = PBRShaderProvider.createDefaultConfig();
@@ -169,7 +171,6 @@ public class PavEngine extends Game {
 
 //        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
-
         initializeCamera();
 
         sceneManager = new SceneManager(
@@ -192,6 +193,8 @@ public class PavEngine extends Game {
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);
         hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
+
+        subtitle = new Subtitle(gameFont[3],resolution.x,resolution.y);
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);

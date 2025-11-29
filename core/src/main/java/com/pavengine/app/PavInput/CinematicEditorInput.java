@@ -25,21 +25,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelSelectedWidget;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
-import com.pavengine.app.PavCursor;
-import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
@@ -52,7 +48,7 @@ public class CinematicEditorInput {
         Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
         Quaternion initialRotation = new Quaternion();
         float initialSize = 1;
-        Vector3 initialPosition = new Vector3(0,0,0);
+        Vector3 initialPosition = new Vector3(0, 0, 0);
 
         @Override
         public boolean keyDown(int keycode) {
@@ -62,9 +58,9 @@ public class CinematicEditorInput {
         @Override
         public boolean keyUp(int keycode) {
 
-            if(keycode == Input.Keys.G) {
+            if (keycode == Input.Keys.G) {
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
-                if(selectedObject != null) {
+                if (selectedObject != null) {
                     initialRotation = selectedObject.rotation.cpy();
                     initialPosition = selectedObject.pos;
                     initialSize = selectedObject.size.x;
@@ -73,10 +69,10 @@ public class CinematicEditorInput {
                 }
             }
 
-            if(keycode == Input.Keys.R) {
+            if (keycode == Input.Keys.R) {
 
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
-                if(selectedObject != null) {
+                if (selectedObject != null) {
                     initialRotation = selectedObject.rotation.cpy();
                     initialPosition = selectedObject.pos;
                     initialSize = selectedObject.size.x;
@@ -85,9 +81,9 @@ public class CinematicEditorInput {
                 }
             }
 
-            if(keycode == Input.Keys.Z) {
+            if (keycode == Input.Keys.Z) {
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
-                if(selectedObject != null) {
+                if (selectedObject != null) {
                     initialRotation = selectedObject.rotation.cpy();
                     initialPosition = selectedObject.pos;
                     initialSize = selectedObject.size.x;
@@ -96,11 +92,11 @@ public class CinematicEditorInput {
                 }
             }
 
-            if(keycode == Input.Keys.X) {
+            if (keycode == Input.Keys.X) {
                 if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
-                    if(selectedObject != null) {
+                    if (selectedObject != null) {
                         selectedObject.rotation = initialRotation;
-                        selectedObject.size = new Vector3(initialSize,initialSize,initialSize);
+                        selectedObject.size = new Vector3(initialSize, initialSize, initialSize);
                         selectedObject.pos = initialPosition;
                     }
                 }
@@ -132,15 +128,23 @@ public class CinematicEditorInput {
 
             setPerspectiveTouch();
 
-            if(cursor.clicked(cinematicPanel.bounds)) {
-                for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
-                    if(cursor.clicked(widget.bound) && cinematicPanel.currentWidgetType == widget.type) {
+            if (cursor.clicked(cinematicPanel.bounds)) {
+                for (CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+                    if (cursor.clicked(widget.bound) && cinematicPanel.currentWidgetType == widget.type) {
                         cinematicPanel.widgetDrag = true;
-                        cinematicPanel.selectedWidget.set(widget.texture,widget.name, new Vector2(widget.bound.x - cursor.clickArea.x,widget.bound.y-cursor.clickArea.y),widget.type);
+                        cinematicPanel.selectedWidget.set(widget.texture, widget.name, new Vector2(widget.bound.x - cursor.clickArea.x, widget.bound.y - cursor.clickArea.y), widget.type);
                         return true;
                     }
                 }
             }
+
+            if (cursor.clicked(cinematicTimeline.bounds)) {
+                for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+                    widget.offsetDrag.set(cursor.getX() - widget.bounds.getX(), cursor.getY() - widget.bounds.getY());
+                    print(widget.offsetDrag);
+                }
+            }
+
 
 //            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
 //                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
@@ -184,17 +188,31 @@ public class CinematicEditorInput {
 
             cinematicPanel.dropdown.click();
 
-            if(cinematicPanel.widgetDrag) {
+            if (cinematicPanel.widgetDrag) {
                 cinematicPanel.widgetDrag = false;
-                if(cinematicPanel.selectedWidget.snapping) {
-                    cinematicTimeline.timelineWidgets.add(new CinematicTimelineWidget(
-                        cinematicPanel.selectedWidget.bg,
-                        cinematicPanel.selectedWidget.text,
-                        new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                            cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                        cinematicPanel.selectedWidget.type,
-                        cinematicTimeline.pixelsPerSecond
-                    ));
+                if (cinematicPanel.selectedWidget.snapping) {
+                    switch (cinematicPanel.selectedWidget.type) {
+                        case Animate:
+                            break;
+                        case Camera:
+                            break;
+                        case Light:
+                            break;
+                        case Music:
+                            break;
+                        case Subtitle:
+                            cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(
+                                cinematicPanel.selectedWidget.bg,
+                                cinematicPanel.selectedWidget.text,
+                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                                cinematicPanel.selectedWidget.type,
+                                cinematicTimeline.pixelsPerSecond
+                            ));
+                            break;
+                        case Transform:
+                            break;
+                    }
                 }
             }
 
@@ -205,13 +223,13 @@ public class CinematicEditorInput {
 
             setPerspectiveTouch();
 
-            if(editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
+            if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
                 setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
             }
 
-            if(cursor.clicked(cinematicTimeline.bounds)) {
-                for(CinematicTimelineControl control : cinematicTimeline.timelineControls) {
-                    if(cursor.clicked(control.obj.getBoundingRectangle())) {
+            if (cursor.clicked(cinematicTimeline.bounds)) {
+                for (CinematicTimelineControl control : cinematicTimeline.timelineControls) {
+                    if (cursor.clicked(control.obj.getBoundingRectangle())) {
                         switch (control.index) {
                             case 0: {
                                 cinematicTimeline.timeSeconds = 0;
@@ -239,7 +257,7 @@ public class CinematicEditorInput {
                     axisGizmo.lookFromAxis(Vector3.X);
                     return true;
                 } else if (cursor.clicked(axisGizmo.yRect)) {
-                    axisGizmo.lookFromAxis(new Vector3(0,0.8f,0.1f));
+                    axisGizmo.lookFromAxis(new Vector3(0, 0.8f, 0.1f));
                     return true;
                 } else if (cursor.clicked(axisGizmo.zRect)) {
                     axisGizmo.lookFromAxis(Vector3.Z);
@@ -300,27 +318,11 @@ public class CinematicEditorInput {
             overlayViewport.unproject(overlayTouch);
 
 
-
             if (enableCursor && cursor.index != 3) {
                 cursor.setCursor(2);
                 for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
                     if (cursor.clicked(widget.bounds)) {
-
-                        // --- Horizontal movement (time-based) ---
-                        float mouseX = cursor.getX() - cinematicTimeline.scrollX;   // adjust for scrolling
-                        widget.startTime = (mouseX - cinematicTimeline.startX) / cinematicTimeline.pixelsPerSecond;
-                        if (widget.startTime < 0) widget.startTime = 0;  // prevent negative
-
-                        // --- Vertical movement (snap to tracks) ---
-                        float mouseY = cursor.getY() - cinematicTimeline.scrollY;
-
-                        // Find nearest track
-                        for (CinematicTimelineObject track : cinematicTimeline.timelineObjects) {
-                            if (mouseY > track.y && mouseY < track.y + 40) {
-                                widget.trackY = track.y;   // Snap to track
-                                break;
-                            }
-                        }
+                        widget.startTime = Math.max(((cursor.getX() - widget.offsetDrag.x - cinematicTimeline.scrollX) - cinematicTimeline.startX) / cinematicTimeline.pixelsPerSecond,0);
                     }
                 }
             } else {
@@ -378,9 +380,8 @@ public class CinematicEditorInput {
             setPerspectiveTouch();
 
 
-
-            if(cursor.clicked(cinematicTimeline.bounds)) {
-                for(CinematicTimelineControl control : cinematicTimeline.timelineControls) {
+            if (cursor.clicked(cinematicTimeline.bounds)) {
+                for (CinematicTimelineControl control : cinematicTimeline.timelineControls) {
                     control.hovered = cursor.clicked(control.obj.getBoundingRectangle());
                 }
                 boolean dragStarted = false;
@@ -398,7 +399,7 @@ public class CinematicEditorInput {
             }
 
             if (selectedObject != null) {
-                switch(editorSelectedObjectBehavior) {
+                switch (editorSelectedObjectBehavior) {
                     case Grab:
                         Vector3 intersection = new Vector3();
 
@@ -439,7 +440,7 @@ public class CinematicEditorInput {
 
                             scaleFactor = Math.min(scaleFactor, 50f);
 
-                            selectedObject.size.set(new Vector3(scaleFactor,scaleFactor,scaleFactor));
+                            selectedObject.size.set(new Vector3(scaleFactor, scaleFactor, scaleFactor));
 
                         }
                         break;
@@ -483,14 +484,14 @@ public class CinematicEditorInput {
         @Override
         public boolean scrolled(float amountX, float amountY) {
 
-            if(cursor.clicked(cinematicTimeline.bounds)) {
-                if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+            if (cursor.clicked(cinematicTimeline.bounds)) {
+                if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
                     cinematicTimeline.resize(amountY);
                 } else {
-                    if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                        cinematicTimeline.updateScrolling(-amountY * 100,0);
+                    if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                        cinematicTimeline.updateScrolling(-amountY * 100, 0);
                     } else {
-                        cinematicTimeline.updateScrolling(0, amountY  * 100);
+                        cinematicTimeline.updateScrolling(0, amountY * 100);
                     }
                 }
                 return true;

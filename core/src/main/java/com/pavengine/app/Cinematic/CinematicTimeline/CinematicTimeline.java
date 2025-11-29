@@ -1,7 +1,6 @@
 package com.pavengine.app.Cinematic.CinematicTimeline;
 
 import static com.pavengine.app.Methods.extractSprites;
-import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
@@ -12,14 +11,13 @@ import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
 
 public class CinematicTimeline {
 
@@ -114,7 +112,7 @@ public class CinematicTimeline {
         for (CinematicTimelineWidget widget : timelineWidgets) {
 
             if (widget.trackY + scrollY + 80 < resolution.y / 2.5f)
-                widget.draw(sb, pixelsPerSecond, scrollY, scrollX, startX);
+                widget.draw(sb, timeSeconds, pixelsPerSecond, scrollY, scrollX, startX);
         }
 
         // Draw current time pointer
