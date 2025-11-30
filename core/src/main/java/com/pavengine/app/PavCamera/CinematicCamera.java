@@ -3,6 +3,7 @@ package com.pavengine.app.PavCamera;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
@@ -35,11 +36,12 @@ public class CinematicCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
-        handleInput(delta);
+        if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
+            handleInput(delta);
+        }
     }
 
     private void handleInput(float delta) {
-
         acc = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ? 3 : 1;
         move = moveSpeed * delta * acc;
 

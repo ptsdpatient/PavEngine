@@ -6,6 +6,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 
@@ -99,7 +100,7 @@ public class CinematicTimeline {
         }
 
         // --- Mouse click to reposition timeline cursor accurately ---
-        if (!cinematicPanel.widgetDrag && cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && (cursor.index == 1 || cursor.index == 2)) {
+        if ( (Gdx.input.getInputProcessor()==cinematicEditorInput) && !cinematicPanel.widgetDrag && cursor.clicked(timeLineBounds) && Gdx.input.isButtonPressed(Input.Buttons.LEFT) && (cursor.index == 1 || cursor.index == 2)) {
             timelinePointerX = cursor.getX();
             timeSeconds = Math.max((timelinePointerX - startX) / pixelsPerSecond, 0);
         }

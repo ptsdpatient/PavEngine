@@ -33,7 +33,7 @@ public class SubtitleTimelineWidget extends CinematicTimelineWidget{
     @Override
     public void update(SpriteBatch sb, float time) {
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            cinematicModal = new SubtitleCinematicModal(uiBG[2],uiControl[5]);
+            cinematicModal = new SubtitleCinematicModal("Subtitle", Color.WHITE);
         }
         if((time > startTime) && time < (startTime + duration)) {
             subtitle.draw(sb,layout);

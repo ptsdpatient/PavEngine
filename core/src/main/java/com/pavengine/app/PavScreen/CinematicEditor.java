@@ -16,6 +16,7 @@ import static com.pavengine.app.PavEngine.referenceEditorRays;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -30,8 +31,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicModal.CinematicModal;
+import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
@@ -50,6 +53,7 @@ import com.pavengine.app.ReferenceOriginLine;
 import java.util.ArrayList;
 
 public class CinematicEditor extends  PavScreen {
+
     public static ArrayList<String> objectList;
     public static Array<PavLayout> cinematicEditorLayout = new Array<>();
     public static PavWidget exportModelInfo;
@@ -82,8 +86,11 @@ public class CinematicEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[7]);
+
+        cinematicTimeline = new CinematicTimeline(uiBG[1], uiBG[7]);
         cinematicPanel = new CinematicPanel(uiBG[1]);
+
+        cinematicModal = new SubtitleCinematicModal("Subtitle", Color.WHITE);
     }
 
     public ArrayList<String> listModels(String path) {
@@ -104,7 +111,7 @@ public class CinematicEditor extends  PavScreen {
 
     @Override
     public void setInput() {
-        Gdx.input.setInputProcessor(cinematicEditorInput);
+//        Gdx.input.setInputProcessor(cinematicEditorInput);
     }
 
 
@@ -234,6 +241,11 @@ public class CinematicEditor extends  PavScreen {
 
 //        perspectiveAxisGizmo.handleInput();
 //        print(camera.direction);
+        if(cinematicModal!=null) {
+            for(Rectangle rect : cinematicModal.getDebugRect()) {
+                debugRectangle(rect,Color.BLUE);
+            }
+        }
 
     }
 
