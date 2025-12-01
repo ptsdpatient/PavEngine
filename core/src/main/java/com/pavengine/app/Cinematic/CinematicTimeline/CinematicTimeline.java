@@ -47,7 +47,7 @@ public class CinematicTimeline {
         this.timelineMark = timelineMark;
 
         timelineObjects.add(new CameraTimelineObject("Camera", gameFont[2], uiBG[1], uiBG[3]));
-        timelineObjects.add(new LightTimelineObject("Light", gameFont[2], uiBG[1], uiBG[3]));
+//        timelineObjects.add(new LightTimelineObject("Light", gameFont[2], uiBG[1], uiBG[3]));
         timelineObjects.add(new SubtitleTimelineObject("Subtitle", gameFont[2], uiBG[1], uiBG[3]));
         timelineObjects.add(new MusicTimelineObject("Music", gameFont[2], uiBG[1], uiBG[3]));
         timelineObjects.add(new TransformTimelineObject("Transform", gameFont[2], uiBG[1], uiBG[3]));

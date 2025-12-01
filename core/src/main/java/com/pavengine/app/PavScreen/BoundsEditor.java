@@ -55,7 +55,7 @@ public class BoundsEditor extends  PavScreen {
     public BoundsEditor(PavEngine game) {
         super(game);
 
-        this.font = gameFont[1];
+        this.font = gameFont[2];
         objectList = new ArrayList<>();
 
         boundsEditorLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));

@@ -39,7 +39,6 @@ public class CinematicPanelDropdown {
         CinematicWidgetType.Animate,
         CinematicWidgetType.Camera,
         CinematicWidgetType.Music,
-        CinematicWidgetType.Light,
         CinematicWidgetType.Subtitle
     };
 

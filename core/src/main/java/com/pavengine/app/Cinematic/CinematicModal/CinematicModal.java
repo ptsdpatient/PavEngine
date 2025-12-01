@@ -15,7 +15,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 public abstract class CinematicModal implements InputProcessor {
-    TextureRegion bg,closeBG,doneBG,widgetBG,accentBG;
+    TextureRegion bg;
+    TextureRegion closeBG;
+    TextureRegion doneBG;
+    TextureRegion widgetBG;
+    static TextureRegion accentBG;
     public Rectangle closeBound = new Rectangle();
     public Rectangle doneBound = new Rectangle();
 
@@ -30,6 +34,8 @@ public abstract class CinematicModal implements InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
 
+    public void save(){};
+
     public abstract void draw(SpriteBatch sb);
 
     public Rectangle[] getDebugRect() { return null; }
@@ -39,5 +45,9 @@ public abstract class CinematicModal implements InputProcessor {
         sb.draw(closeBG,closeBound.x,closeBound.y,32,32);
         sb.draw(doneBG,doneBound.x,doneBound.y,32,32);
         draw(sb);
+    }
+
+    public void debug(SpriteBatch sb) {
+
     }
 }

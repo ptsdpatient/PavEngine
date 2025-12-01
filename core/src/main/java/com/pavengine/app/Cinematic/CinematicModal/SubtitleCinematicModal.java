@@ -1,5 +1,6 @@
 package com.pavengine.app.Cinematic.CinematicModal;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayCamera;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
 
 public class SubtitleCinematicModal extends CinematicModal {
 
@@ -45,14 +47,14 @@ public class SubtitleCinematicModal extends CinematicModal {
 
         public void draw(SpriteBatch sb) {
             // Draw background only when hovered
+
             if (hovered() || this == selectedColorSubtitle) {
                 sb.draw(accentBG, bound.x, bound.y, bound.width, bound.height);
-                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     selectedColorSubtitle = this;
                     color = subtitleColor;
                     textLayout.setText(gameFont[2], text + "_" ,color, textArea.width, Align.left,true);
                 }
-
             }
 
             // Draw text - baseline position stays same
@@ -61,7 +63,7 @@ public class SubtitleCinematicModal extends CinematicModal {
     }
 
 
-
+    SubtitleTimelineWidget widget;
     GlyphLayout textLayout;
     String text;
     Color color;
@@ -89,9 +91,10 @@ public class SubtitleCinematicModal extends CinematicModal {
     public Rectangle colorArea = new Rectangle(resolution.x/2f-(resolution.x*0.4f)/2f,255, resolution.x*0.4f,100);
     Rectangle[] debugRect = new Rectangle[]{ textArea, colorArea };
 
-    public SubtitleCinematicModal(String text, Color color) {
-        this.text = text;
-        this.color = color;
+    public SubtitleCinematicModal(SubtitleTimelineWidget widget) {
+        this.widget = widget;
+        this.text = widget.text;
+        this.color = widget.color;
         textLayout = new GlyphLayout(gameFont[2], text  + "_",color, textArea.width, Align.left,true);
         int i = 0, j = 0;
         for(Color colorSample : colorList) {
@@ -105,6 +108,21 @@ public class SubtitleCinematicModal extends CinematicModal {
                 j -= 40;
             }
         }
+    }
+
+    @Override
+    public void save() {
+        widget.color = this.color;
+        widget.text = this.text;
+        widget.layout.setText(
+            gameFont[2],
+            widget.text,
+            widget.color,
+            resolution.x * 0.8f,
+            Align.center,
+            true
+        );
+        print(widget.text);
     }
 
     @Override
@@ -140,7 +158,7 @@ public class SubtitleCinematicModal extends CinematicModal {
         ScissorStack.calculateScissors(overlayCamera, sb.getTransformMatrix(), textArea, scissor);
         ScissorStack.pushScissors(scissor);
 
-        gameFont[1].draw(sb, textLayout, textArea.x + 16, textArea.y + 16 + textLayout.height);
+        gameFont[2].draw(sb, textLayout, textArea.x + 16, textArea.y + 16 + textLayout.height);
 
         sb.flush();
         ScissorStack.popScissors();

@@ -28,6 +28,8 @@ public class CinematicPanel {
         this.bounds = new Rectangle(0,resolution.y/2.5f,284,resolution.y/0.6f);
         dropdown = new CinematicPanelDropdown(uiBG[1],uiBG[6], new Vector2(50f,resolution.y - 68));
         panelWidgets.add(new SubtitlePanelWidget("Subtitle", gameFont[2]));
+        panelWidgets.add(new CameraPanelWidget("Camera", gameFont[2]));
+
     }
 
     public void draw(SpriteBatch batch) {
@@ -41,7 +43,7 @@ public class CinematicPanel {
 
         if(cinematicPanel.widgetDrag) {
             cinematicPanel.selectedWidget.draw( batch, cursor.getPosition());
-            
+
         }
     }
 

@@ -182,12 +182,8 @@ public class PavEngine extends Game {
         pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
 
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
-        float fontScale = 0.5f;
-        for(int i = 0; i < 7 ; i++) {
-            gameFont[i] = new BitmapFont(load("font/ubuntu.fnt"));
-            gameFont[i].getData().setScale(fontScale);
-            print(fontScale);
-            fontScale+=0.25f;
+        for(int i = 1; i < 7 ; i++) {
+            gameFont[i] = new BitmapFont(load("font/default_" + i + ".fnt"));
         }
 
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);

@@ -3,6 +3,7 @@ package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.lockCursor;
+import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
 
 import com.badlogic.gdx.Gdx;

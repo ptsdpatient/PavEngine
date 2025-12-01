@@ -12,6 +12,7 @@ import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.playerDamage;
 import static com.pavengine.app.PavEngine.playerDamageRate;
+import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sprayLimit;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;

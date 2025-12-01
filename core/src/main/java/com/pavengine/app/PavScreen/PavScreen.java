@@ -6,6 +6,7 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.cameraBehavior;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.pavCamera;
+import static com.pavengine.app.PavEngine.resolution;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,7 +25,6 @@ import com.pavengine.app.PavEngine;
 public abstract class PavScreen implements Screen {
 
 
-    public Vector2 resolution = new Vector2(1280,720);
     public PavEngine game;
     public SpriteBatch batch;
     private OrthographicCamera camera;
