@@ -1,5 +1,11 @@
 package com.pavengine.app;
 
+import static com.badlogic.gdx.math.MathUtils.clamp;
+import static com.pavengine.app.CameraTransitionMode.AXIS_PRIORITY;
+import static com.pavengine.app.CameraTransitionMode.BEZIER_XZ;
+import static com.pavengine.app.CameraTransitionMode.BEZIER_Y;
+import static com.pavengine.app.CameraTransitionMode.STAGGERED;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableCursor;
 import static com.pavengine.app.PavEngine.resolution;
@@ -139,6 +145,147 @@ public class Methods {
         return angles;
     }
 
+
+//    public static boolean transitionCamera(CameraTransform start,
+//                                           CameraTransform end,
+//                                           float elapsed,
+//                                           float duration) {
+//
+//        if (elapsed >= duration) {
+//            // Snap to final state
+//            camera.position.set(end.position);
+//            camera.direction.set(end.direction);
+//            camera.update();
+//            return false;
+//        }
+//
+//        float t = elapsed / duration;
+//
+//        // Ease In-Out smoothing
+//        t = t * t * (3f - 2f * t);    // smoothstep (0→1→0)
+//
+//        // Interpolate position + direction
+//        camera.position.set(
+//            start.position).lerp(end.position, t);
+//
+//        camera.direction.set(
+//            start.direction).lerp(end.direction, t);
+//
+//        camera.update();
+//        return true;
+//    }
+
+    public static boolean transitionCamera(CameraTransform start,
+                                           CameraTransform end,
+                                           float elapsed,
+                                           float duration,
+                                           CameraTransitionMode mode) {
+
+        if (elapsed >= duration) {
+            camera.position.set(end.position);
+            camera.direction.set(end.direction);
+            camera.update();
+            return false;
+        }
+
+        float t = elapsed / duration;
+
+        // Compute interpolation factor depending on selected mode
+        t = applyMode(t, mode);
+
+        // Position
+        Vector3 pos = interpolateVector(start.position, end.position, t, mode);
+
+        // Direction
+        Vector3 dir = interpolateVector(start.direction, end.direction, t, mode);
+
+        camera.position.set(pos);
+        camera.direction.set(dir);
+        camera.update();
+
+        return true;
+    }
+
+    private static float applyMode(float t, CameraTransitionMode mode) {
+
+        switch (mode) {
+
+            case LINEAR:
+                return t;
+
+            case SMOOTHSTEP:
+                return t * t * (3f - 2f * t);
+
+            case EASE_IN:
+                return t * t;
+
+            case EASE_OUT:
+                return (float)Math.sqrt(t);
+
+            case EASE_IN_OUT:
+                return t * t * (3f - 2f * t); // same as smoothstep
+
+            default:
+                return t;
+        }
+    }
+
+
+    private static Vector3 interpolateVector(Vector3 a, Vector3 b, float t, CameraTransitionMode mode) {
+        Vector3 out = new Vector3();
+
+        switch (mode) {
+            case BEZIER_Y:
+                // Y moves faster, X and Z remain linear
+                float yT = bezierCurve(t);   // fast curve
+                out.x = MathUtils.lerp(a.x, b.x, t);
+                out.y = MathUtils.lerp(a.y, b.y, yT);
+                out.z = MathUtils.lerp(a.z, b.z, t);
+                return out;
+
+            case BEZIER_XZ:
+                float curve = bezierCurve(t);
+                out.x = MathUtils.lerp(a.x, b.x, curve);
+                out.y = MathUtils.lerp(a.y, b.y, t);
+                out.z = MathUtils.lerp(a.z, b.z, curve);
+                return out;
+
+            case AXIS_PRIORITY:
+                // X finishes first, then Y, then Z
+                float tx = clamp(t * 1.5f);
+                float ty = clamp((t - 0.33f) * 1.5f);
+                float tz = clamp((t - 0.66f) * 3f);
+
+                out.x = MathUtils.lerp(a.x, b.x, tx);
+                out.y = MathUtils.lerp(a.y, b.y, ty);
+                out.z = MathUtils.lerp(a.z, b.z, tz);
+                return out;
+
+            case STAGGERED:
+                // X starts immediately, Y after 0.25, Z after 0.5
+                float lx = clamp(t);
+                float ly = clamp((t - 0.25f) / 0.75f);
+                float lz = clamp((t - 0.5f) / 0.5f);
+
+                out.x = MathUtils.lerp(a.x, b.x, lx);
+                out.y = MathUtils.lerp(a.y, b.y, ly);
+                out.z = MathUtils.lerp(a.z, b.z, lz);
+                return out;
+
+            default:
+                // Default: uniform interpolation
+                return out.set(a).lerp(b, t);
+        }
+    }
+
+    private static float clamp(float v) {
+        return MathUtils.clamp(v, 0f, 1f);
+    }
+
+    private static float bezierCurve(float t) {
+        // simple cubic Bezier (0,0) → (0.3,1) → (0.7,1) → (1,1)
+        return t * t * (3f - 2f * t);
+    }
 
 
     public static TextureRegion[] extractSprites(String path, int width, int height) {

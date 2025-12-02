@@ -48,7 +48,7 @@ public class CinematicPanelDropdown {
     private Rectangle box;
 
     public CinematicPanelDropdown(TextureRegion background, TextureRegion hover, Vector2 position) {
-        this.font = gameFont[2];
+        this.font = gameFont[1];
         this.background = new Sprite(background);
         this.hoverTexture = hover;
 
@@ -105,19 +105,20 @@ public class CinematicPanelDropdown {
     }
 
     public void click() {
-        if(cursor.clicked(buttonRect)) {
-            dropDownExpand = !dropDownExpand;
-            return;
-        } else dropDownExpand = false;
+
 
         for (int i = 0; i < list.length; i++) {
-            if (cursor.clicked(optionRects[i])) {
+            if (cursor.clicked(optionRects[i]) && dropDownExpand) {
                 cinematicPanel.currentWidgetType = list[i];
                 buttonLayout.setText(font, cinematicPanel.currentWidgetType.name());
                 dropDownExpand = false;
                 break;
             }
         }
+
+        if(cursor.clicked(buttonRect)) {
+            dropDownExpand = !dropDownExpand;
+        } else dropDownExpand = false;
     }
 
     public void scroll(float amountY) {

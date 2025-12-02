@@ -187,7 +187,7 @@ public class CinematicEditor extends  PavScreen {
             }
         }
         if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
-            gameFont[2].draw(batch, cameraReferenceLayout,resolution.x - cameraReferenceLayout.width,resolution.y / 2.5f + cameraReferenceLayout.height + 16);
+            gameFont[1].draw(batch, cameraReferenceLayout,resolution.x - cameraReferenceLayout.width,resolution.y / 2.5f + cameraReferenceLayout.height + 16);
         }
 
         batch.end();
@@ -250,7 +250,7 @@ public class CinematicEditor extends  PavScreen {
 //        print(camera.direction);
         if(cinematicModal!=null) {
             for(Rectangle rect : cinematicModal.getDebugRect()) {
-                debugRectangle(rect,Color.BLUE);
+//                debugRectangle(rect,Color.BLUE);
             }
             cinematicModal.debug(batch);
         }

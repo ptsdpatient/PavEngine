@@ -46,12 +46,11 @@ public class CinematicTimeline {
         this.background = background;
         this.timelineMark = timelineMark;
 
-        timelineObjects.add(new CameraTimelineObject("Camera", gameFont[2], uiBG[1], uiBG[3]));
-//        timelineObjects.add(new LightTimelineObject("Light", gameFont[2], uiBG[1], uiBG[3]));
-        timelineObjects.add(new SubtitleTimelineObject("Subtitle", gameFont[2], uiBG[1], uiBG[3]));
-        timelineObjects.add(new MusicTimelineObject("Music", gameFont[2], uiBG[1], uiBG[3]));
-        timelineObjects.add(new TransformTimelineObject("Transform", gameFont[2], uiBG[1], uiBG[3]));
-        timelineObjects.add(new AnimateTimelineObject("Animate", gameFont[2], uiBG[1], uiBG[3]));
+        timelineObjects.add(new CameraTimelineObject("Camera",uiBG[13]));
+        timelineObjects.add(new SubtitleTimelineObject("Subtitle",  uiBG[8]));
+        timelineObjects.add(new MusicTimelineObject("Music", uiBG[10]));
+        timelineObjects.add(new TransformTimelineObject("Transform",  uiBG[11]));
+        timelineObjects.add(new AnimateTimelineObject("Animate", uiBG[12]));
 
         float posY = resolution.y / 2.5f - 70;
         for (CinematicTimelineObject obj : timelineObjects) {
@@ -139,7 +138,7 @@ public class CinematicTimeline {
         timeBuffer[6] = (char) ('0' + cs / 10);
         timeBuffer[7] = (char) ('0' + cs % 10);
 
-        gameFont[2].draw(sb, String.valueOf(timeBuffer), timelinePointerX - 72, resolution.y / 2.5f - 12);
+        gameFont[1].draw(sb, String.valueOf(timeBuffer), timelinePointerX - 64, resolution.y / 2.5f - 12);
     }
 
     public void updateScrolling(float dx, float dy) {

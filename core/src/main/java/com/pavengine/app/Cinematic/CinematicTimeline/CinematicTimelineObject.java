@@ -1,6 +1,8 @@
 package com.pavengine.app.Cinematic.CinematicTimeline;
 
+import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavEngine.uiBG;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -23,14 +25,13 @@ public abstract class CinematicTimelineObject {
     GlyphLayout layout;
     public CinematicWidgetType type;
 
-    public CinematicTimelineObject(String name, BitmapFont fnt,
+    public CinematicTimelineObject(String name,
                                    TextureRegion nameTexture,
-                                   TextureRegion lineTexture,
                                    CinematicWidgetType type) {
         this.nameTexture = nameTexture;
-        this.lineTexture = lineTexture;
+        this.lineTexture = uiBG[3];
         this.name = name;
-        this.font = fnt;
+        this.font = gameFont[1];
         this.type = type;
         layout = new GlyphLayout(font, name, Color.BLACK,196, Align.center,true);
     }

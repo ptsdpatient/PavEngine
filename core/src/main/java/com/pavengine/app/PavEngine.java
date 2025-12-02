@@ -93,6 +93,7 @@ public class PavEngine extends Game {
     public static TextureRegion[]
         uiBG ,
         uiControl,
+        icons,
         hoverUIBG;
 
     public static boolean
@@ -183,14 +184,15 @@ public class PavEngine extends Game {
 
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
         for(int i = 1; i < 7 ; i++) {
-            gameFont[i] = new BitmapFont(load("font/default_" + i + ".fnt"));
+            gameFont[i-1] = new BitmapFont(load("font/default_" + i + ".fnt"));
         }
 
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);
         hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
+        icons = extractSprites("sprites/default/icons.png",32,32);
 
-        subtitle = new Subtitle(gameFont[3],resolution.x,resolution.y);
+        subtitle = new Subtitle(gameFont[2],resolution.x,resolution.y);
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);

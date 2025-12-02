@@ -17,20 +17,17 @@ import com.badlogic.gdx.utils.Array;
 public abstract class CinematicModal implements InputProcessor {
     TextureRegion bg;
     TextureRegion closeBG;
-    TextureRegion doneBG;
+
     TextureRegion widgetBG;
     static TextureRegion accentBG;
     public Rectangle closeBound = new Rectangle();
-    public Rectangle doneBound = new Rectangle();
 
     public CinematicModal() {
         this.bg = uiBG[2];
         this.closeBG = uiControl[5];
-        this.doneBG = uiControl[4];
         this.widgetBG = uiBG[0];
         this.accentBG = uiBG[3];
         closeBound.set(resolution.x-60,resolution.y-60,32,32);
-        doneBound.set(resolution.x-60,60,32,32);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -43,7 +40,6 @@ public abstract class CinematicModal implements InputProcessor {
     public void render(SpriteBatch sb) {
         sb.draw(bg,0,0,resolution.x,resolution.y);
         sb.draw(closeBG,closeBound.x,closeBound.y,32,32);
-        sb.draw(doneBG,doneBound.x,doneBound.y,32,32);
         draw(sb);
     }
 

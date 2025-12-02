@@ -102,10 +102,10 @@ public class CinematicCamera extends PavCamera {
         appendVec3Inline(camera.direction);
 
         cameraReferenceLayout.setText(
-            gameFont[2],
+            gameFont[1],
             camInfo.toString(),
             Color.WHITE,
-            400,
+            500,
             Align.left,
             true
         );

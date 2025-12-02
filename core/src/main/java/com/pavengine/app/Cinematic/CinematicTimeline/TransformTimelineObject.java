@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public class TransformTimelineObject extends CinematicTimelineObject{
-    public TransformTimelineObject(String name, BitmapFont fnt, TextureRegion nameTexture, TextureRegion lineTexture) {
-        super(name, fnt, nameTexture, lineTexture, CinematicWidgetType.Transform);
+    public TransformTimelineObject(String name, TextureRegion nameTexture) {
+        super(name, nameTexture, CinematicWidgetType.Transform);
     }
 }

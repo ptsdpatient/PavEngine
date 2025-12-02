@@ -1,5 +1,7 @@
 package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 
+import static com.pavengine.app.Methods.transitionCamera;
+import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
@@ -14,15 +16,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
+import com.pavengine.app.CameraTransform;
+import com.pavengine.app.CameraTransitionMode;
 import com.pavengine.app.Cinematic.CinematicModal.CameraCinematicModal;
 import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public class CameraTimelineWidget extends CinematicTimelineWidget{
 
-    public String text = "Camera";
-    public Color color = Color.WHITE;
     public GlyphLayout layout = new GlyphLayout();
+    public CameraTransform startInfo = new CameraTransform(), endInfo = new CameraTransform();
+    CameraTransitionMode mode = CameraTransitionMode.EASE_IN;
 
     public CameraTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
@@ -35,7 +39,7 @@ public class CameraTimelineWidget extends CinematicTimelineWidget{
             cinematicModal = new CameraCinematicModal(this);
         }
         if((time > startTime) && time < (startTime + duration)) {
-            subtitle.draw(sb,layout);
+            transitionCamera(startInfo,endInfo,time,duration,mode);
         }
     }
 

@@ -2,6 +2,7 @@ package com.pavengine.app.Cinematic.CinematicPanel;
 
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavEngine.gameFont;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -25,9 +26,9 @@ public abstract class CinematicPanelWidget {
     public CinematicPanelWidget(String name, BitmapFont fnt, TextureRegion texture, CinematicWidgetType type) {
         this.texture = texture;
         this.name = name;
-        this.font = fnt;
+        this.font = gameFont[1];
         this.type = type;
-        layout = new GlyphLayout(font, name, Color.BLACK,196, Align.center,true);
+        layout = new GlyphLayout(font, name, Color.WHITE,224, Align.center,true);
         bound = new Rectangle(0, y,224,40);
     }
 
@@ -45,6 +46,6 @@ public abstract class CinematicPanelWidget {
         bound.setPosition(x, drawY - 32);
         sb.draw(texture, x, drawY - 32, 224, 40);
 
-        font.draw(sb, name, x + 10, drawY);
+        font.draw(sb, layout, x, drawY);
     }
 }
