@@ -26,7 +26,7 @@ public class CameraTimelineWidget extends CinematicTimelineWidget{
 
     public GlyphLayout layout = new GlyphLayout();
     public CameraTransform startInfo = new CameraTransform(), endInfo = new CameraTransform();
-    CameraTransitionMode mode = CameraTransitionMode.EASE_IN;
+    public CameraTransitionMode mode = CameraTransitionMode.LINEAR;
 
     public CameraTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
@@ -38,9 +38,8 @@ public class CameraTimelineWidget extends CinematicTimelineWidget{
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
             cinematicModal = new CameraCinematicModal(this);
         }
-        if((time > startTime) && time < (startTime + duration)) {
-            transitionCamera(startInfo,endInfo,time,duration,mode);
+        if((time >= startTime) && time <= (startTime + duration)) {
+            transitionCamera(startInfo,endInfo,time - startTime,duration,mode);
         }
     }
-
 }

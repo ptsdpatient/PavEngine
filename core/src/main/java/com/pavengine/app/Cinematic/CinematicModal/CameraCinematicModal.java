@@ -20,7 +20,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.CameraTransform;
+import com.pavengine.app.CameraTransitionMode;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CameraTimelineWidget;
+import com.pavengine.app.Dropdowns.CinematicCameraModalDropdown;
+import com.pavengine.app.Dropdowns.Dropdown;
 
 public class CameraCinematicModal extends CinematicModal {
 
@@ -121,16 +124,19 @@ public class CameraCinematicModal extends CinematicModal {
     CameraTimelineWidget widget;
     TextField selectedTextField;
 
-    public Info startInfo,endInfo;
+    public Info startInfo, endInfo;
+//    public CameraTransitionMode mode = CameraTransitionMode.LINEAR;
 
     public Array<TextField> fields = new Array<>();
     Rectangle[] debugRect;
+    public CinematicCameraModalDropdown dropdown;
 
     public CameraCinematicModal(CameraTimelineWidget widget) {
         this.widget = widget;
 
         startInfo = new Info(widget.startInfo, new Rectangle(resolution.x/2f-(resolution.x*0.7f)/2f,resolution.y - 175, resolution.x*0.7f,80),- 80);
         endInfo = new Info(widget.endInfo, new Rectangle(resolution.x/2f-(resolution.x*0.7f)/2f,100, resolution.x*0.7f,80),120);
+        dropdown = new CinematicCameraModalDropdown(uiBG[0], uiBG[6], new Vector2(resolution.x/2f - 64,resolution.y - 375));
 
         debugRect = new Rectangle[]{startInfo.bounds, endInfo.bounds};
 
@@ -144,6 +150,7 @@ public class CameraCinematicModal extends CinematicModal {
     public void save() {
         widget.startInfo.set(startInfo.pos.value(),startInfo.dir.value());
         widget.endInfo.set(endInfo.pos.value(),endInfo.dir.value());
+        widget.mode = dropdown.currentMode;
     }
 
     @Override
@@ -167,6 +174,9 @@ public class CameraCinematicModal extends CinematicModal {
 
         startInfo.draw(sb);
         endInfo.draw(sb);
+        dropdown.draw(sb);
+
+
 
         for (TextField field : fields) {
             field.hovered = cursor.clicked(field.bound);
@@ -250,6 +260,9 @@ public class CameraCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(cursor.clicked(dropdown.buttonRect) && button == Input.Buttons.LEFT) {
+            dropdown.click();
+        }
         return false;
     }
 

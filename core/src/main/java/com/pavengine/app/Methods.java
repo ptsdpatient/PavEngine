@@ -190,13 +190,10 @@ public class Methods {
 
         float t = elapsed / duration;
 
-        // Compute interpolation factor depending on selected mode
         t = applyMode(t, mode);
 
-        // Position
         Vector3 pos = interpolateVector(start.position, end.position, t, mode);
 
-        // Direction
         Vector3 dir = interpolateVector(start.direction, end.direction, t, mode);
 
         camera.position.set(pos);
@@ -210,10 +207,8 @@ public class Methods {
 
         switch (mode) {
 
-            case LINEAR:
-                return t;
-
             case SMOOTHSTEP:
+            case EASE_IN_OUT:
                 return t * t * (3f - 2f * t);
 
             case EASE_IN:
@@ -221,9 +216,6 @@ public class Methods {
 
             case EASE_OUT:
                 return (float)Math.sqrt(t);
-
-            case EASE_IN_OUT:
-                return t * t * (3f - 2f * t); // same as smoothstep
 
             default:
                 return t;

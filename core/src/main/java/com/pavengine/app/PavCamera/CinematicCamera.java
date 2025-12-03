@@ -7,6 +7,7 @@ import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cameraReferenceLayout;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
+import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -42,7 +43,7 @@ public class CinematicCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
-        if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
+        if((Gdx.input.getInputProcessor() == cinematicEditorInput && !playingScene)) {
             handleInput(delta);
         }
     }

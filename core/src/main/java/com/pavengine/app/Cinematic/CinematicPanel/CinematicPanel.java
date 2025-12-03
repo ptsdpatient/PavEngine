@@ -6,12 +6,13 @@ import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Dropdowns.CinematicPanelDropdown;
+import com.pavengine.app.Dropdowns.Dropdown;
 
 public class CinematicPanel {
     public CinematicPanelSelectedWidget selectedWidget = new CinematicPanelSelectedWidget();
@@ -19,7 +20,7 @@ public class CinematicPanel {
     public Rectangle bounds;
     float scrollY = resolution.y - 142;
     public Array<CinematicPanelWidget> panelWidgets = new Array<>();
-    public CinematicPanelDropdown dropdown;
+    public Dropdown dropdown;
     public CinematicWidgetType currentWidgetType = CinematicWidgetType.Subtitle;
     public boolean widgetDrag = false;
 
@@ -29,7 +30,6 @@ public class CinematicPanel {
         dropdown = new CinematicPanelDropdown(uiBG[1],uiBG[6], new Vector2(50f,resolution.y - 68));
         panelWidgets.add(new SubtitlePanelWidget("Subtitle", gameFont[2]));
         panelWidgets.add(new CameraPanelWidget("Camera", gameFont[2]));
-
     }
 
     public void draw(SpriteBatch batch) {
