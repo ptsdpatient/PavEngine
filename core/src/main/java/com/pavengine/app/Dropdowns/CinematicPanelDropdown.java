@@ -26,6 +26,7 @@ public class CinematicPanelDropdown extends Dropdown {
 
     @Override
     void optionClicked(int i) {
-        cinematicPanel.currentWidgetType = optionList[i];
+//        cinematicPanel.currentWidgetType = optionList[i];
+//        buttonLayout.setText(font, cinematicPanel.currentWidgetType.name());
     }
 }

@@ -62,8 +62,8 @@ public abstract class PavScreen implements Screen {
         batch.begin();
 
         if (
-            !(cameraBehavior == CameraBehaviorType.MapEditorCamera || cameraBehavior == CameraBehaviorType.Cinematic &&
-                (Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT))
+            (cameraBehavior == CameraBehaviorType.MapEditorCamera || cameraBehavior == CameraBehaviorType.Cinematic) &&
+                !(Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT)
             )
         )
             cursor.draw(batch, delta);

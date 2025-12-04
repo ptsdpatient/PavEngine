@@ -18,15 +18,17 @@ public abstract class CinematicPanelWidget {
     public TextureRegion texture;
     public String name;
     BitmapFont font;
-    float x = 20, y = 50;
+    float x, y;
     GlyphLayout layout;
     public CinematicWidgetType type;
     public Rectangle bound;
 
-    public CinematicPanelWidget(String name, BitmapFont fnt, TextureRegion texture, CinematicWidgetType type) {
+    public CinematicPanelWidget(String name, Vector2 position, TextureRegion texture, CinematicWidgetType type) {
         this.texture = texture;
         this.name = name;
         this.font = gameFont[1];
+        this.x = position.x;
+        this.y = position.y;
         this.type = type;
         layout = new GlyphLayout(font, name, Color.WHITE,224, Align.center,true);
         bound = new Rectangle(0, y,224,40);

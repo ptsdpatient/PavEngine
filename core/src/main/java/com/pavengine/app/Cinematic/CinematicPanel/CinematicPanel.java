@@ -18,28 +18,26 @@ public class CinematicPanel {
     public CinematicPanelSelectedWidget selectedWidget = new CinematicPanelSelectedWidget();
     TextureRegion bg;
     public Rectangle bounds;
-    float scrollY = resolution.y - 142;
+    float scrollY = 0;
     public Array<CinematicPanelWidget> panelWidgets = new Array<>();
-    public Dropdown dropdown;
-    public CinematicWidgetType currentWidgetType = CinematicWidgetType.Subtitle;
+
     public boolean widgetDrag = false;
 
     public CinematicPanel(TextureRegion bg) {
         this.bg = bg;
         this.bounds = new Rectangle(0,resolution.y/2.5f,284,resolution.y/0.6f);
-        dropdown = new CinematicPanelDropdown(uiBG[1],uiBG[6], new Vector2(50f,resolution.y - 68));
-        panelWidgets.add(new SubtitlePanelWidget("Subtitle", gameFont[2]));
-        panelWidgets.add(new CameraPanelWidget("Camera", gameFont[2]));
+        panelWidgets.add(new SubtitlePanelWidget("Subtitle",new Vector2( 24,resolution.y - 50)));
+        panelWidgets.add(new CameraPanelWidget("Camera",new Vector2(24,resolution.y - 50 - 48)));
+        panelWidgets.add(new AnimatePanelWidget("Animate",new Vector2(24,resolution.y - 50 - 48*2)));
+
     }
 
     public void draw(SpriteBatch batch) {
         batch.draw(bg,bounds.x,bounds.y,bounds.width,bounds.height);
 
         for(CinematicPanelWidget panelWidget : panelWidgets) {
-            if(panelWidget.type == currentWidgetType) panelWidget.draw(batch, scrollY);
+            panelWidget.draw(batch, scrollY);
         }
-
-        dropdown.draw(batch);
 
         if(cinematicPanel.widgetDrag) {
             cinematicPanel.selectedWidget.draw( batch, cursor.getPosition());

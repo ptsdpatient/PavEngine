@@ -71,7 +71,7 @@ public class MapEditor extends  PavScreen {
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
         for (String model : listModels("assets/models/"))
-            mapEditingLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+            mapEditingLayout.get(0).addSprite(new TextButton(model, font, uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
 
 
 //        scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
@@ -137,13 +137,9 @@ public class MapEditor extends  PavScreen {
             obj.update(delta);
         }
 
-
         pavCamera.update(delta);
         camera.update();
         overlayCamera.update();
-
-
-
 
         sceneManager.update(delta);
         sceneManager.render();
@@ -156,8 +152,6 @@ public class MapEditor extends  PavScreen {
         for(ReferenceEditorLine or : referenceEditorRays) {
             or.draw();
         }
-
-
 
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();

@@ -5,6 +5,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -16,7 +17,7 @@ import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public abstract class Dropdown {
 
-    private GlyphLayout buttonLayout;
+    public GlyphLayout buttonLayout;
     private TextureRegion hoverTexture;
     public Rectangle buttonRect;
     public boolean dropDownExpand = false;
@@ -32,12 +33,12 @@ public abstract class Dropdown {
     public Rectangle box;
     public String[] list;
 
-    public Dropdown(TextureRegion background, TextureRegion hover, Vector2 position,String[] list) {
+    public Dropdown(TextureRegion background, TextureRegion hover, Vector2 position, String[] list) {
         this.list = list;
         this.font = gameFont[1];
         this.background = new Sprite(background);
         this.hoverTexture = hover;
-        buttonLayout = new GlyphLayout(font, CinematicWidgetType.Subtitle.name());
+        buttonLayout = new GlyphLayout(font, list[0]);
         this.box = new Rectangle(0, 0, buttonLayout.width + 40, OPTION_HEIGHT);
 
         buttonRect = new Rectangle();
@@ -62,21 +63,18 @@ public abstract class Dropdown {
     }
 
     public void draw(SpriteBatch batch) {
-        // Main button
+
         background.setBounds(buttonRect.x  , buttonRect.y, buttonRect.width, buttonRect.height);
         background.draw(batch);
-        font.draw(batch, cinematicPanel.currentWidgetType.name(), buttonRect.x + 10, buttonRect.y + OPTION_HEIGHT / 1.4f);
+        font.draw(batch, buttonLayout, buttonRect.x, buttonRect.y + OPTION_HEIGHT / 1.4f);
 
         if (!dropDownExpand) return;
 
-        // Dropdown box
         for (int i = 0; i < list.length; i++) {
             Rectangle rect = optionRects[i];
             if (rect.y + rect.height < buttonRect.y - visibleHeight || rect.y > buttonRect.y)
                 continue;
             batch.draw(cursor.clicked(rect)?hoverTexture:background, rect.x, rect.y, rect.width, rect.height);
-
-
             font.draw(batch, list[i], rect.x + 10, rect.y + OPTION_HEIGHT / 1.4f);
         }
     }
@@ -86,7 +84,6 @@ public abstract class Dropdown {
         for (int i = 0; i < list.length; i++) {
             if (cursor.clicked(optionRects[i]) && dropDownExpand) {
                 optionClicked(i);
-                buttonLayout.setText(font, cinematicPanel.currentWidgetType.name());
                 dropDownExpand = false;
                 break;
             }

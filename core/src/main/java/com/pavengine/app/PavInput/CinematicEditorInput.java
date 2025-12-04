@@ -131,7 +131,7 @@ public class CinematicEditorInput {
 
             if (cursor.clicked(cinematicPanel.bounds)) {
                 for (CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
-                    if (cursor.clicked(widget.bound) && cinematicPanel.currentWidgetType == widget.type) {
+                    if (cursor.clicked(widget.bound)) {
                         cinematicPanel.widgetDrag = true;
                         cinematicPanel.selectedWidget.set(widget.texture, widget.name, new Vector2(widget.bound.x - cursor.clickArea.x, widget.bound.y - cursor.clickArea.y), widget.type);
                         return true;
@@ -142,7 +142,7 @@ public class CinematicEditorInput {
             if (cursor.clicked(cinematicTimeline.bounds)) {
                 for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
                     widget.offsetDrag.set(cursor.getX() - widget.bounds.getX(), cursor.getY() - widget.bounds.getY());
-                    print(widget.offsetDrag);
+//                    print(widget.offsetDrag);
                 }
             }
 
@@ -187,7 +187,6 @@ public class CinematicEditorInput {
 
             cursor.setCursor(1);
 
-            cinematicPanel.dropdown.click();
 
             if (cinematicPanel.widgetDrag) {
                 cinematicPanel.widgetDrag = false;

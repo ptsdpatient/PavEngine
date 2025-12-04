@@ -5,6 +5,8 @@ package com.pavengine.app.PavInput;
   import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+  import static com.pavengine.app.PavCrypt.PavCrypt.addCrypt;
+  import static com.pavengine.app.PavCrypt.PavCrypt.cryptWrite;
   import static com.pavengine.app.PavEngine.axisGizmo;
   import static com.pavengine.app.PavEngine.cursor;
   import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
@@ -19,9 +21,10 @@ import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 import static com.pavengine.app.PavScreen.MapEditor.mapEditingLayout;
+  import static com.pavengine.app.PavUI.ClickBehavior.ExportModelInfo;
 
 
-import com.badlogic.gdx.Gdx;
+  import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -34,7 +37,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.pavengine.app.PavCursor;
   import com.pavengine.app.PavEngine;
   import com.pavengine.app.PavGameObject.GameObject;
-import com.pavengine.app.PavIntersector;
+  import com.pavengine.app.PavGameObject.StaticObject;
+  import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
@@ -203,11 +207,23 @@ public class MapEditorInput {
 
                             switch (widget.clickBehavior) {
 
+                                case ExportModelInfo :{
+                                    print("export");
+                                    for(GameObject obj : staticObjects) {
+                                        cryptWrite("save.dat", json -> {
+                                            addCrypt(json, "hp", p.hp);
+                                            addCrypt(json, "speed", p.speed);
+                                            addCrypt(json, "alive", p.alive);
+                                            addCrypt(json, "position", p.position);
+                                        });
+                                    }
+                                    return true;
+                                }
 
                                 case AddStaticObjectToMapEditor: {
                                     print("add : " + widget.text);
                                     world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                    setSelectedObject(staticObjects.get(staticObjects.size - 1));
+                                    setSelectedObject(staticObjects.peek());
                                     print(selectedObject == null ? "null" : "exists");
                                     return true;
                                 }
@@ -222,7 +238,6 @@ public class MapEditorInput {
                 }
                 if (selectedObject != null)
                     if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-//                        print("deselect");
                         selectedObject.debugColor = Color.YELLOW;
                         selectedObject = null;
                     }

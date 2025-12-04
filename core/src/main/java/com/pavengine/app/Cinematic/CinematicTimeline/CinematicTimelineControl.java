@@ -11,6 +11,7 @@ public class CinematicTimelineControl {
     float scale = 1f;
     public boolean hovered = false;
     public int index;
+
     public CinematicTimelineControl(TextureRegion tex, Vector2 position, int index) {
         obj = new Sprite(tex);
         obj.setPosition(position.x, position.y);

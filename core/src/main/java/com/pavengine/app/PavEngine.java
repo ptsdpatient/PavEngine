@@ -156,7 +156,7 @@ public class PavEngine extends Game {
         axisGizmo = new AxisGizmo(overlayCamera);
 
         cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.Cinematic :
+            CameraBehaviorType.MapEditorCamera :
             CameraBehaviorType.ThirdPerson;
 
 
@@ -202,11 +202,11 @@ public class PavEngine extends Game {
         boundsEditor = new BoundsEditor(this);
         cinematicEditor = new CinematicEditor(this);
 
-        if(enableMapEditor){
-            setScreen(cinematicEditor);
-        } else {
-            setGameScreen();
-        }
+//        if(enableMapEditor){
+            setScreen(mapEditor);
+//        } else {
+//            setGameScreen();
+//        }
 
     }
 
@@ -264,6 +264,7 @@ public class PavEngine extends Game {
             case Cinematic:
                 pavCamera = new CinematicCamera(67);
                 break;
+
             case MapEditorCamera:
                 pavCamera = new MapEditorCamera(67);
                 break;

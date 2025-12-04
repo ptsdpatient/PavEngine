@@ -46,11 +46,11 @@ public class CinematicTimeline {
         this.background = background;
         this.timelineMark = timelineMark;
 
-        timelineObjects.add(new CameraTimelineObject("Camera",uiBG[13]));
-        timelineObjects.add(new SubtitleTimelineObject("Subtitle",  uiBG[8]));
-        timelineObjects.add(new MusicTimelineObject("Music", uiBG[10]));
-        timelineObjects.add(new TransformTimelineObject("Transform",  uiBG[11]));
-        timelineObjects.add(new AnimateTimelineObject("Animate", uiBG[12]));
+        timelineObjects.add(new CameraTimelineObject("Camera",uiBG[1]));
+        timelineObjects.add(new SubtitleTimelineObject("Subtitle",  uiBG[1]));
+        timelineObjects.add(new MusicTimelineObject("Music", uiBG[1]));
+        timelineObjects.add(new TransformTimelineObject("Transform",  uiBG[1]));
+        timelineObjects.add(new AnimateTimelineObject("Animate", uiBG[1]));
 
         float posY = resolution.y / 2.5f - 70;
         for (CinematicTimelineObject obj : timelineObjects) {

@@ -150,12 +150,8 @@ public class CinematicEditor extends  PavScreen {
         camera.update();
         overlayCamera.update();
 
-
-
-
         sceneManager.update(delta);
         sceneManager.render();
-
 
         for(ReferenceOriginLine or : centerReferenceOriginRays) {
             or.draw();
@@ -165,11 +161,8 @@ public class CinematicEditor extends  PavScreen {
             or.draw();
         }
 
-
-
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();
-
 
         for (PavLayout layout : cinematicEditorLayout) {
             layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
@@ -195,8 +188,8 @@ public class CinematicEditor extends  PavScreen {
 
         for(PavLayout layout : cinematicEditorLayout) {
             for(PavWidget widget : layout.widgets) {
-                if(widget.isHovered)
-                    debugRectangle(widget.box, Color.GREEN);
+//                if(widget.isHovered)
+//                    debugRectangle(widget.box, Color.GREEN);
             }
         }
 

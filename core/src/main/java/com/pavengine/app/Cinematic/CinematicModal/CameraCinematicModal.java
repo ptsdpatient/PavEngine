@@ -113,10 +113,12 @@ public class CameraCinematicModal extends CinematicModal {
         public void draw(SpriteBatch sb) {
             pos.draw(sb);
             dir.draw(sb);
-            if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cursor.clicked(cameraInfoBound)) {
+
+            if(!dropdown.dropDownExpand && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cursor.clicked(cameraInfoBound)) {
                 pos.set(camera.position);
                 dir.set(camera.direction);
             }
+
             sb.draw(icons[0],cameraInfoBound.x,cameraInfoBound.y,cameraInfoBound.width,cameraInfoBound.height);
         }
     }
@@ -125,18 +127,17 @@ public class CameraCinematicModal extends CinematicModal {
     TextField selectedTextField;
 
     public Info startInfo, endInfo;
-//    public CameraTransitionMode mode = CameraTransitionMode.LINEAR;
 
     public Array<TextField> fields = new Array<>();
     Rectangle[] debugRect;
-    public CinematicCameraModalDropdown dropdown;
+    public static CinematicCameraModalDropdown dropdown;
 
     public CameraCinematicModal(CameraTimelineWidget widget) {
         this.widget = widget;
 
         startInfo = new Info(widget.startInfo, new Rectangle(resolution.x/2f-(resolution.x*0.7f)/2f,resolution.y - 175, resolution.x*0.7f,80),- 80);
         endInfo = new Info(widget.endInfo, new Rectangle(resolution.x/2f-(resolution.x*0.7f)/2f,100, resolution.x*0.7f,80),120);
-        dropdown = new CinematicCameraModalDropdown(uiBG[0], uiBG[6], new Vector2(resolution.x/2f - 64,resolution.y - 375));
+        dropdown = new CinematicCameraModalDropdown(uiBG[0], uiBG[6], new Vector2(resolution.x/2f - 64,resolution.y - 375), widget.mode);
 
         debugRect = new Rectangle[]{startInfo.bounds, endInfo.bounds};
 
@@ -177,9 +178,8 @@ public class CameraCinematicModal extends CinematicModal {
         dropdown.draw(sb);
 
 
-
         for (TextField field : fields) {
-            field.hovered = cursor.clicked(field.bound);
+            if(!dropdown.dropDownExpand) field.hovered = cursor.clicked(field.bound);
             if(
                 field.hovered
                 && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
@@ -260,9 +260,11 @@ public class CameraCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(cursor.clicked(dropdown.buttonRect) && button == Input.Buttons.LEFT) {
-            dropdown.click();
-        }
+        dropdown.click();
+//        if(cursor.clicked(dropdown.dropDownExpand?dropdown.box:dropdown.buttonRect) && button == Input.Buttons.LEFT) {
+//
+//            print("click");
+//        }
         return false;
     }
 

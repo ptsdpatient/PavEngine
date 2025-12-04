@@ -1,8 +1,10 @@
 package com.pavengine.app.Dropdowns;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.pavengine.app.CameraTransitionMode;
@@ -10,7 +12,7 @@ import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public class CinematicCameraModalDropdown extends Dropdown {
 
-    public CameraTransitionMode currentMode = CameraTransitionMode.LINEAR;
+    public CameraTransitionMode currentMode;
 
     CameraTransitionMode[] transitionModes = new CameraTransitionMode[]{
         CameraTransitionMode.LINEAR,
@@ -25,7 +27,7 @@ public class CinematicCameraModalDropdown extends Dropdown {
     };
 
 
-    public CinematicCameraModalDropdown(TextureRegion background, TextureRegion hover, Vector2 position) {
+    public CinematicCameraModalDropdown(TextureRegion background, TextureRegion hover, Vector2 position, CameraTransitionMode mode) {
         super(background, hover, position, new String[]{
             CameraTransitionMode.LINEAR.name(),
             CameraTransitionMode.SMOOTHSTEP.name(),
@@ -37,10 +39,14 @@ public class CinematicCameraModalDropdown extends Dropdown {
             CameraTransitionMode.AXIS_PRIORITY.name(),
             CameraTransitionMode.STAGGERED.name()
         });
+        this.currentMode = mode;
+        buttonLayout = new GlyphLayout(font, mode.name());
     }
 
     @Override
     void optionClicked(int i) {
         currentMode = transitionModes[i];
+        buttonLayout.setText(font, currentMode.name());
+        print(currentMode.name());
     }
 }
