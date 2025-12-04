@@ -5,8 +5,9 @@ package com.pavengine.app.PavInput;
   import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
-  import static com.pavengine.app.PavCrypt.PavCrypt.addCrypt;
+  import static com.pavengine.app.PavCrypt.DataMap.gameObjectCrypt;
   import static com.pavengine.app.PavCrypt.PavCrypt.cryptWrite;
+  import static com.pavengine.app.PavCrypt.PavCrypt.writeArray;
   import static com.pavengine.app.PavEngine.axisGizmo;
   import static com.pavengine.app.PavEngine.cursor;
   import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
@@ -34,7 +35,8 @@ import com.badlogic.gdx.graphics.Color;
   import com.badlogic.gdx.math.Vector3;
   import com.pavengine.app.EditorSelectedObjectBehavior;
   import com.pavengine.app.ObjectType;
-import com.pavengine.app.PavCursor;
+  import com.pavengine.app.PavCrypt.CryptSchema;
+  import com.pavengine.app.PavCursor;
   import com.pavengine.app.PavEngine;
   import com.pavengine.app.PavGameObject.GameObject;
   import com.pavengine.app.PavGameObject.StaticObject;
@@ -208,15 +210,7 @@ public class MapEditorInput {
                             switch (widget.clickBehavior) {
 
                                 case ExportModelInfo :{
-                                    print("export");
-                                    for(GameObject obj : staticObjects) {
-                                        cryptWrite("save.dat", json -> {
-                                            addCrypt(json, "hp", p.hp);
-                                            addCrypt(json, "speed", p.speed);
-                                            addCrypt(json, "alive", p.alive);
-                                            addCrypt(json, "position", p.position);
-                                        });
-                                    }
+                                    writeArray("assets/scene.bin", staticObjects, CryptSchema.GameObject);
                                     return true;
                                 }
 

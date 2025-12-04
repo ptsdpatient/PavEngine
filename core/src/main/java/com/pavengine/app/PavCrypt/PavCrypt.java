@@ -2,6 +2,7 @@ package com.pavengine.app.PavCrypt;
 
 
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavCrypt.DataMap.gameObjectCrypt;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -12,10 +13,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavBounds.PavBoundsType;
+import com.pavengine.app.PavGameObject.GameObject;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class PavCrypt {
@@ -46,66 +50,157 @@ public class PavCrypt {
         return b;
     }
 
-    public static void addCrypt(JsonValue json, String key, Object value) {
-        JsonValue child;
 
-        if (value instanceof Integer) child = new JsonValue((Integer) value);
-        else if (value instanceof Float) child = new JsonValue((Float) value);
-        else if (value instanceof Boolean) child = new JsonValue((Boolean) value);
-        else if (value instanceof Long) child = new JsonValue((Long) value);
-        else if (value instanceof Double) child = new JsonValue((Double) value);
-        else if (value instanceof String) child = new JsonValue((String) value);
-
-        else if (value instanceof JsonValue) child = (JsonValue) value;
-
-        else if (value instanceof Vector2) {
-            Vector2 v = (Vector2) value;
-            child = new JsonValue(JsonValue.ValueType.object);
-            child.addChild("x", new JsonValue(v.x));
-            child.addChild("y", new JsonValue(v.y));
-        }
-        else if (value instanceof Vector3) {
-            Vector3 v = (Vector3) value;
-            child = new JsonValue(JsonValue.ValueType.object);
-            child.addChild("x", new JsonValue(v.x));
-            child.addChild("y", new JsonValue(v.y));
-            child.addChild("z", new JsonValue(v.z));
-        } else if (value instanceof Quaternion) {
-            Quaternion q = (Quaternion) value;
-            child = new JsonValue(JsonValue.ValueType.object);
-            child.addChild("w", new JsonValue(q.w));
-            child.addChild("x", new JsonValue(q.x));
-            child.addChild("y", new JsonValue(q.y));
-            child.addChild("z", new JsonValue(q.z));
-        }
-        else {
-            throw new IllegalArgumentException("Unsupported type: " + value.getClass());
-        }
-
-        json.addChild(key, child);
-    }
-
-
-    public static void cryptWrite(String path, Consumer<JsonValue> builder)  {
+    public static void cryptWrite(DataOutputStream out, Consumer<JsonValue> builder) {
         try {
             json = new JsonValue(JsonValue.ValueType.object);
             builder.accept(json);
 
-            System.out.println(json);
+            int count = 0;
+            for (JsonValue child = json.child; child != null; child = child.next) count++;
+
+            out.writeInt(count);
 
             for (JsonValue child = json.child; child != null; child = child.next) {
-                System.out.println(child.name() + " = " + child);
+                CryptEnum type = CryptEnum.valueOf(child.get("type").asString());
+                out.writeInt(type.id);
+                cryptAdd(type, out, child.get("value"));
             }
-//            file = Gdx.files.local(path);
-//            out = new DataOutputStream(file.write(false));
-//            out.writeInt(arr.size);
-//            for (PavBounds b : arr) writeBounds(out, b);
-//            out.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred: " + e);
+        }
+    }
+
+
+    private static void cryptAdd(CryptEnum type, DataOutputStream out, JsonValue value) throws IOException {
+        switch (type) {
+
+            case Int:
+                out.writeInt(value.getInt("value"));
+                break;
+
+            case Float:
+                out.writeFloat(value.getFloat("value"));
+                break;
+
+            case String:
+                String str = value.getString("value");
+                out.writeInt(str.length());
+                out.writeBytes(str);
+                break;
+
+            case Boolean:
+                out.writeBoolean(value.getBoolean("value"));
+                break;
+
+            case Vector2:
+                out.writeFloat(value.getFloat("x"));
+                out.writeFloat(value.getFloat("y"));
+                break;
+
+            case Vector3:
+                out.writeFloat(value.getFloat("x"));
+                out.writeFloat(value.getFloat("y"));
+                out.writeFloat(value.getFloat("z"));
+                break;
+
+            case Quaternion:
+                out.writeFloat(value.getFloat("w"));
+                out.writeFloat(value.getFloat("x"));
+                out.writeFloat(value.getFloat("y"));
+                out.writeFloat(value.getFloat("z"));
+                break;
+        }
+    }
+
+    public static <T> void writeArray(String path, Array<T> arr, CryptSchema schema)  {
+        try {
+            file = Gdx.files.local(path);
+            out = new DataOutputStream(file.write(false));
+            out.writeInt(arr.size);
+            for (T item : arr) {
+                switch (schema) {
+                    case GameObject:
+                        cryptWrite(out, gameObjectCrypt((GameObject) item));
+                        break;
+                }
+            }
+            out.close();
         } catch (Exception e) {
             print("Error ocurred! : " + e);
             throw new RuntimeException(e);
         }
     }
+
+    public static <T> void readArray(String path, CryptSchema schema, Consumer<Map<String, Object>> onRead) {
+        try (DataInputStream in = new DataInputStream(Gdx.files.local(path).read())) {
+
+            int arraySize = in.readInt(); // number of objects
+
+            for (int i = 0; i < arraySize; i++) {
+                Map<String, Object> objMap = new HashMap<>();
+
+                switch (schema) {
+                    case GameObject:
+                        readFields(in, objMap);
+                        onRead.accept(objMap);
+                        break;
+
+                    // Add other schemas here in future
+                    // case SomeOtherSchema:
+                    //     readFields(in, objMap);
+                    //     onRead.accept(objMap);
+                    //     break;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading binary: " + e);
+        }
+    }
+
+    private static void readFields(DataInputStream in, Map<String, Object> objMap) throws IOException {
+        int fieldCount = in.readInt();
+
+        for (int f = 0; f < fieldCount; f++) {
+            int typeId = in.readInt();
+            CryptEnum type = CryptEnum.fromId(typeId);
+
+            Object value = readValueByType(in, type);
+            objMap.put("field" + f, value);
+        }
+    }
+
+    private static Object readValueByType(DataInputStream in, CryptEnum type) throws IOException {
+        switch (type) {
+            case Int:
+                return in.readInt();
+            case Float:
+                return in.readFloat();
+            case String: {
+                int len = in.readInt();
+                byte[] bytes = new byte[len];
+                in.readFully(bytes);
+                return new String(bytes);
+            }
+            case Boolean:
+                return in.readBoolean();
+            case Vector2:
+                return new Vector2(in.readFloat(), in.readFloat());
+            case Vector3:
+                return new Vector3(in.readFloat(), in.readFloat(), in.readFloat());
+            case Quaternion:
+                float w = in.readFloat();
+                float x = in.readFloat();
+                float y = in.readFloat();
+                float z = in.readFloat();
+                return new Quaternion(x, y, z, w);
+            default:
+                throw new IllegalArgumentException("Unknown CryptEnum type: " + type);
+        }
+    }
+
 
     public static void writeArray(String name, Array<PavBounds> arr)  {
         try {
