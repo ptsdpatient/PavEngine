@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 public class MapEditorCamera extends PavCamera {
+
     private float moveSpeed = 20f;
     private float mouseSensitivity = 0.2f;
     private final Vector3 direction = new Vector3();
@@ -24,7 +25,7 @@ public class MapEditorCamera extends PavCamera {
         camera.position.set(6, 6, 6);
         camera.direction.set(-0.6376863f, -0.41910368f, -0.6463035f).nor();
 
-        print("new camera");
+//        print("new camera");
 
         yaw = MathUtils.atan2(camera.direction.x, camera.direction.z) * MathUtils.radiansToDegrees;
         pitch = MathUtils.asin(camera.direction.y) * MathUtils.radiansToDegrees;
@@ -35,11 +36,14 @@ public class MapEditorCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
+//        print("s");
         handleInput(delta);
+
     }
 
     private void handleInput(float delta) {
 
+//        print("yes");
         acc = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ? 3 : 1;
         move = moveSpeed * delta * acc;
 

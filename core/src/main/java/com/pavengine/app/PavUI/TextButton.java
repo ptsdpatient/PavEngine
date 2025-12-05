@@ -41,6 +41,16 @@ public class TextButton extends PavWidget {
         type = WidgetType.TextButton;
     }
 
+    public TextButton(String model, BitmapFont font, TextureRegion textureRegion, ClickBehavior clickBehavior) {
+        this.text = model;
+        this.font = font;
+        this.clickBehavior = clickBehavior;
+        layout = new GlyphLayout(font, text);
+        this.background = new Sprite(textureRegion);
+        this.box = new Rectangle(0, 0, layout.width, layout.height);
+        type = WidgetType.TextButton;
+    }
+
     @Override
     public Vector2 getCenter() {
         return new Vector2(box.x + box.width / 2f, box.y + box.height / 2f);

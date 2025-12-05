@@ -7,6 +7,7 @@ import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.cursor;
@@ -38,10 +39,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.Checkbox;
@@ -65,13 +68,13 @@ public class MapEditor extends  PavScreen {
     public MapEditor(PavEngine game) {
         super(game);
 
-        this.font = gameFont;
+        this.font = gameFont[2];
         objectList = new ArrayList<>();
 
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
         for (String model : listModels("assets/models/"))
-            mapEditingLayout.get(0).addSprite(new TextButton(model, font, hoverUIBG[1], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+            mapEditingLayout.get(0).addSprite(new TextButton(model, font, uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
 
 
 //        scaleStepper = new Stepper(192 + 32, 140 - 20, new Vector3(0.005f, 0.005f, 0.005f), ClickBehavior.StepperScale, "Scale", font, uiControl[0], uiControl[1]);
@@ -86,6 +89,14 @@ public class MapEditor extends  PavScreen {
 
         addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
+        readArray("scene/scene.bin", CryptSchema.GameObject, objMap -> {
+            String name = (String) objMap.get("field0");
+            String type = (String) objMap.get("field1");
+            Vector3 pos = (Vector3) objMap.get("field2");
+            Quaternion rot = (Quaternion) objMap.get("field3");
+
+            System.out.println("Name: " + name + ", Type: " + type + ", Pos: " + pos + ", Rot: " + rot);
+        });
     }
 
     public ArrayList<String> listModels(String path) {
@@ -137,13 +148,9 @@ public class MapEditor extends  PavScreen {
             obj.update(delta);
         }
 
-
         pavCamera.update(delta);
         camera.update();
         overlayCamera.update();
-
-
-
 
         sceneManager.update(delta);
         sceneManager.render();
@@ -156,8 +163,6 @@ public class MapEditor extends  PavScreen {
         for(ReferenceEditorLine or : referenceEditorRays) {
             or.draw();
         }
-
-
 
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();

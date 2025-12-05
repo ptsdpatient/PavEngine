@@ -5,6 +5,7 @@ import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
+import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.hoverUIBG;
@@ -12,8 +13,11 @@ import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
+import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sceneManager;
+import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavEngine.uiBG;
+import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -23,12 +27,22 @@ import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicModal.CameraCinematicModal;
+import com.pavengine.app.Cinematic.CinematicModal.CinematicModal;
+import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanel;
+import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -42,17 +56,21 @@ import com.pavengine.app.ReferenceOriginLine;
 import java.util.ArrayList;
 
 public class CinematicEditor extends  PavScreen {
+
     public static ArrayList<String> objectList;
     public static Array<PavLayout> cinematicEditorLayout = new Array<>();
     public static PavWidget exportModelInfo;
     private BitmapFont font;
     public static CinematicTimeline cinematicTimeline;
+    public static CinematicPanel cinematicPanel;
     public static boolean playingScene = false;
+    public static CinematicModal cinematicModal;
+    public static GlyphLayout cameraReferenceLayout = new GlyphLayout();
 
     public CinematicEditor(PavEngine game) {
         super(game);
 
-        this.font = gameFont;
+        this.font = gameFont[2];
         objectList = new ArrayList<>();
 
 
@@ -72,7 +90,10 @@ public class CinematicEditor extends  PavScreen {
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
         addAndGet(cinematicEditorLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
-        cinematicTimeline = new CinematicTimeline(uiBG[1],uiBG[7]);
+
+        cinematicTimeline = new CinematicTimeline(uiBG[1], uiBG[7]);
+        cinematicPanel = new CinematicPanel(uiBG[1]);
+
     }
 
     public ArrayList<String> listModels(String path) {
@@ -129,12 +150,8 @@ public class CinematicEditor extends  PavScreen {
         camera.update();
         overlayCamera.update();
 
-
-
-
         sceneManager.update(delta);
         sceneManager.render();
-
 
         for(ReferenceOriginLine or : centerReferenceOriginRays) {
             or.draw();
@@ -144,25 +161,35 @@ public class CinematicEditor extends  PavScreen {
             or.draw();
         }
 
-
-
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();
-
 
         for (PavLayout layout : cinematicEditorLayout) {
             layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
         }
 
         cinematicTimeline.draw(batch);
+        cinematicPanel.draw(batch);
+
+        if(cinematicModal != null){
+            cinematicModal.render(batch);
+            if(cursor.clicked(cinematicModal.closeBound) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                cinematicModal.save();
+                Gdx.input.setInputProcessor(cinematicEditorInput);
+                cinematicModal = null;
+            }
+        }
+        if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
+            gameFont[1].draw(batch, cameraReferenceLayout,resolution.x - cameraReferenceLayout.width,resolution.y / 2.5f + cameraReferenceLayout.height + 16);
+        }
 
         batch.end();
 
 
         for(PavLayout layout : cinematicEditorLayout) {
             for(PavWidget widget : layout.widgets) {
-                if(widget.isHovered)
-                    debugRectangle(widget.box, Color.GREEN);
+//                if(widget.isHovered)
+//                    debugRectangle(widget.box, Color.GREEN);
             }
         }
 
@@ -173,6 +200,11 @@ public class CinematicEditor extends  PavScreen {
                     debugCube(box, obj.debugColor);
         }
 
+        for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+//            debugRectangle(widget.bound, Color.GREEN);
+
+        }
+
 //        axisGizmo.update();
 //        axisGizmo.draw();
 
@@ -180,6 +212,24 @@ public class CinematicEditor extends  PavScreen {
 //            perspectiveAxisGizmo.update();
 //            perspectiveAxisGizmo.draw();
         }
+        for(CinematicTimelineObject object : cinematicTimeline.timelineObjects) {
+//            debugRectangle(object.lineRect,Color.YELLOW);
+        }
+
+//        for(CinematicPanelWidget widget : cinematicPanel.panelWidgets) {
+//
+//        }
+
+//        debugRectangle(cinematicPanel.selectedWidget.lineRect,Color.CYAN);
+
+        for (CinematicTimelineWidget widget : cinematicTimeline.timelineWidgets) {
+//            debugRectangle(widget.leftRectangle,Color.RED);
+//            debugRectangle(widget.rightRectangle,Color.RED);
+//            debugRectangle(widget.bounds,Color.BLUE);
+        }
+
+
+//        debugRectangle(cursor.clickArea,Color.GREEN);
 
 
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
@@ -191,6 +241,13 @@ public class CinematicEditor extends  PavScreen {
 
 //        perspectiveAxisGizmo.handleInput();
 //        print(camera.direction);
+        if(cinematicModal!=null) {
+            for(Rectangle rect : cinematicModal.getDebugRect()) {
+//                debugRectangle(rect,Color.BLUE);
+            }
+            cinematicModal.debug(batch);
+        }
+
 
     }
 

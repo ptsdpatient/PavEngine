@@ -158,17 +158,14 @@ public class BoundsLister extends PavWidget {
 
                 if (y + itemHeight < visibleBottom || y > visibleTop) continue;
 
-                // Temporary rectangle for hover & click check
                 Rectangle rect = new Rectangle(box.x, y, box.width, itemHeight);
 
                 PavBounds b = selectedObject.boxes.get(i);
                 String label = (i + 1) + ". " + b.type.name();
 
-                // Hover effect
                 boolean hovered = cursor.clicked(rect);
                 if (hovered) sb.draw(hoverTexture, rect.x, rect.y, rect.width, rect.height);
 
-                // Click detection
                 if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     dropDownExpand = false;
                     selectedBound = selectedObject.boxes.get(i);

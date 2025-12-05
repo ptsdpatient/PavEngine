@@ -80,11 +80,11 @@ public class PavEngine extends Game {
     public static SceneManager sceneManager;
     public static PBRShaderConfig pbrConfig;
     public static DepthShaderProvider depthShader;
-//    public static AxisGizmo3D perspectiveAxisGizmo;
 
-    public static BitmapFont
-        gameFont,
-        bigGameFont ;
+    public static Subtitle subtitle;
+
+    public static BitmapFont[]
+        gameFont = new BitmapFont[7];
 
 
     public PavLight pavLight;
@@ -93,6 +93,7 @@ public class PavEngine extends Game {
     public static TextureRegion[]
         uiBG ,
         uiControl,
+        icons,
         hoverUIBG;
 
     public static boolean
@@ -127,7 +128,7 @@ public class PavEngine extends Game {
 
         cursor = new PavCursor(
             "sprites/default/cursor_sheet.png",
-            175f
+            125f
         );
 
         pbrConfig = PBRShaderProvider.createDefaultConfig();
@@ -155,7 +156,7 @@ public class PavEngine extends Game {
         axisGizmo = new AxisGizmo(overlayCamera);
 
         cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.Cinematic :
+            CameraBehaviorType.MapEditorCamera :
             CameraBehaviorType.ThirdPerson;
 
 
@@ -171,7 +172,6 @@ public class PavEngine extends Game {
 
 //        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
 
-
         initializeCamera();
 
         sceneManager = new SceneManager(
@@ -183,13 +183,16 @@ public class PavEngine extends Game {
         pavLight = new PavLight(sceneManager.environment, PavLightProfile.DAY);
 
         sceneManager.setSkyBox(createSkybox("skybox/default/sky.png"));
-
-        gameFont = new BitmapFont(load("font/ubuntu.fnt"));
-        bigGameFont = new BitmapFont(load("font/ubuntu.fnt"));
+        for(int i = 1; i < 7 ; i++) {
+            gameFont[i-1] = new BitmapFont(load("font/default_" + i + ".fnt"));
+        }
 
         uiBG = extractSprites("sprites/default/ui_bg.png",32,32);
         uiControl = extractSprites("sprites/default/ui_control.png",32,32);
         hoverUIBG = extractSprites("sprites/default/ui_hover.png",32,32);
+        icons = extractSprites("sprites/default/icons.png",32,32);
+
+        subtitle = new Subtitle(gameFont[2],resolution.x,resolution.y);
 
         loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);
@@ -199,11 +202,11 @@ public class PavEngine extends Game {
         boundsEditor = new BoundsEditor(this);
         cinematicEditor = new CinematicEditor(this);
 
-        if(enableMapEditor){
-            setScreen(cinematicEditor);
-        } else {
-            setGameScreen();
-        }
+//        if(enableMapEditor){
+            setScreen(mapEditor);
+//        } else {
+//            setGameScreen();
+//        }
 
     }
 
@@ -261,6 +264,7 @@ public class PavEngine extends Game {
             case Cinematic:
                 pavCamera = new CinematicCamera(67);
                 break;
+
             case MapEditorCamera:
                 pavCamera = new MapEditorCamera(67);
                 break;

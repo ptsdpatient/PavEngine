@@ -73,7 +73,7 @@ public class GameScreen extends PavScreen {
     public static Array<PavLayout>
         gameWorldLayout = new Array<>();
     public static Rectangle mapEditorPanel = new Rectangle(200, 0, 700, 300);
-    public static TextBox messageBox = new TextBox("", gameFont, uiBG[2], ClickBehavior.NextMessage);
+    public static TextBox messageBox = new TextBox("", gameFont[2], uiBG[2], ClickBehavior.NextMessage);
     public static LevelManager levelManager;
     public boolean intro = false;
     public PavEngine game;
@@ -99,7 +99,7 @@ public class GameScreen extends PavScreen {
 
 
         interactableLayout  = new PavLayout(CENTER, ROW, 3, 64 * 3, 64);
-        interactableLayout.addSprite(new TextButton("[ E ] Interact", gameFont, ClickBehavior.Nothing));
+        interactableLayout.addSprite(new TextButton("[ E ] Interact", gameFont[2], ClickBehavior.Nothing));
 
         messageBoxLayout = new PavLayout(BOTTOM_CENTER, ROW, 0, overlayCamera.viewportWidth, overlayCamera.viewportHeight / 3f, 12);
         messageBoxLayout.addSprite(messageBox);

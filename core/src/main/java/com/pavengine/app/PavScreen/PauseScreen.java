@@ -1,6 +1,6 @@
 package com.pavengine.app.PavScreen;
 
-import static com.pavengine.app.PavEngine.bigGameFont;
+import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER;
 import static com.pavengine.app.PavUI.PavFlex.ROW;
@@ -43,7 +43,7 @@ public class PauseScreen implements Screen {
 
 
         pauseLayout = new PavLayout(CENTER, ROW, 4, 164, 32);
-        pauseLayout.addSprite(new TextButton("PAUSE (Click to go back)", bigGameFont, ClickBehavior.Nothing));
+        pauseLayout.addSprite(new TextButton("PAUSE (Click to go back)", gameFont[3], ClickBehavior.Nothing));
         resize((int) screen.x, (int) screen.y);
 
     }
