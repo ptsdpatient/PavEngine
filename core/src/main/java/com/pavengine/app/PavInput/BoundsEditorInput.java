@@ -48,27 +48,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BoundsEditorInput {
-    enum TransformMode {NONE, MOVE, SCALE, ROTATE}
 
     public static InputProcessor boundsEditorInput = new InputProcessor() {
         private TransformMode transformMode = TransformMode.NONE;
         private Vector3 activeAxis = Vector3.Zero;
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
-        Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
-        Quaternion initialRotation = new Quaternion();
-        float initialSize = 1;
+        Vector3 perspectiveTouch = new Vector3();
         Vector3 initialPosition = new Vector3(0, 0, 0);
         Vector3 startPointerPos = new Vector3();
         Vector3 initialScale = new Vector3();
         Vector3 intersection_scale = new Vector3();
         private final Vector3 tempVec1 = new Vector3();
-        private final Vector3 tempVec2 = new Vector3();
         private final Vector3 newScale = new Vector3();
 
         @Override
         public boolean keyDown(int keycode) {
-
 
             if(selectedBound != null) switch (keycode) {
                 case Input.Keys.G:
@@ -156,7 +151,6 @@ public class BoundsEditorInput {
                 Gdx.input.setCursorCatched(!enableCursor);
                 lockCursor(enableCursor);
             }
-
 
             return false;
         }

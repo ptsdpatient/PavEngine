@@ -2,6 +2,7 @@ package com.pavengine.app.PavCamera;
 
 
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -36,8 +37,8 @@ public class MapEditorCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
-//        print("s");
-        handleInput(delta);
+        if(selectedObject == null)
+            handleInput(delta);
 
     }
 

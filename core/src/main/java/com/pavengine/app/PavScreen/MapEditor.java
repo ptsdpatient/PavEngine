@@ -89,14 +89,14 @@ public class MapEditor extends  PavScreen {
 
         addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
-        readArray("scene/scene.bin", CryptSchema.GameObject, objMap -> {
-            String name = (String) objMap.get("field0");
-            String type = (String) objMap.get("field1");
-            Vector3 pos = (Vector3) objMap.get("field2");
-            Quaternion rot = (Quaternion) objMap.get("field3");
-
-            System.out.println("Name: " + name + ", Type: " + type + ", Pos: " + pos + ", Rot: " + rot);
-        });
+//        readArray("scene/scene.bin", CryptSchema.GameObject, objMap -> {
+//            String name = (String) objMap.get("field0");
+//            String type = (String) objMap.get("field1");
+//            Vector3 pos = (Vector3) objMap.get("field2");
+//            Quaternion rot = (Quaternion) objMap.get("field3");
+//
+//            System.out.println("Name: " + name + ", Type: " + type + ", Pos: " + pos + ", Rot: " + rot);
+//        });
     }
 
     public ArrayList<String> listModels(String path) {

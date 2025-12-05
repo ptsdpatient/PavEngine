@@ -55,7 +55,12 @@ public class StaticObject extends GameObject {
 
         pavBounds.setBounds(bounds);
 
+        updateCenter();
+        updateBox();
+
         update(0);
+
+
     }
 
     public StaticObject(String name, Vector3 position, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
@@ -81,6 +86,9 @@ public class StaticObject extends GameObject {
         pavBounds.setBounds(bounds);
 
 
+        updateCenter();
+        updateBox();
+
         update(0);
     }
 
@@ -105,6 +113,10 @@ public class StaticObject extends GameObject {
         bounds.max.add(pos);
         boxes.add(new PavBounds(bounds));
         pavBounds.setBounds(bounds);
+
+
+        updateCenter();
+        updateBox();
 
         update(0);
     }
@@ -196,13 +208,7 @@ public class StaticObject extends GameObject {
     }
 
     public void update(float delta) {
-
-        updateCenter();
-
-        updateBox();
-
         scene.modelInstance.transform.set(pos, rotation, size);
-
     }
 
 
@@ -217,7 +223,12 @@ public class StaticObject extends GameObject {
 
     public void updateBox() {
         scene.modelInstance.calculateBoundingBox(bounds);
-//        print(size);
+
+        for(PavBounds bound : boxes) {
+            bound.set(bounds,
+                new Matrix4(pos, rotation, size));
+        }
+
         pavBounds.set( bounds,
             new Matrix4(pos, rotation, size));
     }
