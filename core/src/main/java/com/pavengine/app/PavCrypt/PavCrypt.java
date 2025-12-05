@@ -136,7 +136,7 @@ public class PavCrypt {
     public static <T> void readArray(String path, CryptSchema schema, Consumer<Map<String, Object>> onRead) {
         try (DataInputStream in = new DataInputStream(Gdx.files.local(path).read())) {
 
-            int arraySize = in.readInt(); // number of objects
+            int arraySize = in.readInt();
 
             for (int i = 0; i < arraySize; i++) {
                 Map<String, Object> objMap = new HashMap<>();

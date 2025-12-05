@@ -209,8 +209,12 @@ public class MapEditorInput {
 
                             switch (widget.clickBehavior) {
 
-                                case ExportModelInfo :{
-                                    writeArray("assets/scene.bin", staticObjects, CryptSchema.GameObject);
+                                case ExportModelInfo : {
+                                    writeArray(
+                                        "scene/scene.bin",
+                                        staticObjects,
+                                        CryptSchema.GameObject
+                                    );
                                     return true;
                                 }
 
