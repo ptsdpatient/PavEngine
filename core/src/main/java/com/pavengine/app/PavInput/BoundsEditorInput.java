@@ -36,6 +36,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -208,7 +209,7 @@ public class BoundsEditorInput {
                         switch (widget.clickBehavior) {
                             case SaveBoundsArray : {
                                 if(selectedObject != null) {
-                                    writeArray(selectedObject.name,selectedObject.boxes);
+                                    writeArray("models/"+selectedObject.name+"bounds.bin",selectedObject.boxes, CryptSchema.PavBounds);
                                 }
 
                             } break;

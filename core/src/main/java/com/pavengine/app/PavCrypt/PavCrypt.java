@@ -3,6 +3,7 @@ package com.pavengine.app.PavCrypt;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCrypt.DataMap.gameObjectCrypt;
+import static com.pavengine.app.PavCrypt.DataMap.pavBoudCrypt;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -123,6 +124,9 @@ public class PavCrypt {
                 switch (schema) {
                     case GameObject:
                         cryptWrite(out, gameObjectCrypt((GameObject) item));
+                        break;
+                    case PavBounds:
+                        cryptWrite(out, pavBoudCrypt((PavBounds) item));
                         break;
                 }
             }
