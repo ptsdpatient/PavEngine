@@ -49,7 +49,7 @@ import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 public class PavEngine extends Game {
     public static Ray perspectiveTouchRay = new Ray();
     public static CameraBehaviorType cameraBehavior;
-    public static boolean dragAndDrop = true;
+//    public static boolean dragAndDrop = true;
     public static boolean enableCursor = true;
     public static boolean enableMapEditor = true;
     public static boolean gamePause = false;
@@ -91,7 +91,7 @@ public class PavEngine extends Game {
     public static EditorSelectedObjectBehavior editorSelectedObjectBehavior = EditorSelectedObjectBehavior.FreeLook;
     public static TextButton editorSelectedObjectText;
     public static TextureRegion[]
-        uiBG ,
+        uiBG,
         uiControl,
         icons,
         hoverUIBG;
@@ -121,7 +121,7 @@ public class PavEngine extends Game {
         if(!enableMapEditor) {
 
         } else {
-            dragAndDrop = true;
+//            dragAndDrop = true;
         }
 
         initializeSound();
@@ -155,9 +155,7 @@ public class PavEngine extends Game {
 
         axisGizmo = new AxisGizmo(overlayCamera);
 
-        cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.MapEditorCamera :
-            CameraBehaviorType.ThirdPerson;
+        cameraBehavior = CameraBehaviorType.BoundsEditor;
 
 
         camera = new PerspectiveCamera(67, resolution.x/2, resolution.y/2);
@@ -203,7 +201,7 @@ public class PavEngine extends Game {
         cinematicEditor = new CinematicEditor(this);
 
 //        if(enableMapEditor){
-            setScreen(mapEditor);
+            setScreen(boundsEditor);
 //        } else {
 //            setGameScreen();
 //        }

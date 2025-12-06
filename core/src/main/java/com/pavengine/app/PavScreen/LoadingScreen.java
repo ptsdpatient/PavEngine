@@ -4,7 +4,7 @@ package com.pavengine.app.PavScreen;
 import static com.pavengine.app.Methods.files;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.PavEngine.resolution;
-import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
+
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -37,7 +37,7 @@ public class LoadingScreen extends PavScreen {
 
     @Override
     public void setInput() {
-        Gdx.input.setInputProcessor(gameWorldInput);
+//        Gdx.input.setInputProcessor(gameWorldInput);
     }
 
 

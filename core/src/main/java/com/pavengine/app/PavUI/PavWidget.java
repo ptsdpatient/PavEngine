@@ -1,12 +1,14 @@
 package com.pavengine.app.PavUI;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class PavWidget {
+
     public BitmapFont font, subtitle;
     public String text;
     public Rectangle box;
@@ -15,6 +17,7 @@ public abstract class PavWidget {
     public ClickBehavior clickBehavior = ClickBehavior.Nothing;
     public WidgetType type = WidgetType.Undefined;
     public int upgradeIndex = 1;
+    GlyphLayout layout = new GlyphLayout();
 
     public abstract Vector2 getCenter();
 

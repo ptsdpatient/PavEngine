@@ -2,6 +2,7 @@ package com.pavengine.app.PavCamera;
 
 
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -26,8 +27,6 @@ public class MapEditorCamera extends PavCamera {
         camera.position.set(6, 6, 6);
         camera.direction.set(-0.6376863f, -0.41910368f, -0.6463035f).nor();
 
-//        print("new camera");
-
         yaw = MathUtils.atan2(camera.direction.x, camera.direction.z) * MathUtils.radiansToDegrees;
         pitch = MathUtils.asin(camera.direction.y) * MathUtils.radiansToDegrees;
 
@@ -37,9 +36,8 @@ public class MapEditorCamera extends PavCamera {
 
     @Override
     public void update(float delta) {
-        if(selectedObject == null)
+        if(selectedObject == null && Gdx.input.getInputProcessor() == mapEditorInput)
             handleInput(delta);
-
     }
 
     private void handleInput(float delta) {

@@ -62,7 +62,7 @@ public abstract class PavScreen implements Screen {
         batch.begin();
 
         if (
-            (cameraBehavior == CameraBehaviorType.MapEditorCamera || cameraBehavior == CameraBehaviorType.Cinematic) &&
+            (cameraBehavior == CameraBehaviorType.MapEditorCamera || cameraBehavior == CameraBehaviorType.Cinematic || cameraBehavior == CameraBehaviorType.BoundsEditor) &&
                 !(Gdx.input.isButtonPressed(Input.Buttons.MIDDLE) || Gdx.input.isButtonPressed(Input.Buttons.RIGHT)
             )
         )

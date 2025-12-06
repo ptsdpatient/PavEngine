@@ -9,7 +9,6 @@ import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
-import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.groundObjects;
 import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
@@ -221,7 +220,7 @@ public class GameScreen extends PavScreen {
 
     @Override
     public void setInput() {
-        Gdx.input.setInputProcessor(gameWorldInput);
+//        Gdx.input.setInputProcessor(gameWorldInput);
     }
 
     @Override

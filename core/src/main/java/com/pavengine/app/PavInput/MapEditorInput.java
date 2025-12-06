@@ -19,6 +19,7 @@ import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 import static com.pavengine.app.PavScreen.MapEditor.mapEditingLayout;
+import static com.pavengine.app.PavScreen.MapEditor.sceneName;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -277,7 +278,7 @@ public class MapEditorInput {
 
                                 case ExportModelInfo: {
                                     writeArray(
-                                        "scene/scene.bin",
+                                        "scene/" + sceneName + ".bin",
                                         staticObjects,
                                         CryptSchema.GameObject
                                     );
@@ -354,19 +355,24 @@ public class MapEditorInput {
                     case SCALE:
                         if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
 
-                            float distance = intersection_scale.dst(startPointerPos);
-                            float sign = (intersection_scale.z > startPointerPos.z) ? 1 : -1;
-                            float scaleFactor = 1 + (distance * sign);
+                            float currentDistance = intersection_scale.dst(selectedObject.pos.cpy());
 
-                            newScale.set(initialScale).scl(scaleFactor);
+                            float startDistance   = startPointerPos.dst(selectedObject.pos.cpy());
 
-                            newScale.x = Math.max(newScale.x, 0.1f);
-                            newScale.y = Math.max(newScale.y, 0.1f);
-                            newScale.z = Math.max(newScale.z, 0.1f);
+                            if (startDistance > 0.0001f) {
 
-                            selectedObject.size.set(newScale);
+                                float scaleFactor = currentDistance / startDistance;
 
+                                newScale.set(initialScale).scl(scaleFactor);
+
+                                newScale.x = Math.max(newScale.x, 0.1f);
+                                newScale.y = Math.max(newScale.y, 0.1f);
+                                newScale.z = Math.max(newScale.z, 0.1f);
+
+                                selectedObject.size.set(newScale);
+                            }
                         }
+
                         break;
 
                     case ROTATE:
@@ -461,6 +467,8 @@ public class MapEditorInput {
 //        PavEngine.editorSelectedObjectBehavior = PavEngine.editorSelectedObjectBehavior == value? EditorSelectedObjectBehavior.FreeLook: value;
         PavEngine.editorSelectedObjectBehavior = value;
         editorSelectedObjectText.text = PavEngine.editorSelectedObjectBehavior.name();
+
+
     }
 
     private static void setSelectedObject(GameObject obj) {

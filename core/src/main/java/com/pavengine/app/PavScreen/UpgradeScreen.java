@@ -15,7 +15,6 @@ import static com.pavengine.app.PavEngine.playerDamageRate;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.sprayLimit;
 import static com.pavengine.app.PavEngine.uiControl;
-import static com.pavengine.app.PavInput.GameWorldInput.gameWorldInput;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -149,7 +148,7 @@ public class UpgradeScreen extends PavScreen {
 
     @Override
     public void setInput() {
-        Gdx.input.setInputProcessor(gameWorldInput);
+//        Gdx.input.setInputProcessor(gameWorldInput);
     }
 
 

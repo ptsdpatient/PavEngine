@@ -330,33 +330,64 @@ public class BoundsEditorInput {
 
                                 if (!activeAxis.isZero()) {
 
-                                    // tempVec1 = intersection_scale - startPointerPos
-                                    tempVec1.set(intersection_scale).sub(startPointerPos);
+//                                    tempVec1.set(intersection_scale).sub(startPointerPos);
+//
+//                                    float axisDelta = tempVec1.dot(activeAxis);
+//                                    float scaleFactor = 1 + axisDelta;
+//
+//                                    // Use existing newScale (no new objects)
+//                                    newScale.set(initialScale);
+//
+//                                    if (activeAxis == Vector3.X) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
+//                                    if (activeAxis == Vector3.Y) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
+//                                    if (activeAxis == Vector3.Z) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+//
+//                                    selectedBound.setSize(newScale);
 
-                                    float axisDelta = tempVec1.dot(activeAxis);
-                                    float scaleFactor = 1 + axisDelta;
+                                    tempVec1.set(activeAxis).nor();
 
-                                    // Use existing newScale (no new objects)
-                                    newScale.set(initialScale);
+                                    Vector3 center = selectedBound.position;
 
-                                    if (activeAxis == Vector3.X) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
-                                    if (activeAxis == Vector3.Y) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
-                                    if (activeAxis == Vector3.Z) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+                                    // Distance projection at current mouse position
+                                    float currentProj = intersection_scale.cpy().sub(center).dot(tempVec1);
 
-                                    selectedBound.setSize(newScale);
+                                    // Distance projection when we clicked
+                                    float startProj   = startPointerPos.cpy().sub(center).dot(tempVec1);
+
+                                    if (Math.abs(startProj) > 0.0001f) {
+
+                                        float scaleFactor = currentProj / startProj;
+
+                                        // Copy original scale before applying
+                                        newScale.set(initialScale);
+
+                                        // Apply only on the active axis
+                                        if (Math.abs(tempVec1.x) > 0.9f) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
+                                        if (Math.abs(tempVec1.y) > 0.9f) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
+                                        if (Math.abs(tempVec1.z) > 0.9f) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+
+                                        selectedBound.setSize(newScale);
+                                    }
                                 }
                                 else {
-                                    float distance = intersection_scale.dst(startPointerPos);
-                                    float sign = (intersection_scale.z > startPointerPos.z) ? 1 : -1;
-                                    float scaleFactor = 1 + (distance * sign);
 
-                                    newScale.set(initialScale).scl(scaleFactor);
+                                    float currentDistance = intersection_scale.dst(selectedBound.position.cpy());
 
-                                    newScale.x = Math.max(newScale.x, 0.1f);
-                                    newScale.y = Math.max(newScale.y, 0.1f);
-                                    newScale.z = Math.max(newScale.z, 0.1f);
+                                    float startDistance   = startPointerPos.dst(selectedBound.position.cpy());
 
-                                    selectedBound.setSize(newScale);
+                                    if (startDistance > 0.0001f) {
+
+                                        float scaleFactor = currentDistance / startDistance;
+
+                                        newScale.set(initialScale).scl(scaleFactor);
+
+                                        newScale.x = Math.max(newScale.x, 0.1f);
+                                        newScale.y = Math.max(newScale.y, 0.1f);
+                                        newScale.z = Math.max(newScale.z, 0.1f);
+
+                                        selectedBound.setSize(newScale);
+                                    }
+
                                 }
                             }
                             break;

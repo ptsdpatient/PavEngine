@@ -13,7 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.pavengine.app.AnimationCurve;
 
 public class TextButton extends PavWidget {
-    GlyphLayout layout;
     TextureRegion hoverTexture;
     AnimationCurve curve = AnimationCurve.EASE_IN_OUT;
 
