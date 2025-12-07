@@ -24,10 +24,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Animation;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodeAnimation;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
@@ -44,8 +53,12 @@ import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
+import net.mgsx.gltf.scene3d.scene.Scene;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BoundsEditorInput {
@@ -62,6 +75,7 @@ public class BoundsEditorInput {
         Vector3 intersection_scale = new Vector3();
         private final Vector3 tempVec1 = new Vector3();
         private final Vector3 newScale = new Vector3();
+
 
         @Override
         public boolean keyDown(int keycode) {
@@ -221,7 +235,7 @@ public class BoundsEditorInput {
                                 }
 
                                 world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                setSelectedObject(staticObjects.get(staticObjects.size - 1));
+                                setSelectedObject(staticObjects.peek());
 
                                 readArray("assets/models/" + selectedObject.name + "/bounds.bin" , CryptSchema.PavBounds, data -> {
                                     Vector3 position = (Vector3) data.get("field0");

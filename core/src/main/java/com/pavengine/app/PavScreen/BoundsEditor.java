@@ -1,6 +1,7 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
+import static com.pavengine.app.Debug.Draw.debugLine;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.print;
@@ -29,8 +30,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.BoneHitbox;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -43,6 +55,9 @@ import com.pavengine.app.ReferenceEditorLine;
 import com.pavengine.app.ReferenceOriginLine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BoundsEditor extends  PavScreen {
     public static ArrayList<String> objectList;
@@ -51,6 +66,7 @@ public class BoundsEditor extends  PavScreen {
     private BitmapFont font;
     public static BoundsLister boundsLister;
     public static PavBounds selectedBound = new PavBounds();
+
 
     public BoundsEditor(PavEngine game) {
         super(game);
@@ -186,10 +202,15 @@ public class BoundsEditor extends  PavScreen {
         axisGizmo.update();
         axisGizmo.draw();
 
-        if(selectedObject!=null) {
+        if(selectedObject != null) {
+
+//            debugMeshTriangles(selectedObject.scene.modelInstance);
+
 //            perspectiveAxisGizmo.update();
 //            perspectiveAxisGizmo.draw();
         }
+
+
 
 
 //        debugCube(new PavBounds(perspectiveAxisGizmo.xOBB),Color.RED);
@@ -203,6 +224,7 @@ public class BoundsEditor extends  PavScreen {
 //        print(camera.direction);
 
     }
+
 
 
 

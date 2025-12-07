@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.pavengine.app.Cell;
 import com.pavengine.app.CellType;
@@ -171,6 +172,32 @@ public class Draw {
 
     }
 
+    public static void debugCube(OrientedBoundingBox box) {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.CYAN);
+
+        Vector3[] corners = box.getVertices();
+
+        shapeRenderer.line(corners[0], corners[1]);
+        shapeRenderer.line(corners[0], corners[2]);
+        shapeRenderer.line(corners[0], corners[4]);
+
+        shapeRenderer.line(corners[1], corners[3]);
+        shapeRenderer.line(corners[1], corners[5]);
+
+        shapeRenderer.line(corners[2], corners[3]);
+        shapeRenderer.line(corners[2], corners[6]);
+
+        shapeRenderer.line(corners[3], corners[7]);
+
+        shapeRenderer.line(corners[4], corners[5]);
+        shapeRenderer.line(corners[4], corners[6]);
+
+        shapeRenderer.line(corners[5], corners[7]);
+        shapeRenderer.line(corners[6], corners[7]);
+        shapeRenderer.end();
+    }
 
     public static void debugCube(PavBounds box) {
         shapeRenderer.setProjectionMatrix(camera.combined);

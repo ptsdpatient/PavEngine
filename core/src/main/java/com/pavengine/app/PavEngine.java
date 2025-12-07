@@ -154,8 +154,7 @@ public class PavEngine extends Game {
 
         axisGizmo = new AxisGizmo(overlayCamera);
 
-        cameraBehavior = CameraBehaviorType.MapEditorCamera;
-
+        cameraBehavior = CameraBehaviorType.BoundsEditor;
 
         camera = new PerspectiveCamera(67, resolution.x/2, resolution.y/2);
         camera.near = 0.1f;
@@ -197,11 +196,7 @@ public class PavEngine extends Game {
         boundsEditor = new BoundsEditor(this);
         cinematicEditor = new CinematicEditor(this);
 
-//        if(enableMapEditor){
-            setScreen(mapEditor);
-//        } else {
-//            setGameScreen();
-//        }
+        setScreen(boundsEditor);
 
     }
 

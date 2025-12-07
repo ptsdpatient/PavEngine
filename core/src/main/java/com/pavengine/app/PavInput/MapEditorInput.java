@@ -358,27 +358,7 @@ public class MapEditorInput {
 
             }
 
-//            boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
-//
-//            if (cursor.clicked(boundsLister.box)) {
-//                if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
-//                    boundsLister.dropDownExpand = true;
-//            } else if (boundsLister.dropDownExpand) {
-//                boundsLister.dropDownExpand = false;
-//
-//            }
 
-
-//            for (GameObject obj : staticObjects) {
-//                boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
-//                obj.debugColor = hit ? Color.ORANGE : Color.YELLOW;
-//            }
-
-//            if (selectedObject != null) selectedObject.debugColor = Color.ORANGE;
-
-//            for (GameObject obj : targetObjects) {
-//                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
-//            }
 
             for (PavLayout layout : mapEditingLayout) {
                 layout.isHovered = cursor.clicked(layout.box);

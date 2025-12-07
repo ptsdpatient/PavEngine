@@ -194,19 +194,4 @@ public class PavBounds {
         box.set(CANONICAL_BOX, transform);
     }
 
-
-
-
-
-    public boolean intersects(PavBounds orientedBoundingBox) {
-        return orientedBoundingBox.box.intersects(box);
-    }
-
-
-
-
-//    public Vector3 getPosition() {
-//        box.getTransform().getTranslation(center);
-//        return center;
-//    }
 }
