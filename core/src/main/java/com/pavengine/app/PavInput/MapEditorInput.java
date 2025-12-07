@@ -214,16 +214,18 @@ public class MapEditorInput {
 
 
             for (GameObject obj : staticObjects) {
-                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-                    transformMode = TransformMode.NONE;
-                    if (selectedObject == obj) {
-                        selectedObject = null;
+                for(PavBounds bound : obj.boxes) {
+                    if(Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, bound.box)) {
+                        transformMode = TransformMode.NONE;
+                        if (selectedObject == obj) {
+                            selectedObject = null;
+                            return true;
+                        }
+                        setSelectedObject(obj);
+                        dragPlane = new Plane(camera.direction, selectedObject.pos);
+                        dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
                         return true;
                     }
-                    setSelectedObject(obj);
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                    return true;
                 }
             }
 
@@ -260,11 +262,20 @@ public class MapEditorInput {
                 }
 
 
-                if (selectedObject != null)
-                    if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
+                if (selectedObject != null) {
+                    boolean touching = false;
+                    for(PavBounds bound : selectedObject.boxes) {
+                        if(Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay,bound.box)) {
+                            touching = true;
+                           break;
+                        }
+                    }
+                    if(!touching) {
                         selectedObject.debugColor = Color.YELLOW;
                         selectedObject = null;
                     }
+                }
+
             }
             return false;
         }

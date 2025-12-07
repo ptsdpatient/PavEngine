@@ -117,6 +117,43 @@ public class CinematicEditorInput {
 
             cursor.setCursor(1);
 
+            if (cinematicPanel.widgetDrag) {
+                cinematicPanel.widgetDrag = false;
+                if (cinematicPanel.selectedWidget.snapping) {
+                    switch (cinematicPanel.selectedWidget.type) {
+                        case Animate:
+                            break;
+                        case Camera:
+                            cinematicTimeline.timelineWidgets.add(new CameraTimelineWidget(
+                                cinematicPanel.selectedWidget.bg,
+                                cinematicPanel.selectedWidget.text,
+                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                                cinematicPanel.selectedWidget.type,
+                                cinematicTimeline.pixelsPerSecond
+                            ));
+                            break;
+                        case Light:
+                            break;
+                        case Music:
+                            break;
+                        case Subtitle:
+                            cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(
+                                cinematicPanel.selectedWidget.bg,
+                                cinematicPanel.selectedWidget.text,
+                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                                cinematicPanel.selectedWidget.type,
+                                cinematicTimeline.pixelsPerSecond
+                            ));
+                            break;
+                        case Transform:
+                            break;
+                    }
+                }
+            }
+
+
             if (!enableCursor) {
                 lockCursor(false);
                 Gdx.input.setCursorCatched(true);
@@ -193,7 +230,6 @@ public class CinematicEditorInput {
                 }
                 if (selectedObject != null)
                     if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-//                        print("deselect");
                         selectedObject.debugColor = Color.YELLOW;
                         selectedObject = null;
                     }
@@ -248,26 +284,6 @@ public class CinematicEditorInput {
                 }
             }
 
-
-//            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//                if (selectedObject != null) {
-//                    for (PavLayout layout : cinematicEditorLayout) {
-//                        if (cursor.clicked(layout.box))
-//                            return true;
-//                    }
-//
-//                    if (cursor.clicked(mapEditorPanel))
-//                        return true;
-//
-//                    if (PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch))
-//                        selectedObject.pos.set(perspectiveTouch.x, perspectiveTouch.y - selectedObject.getHeight()/2f, perspectiveTouch.z);
-//                    Vector3 intersection = new Vector3();
-//
-//                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-//                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
-//                    }
-//                }
-//            }
 
             return false;
         }
