@@ -92,10 +92,11 @@ public class StaticObject extends GameObject {
         update(0);
     }
 
-    public StaticObject(String name, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
+    public StaticObject(String name, ObjectType objectType, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
         this.name = name;
         this.scene = scene;
 
+        this.objectType =objectType;
         this.rotation = rotation;
         this.size = size;
         this.pos = position;

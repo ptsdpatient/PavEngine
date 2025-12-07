@@ -169,7 +169,7 @@ public class BoundsLister extends PavWidget {
                 if (hovered && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                     dropDownExpand = false;
                     selectedBound = selectedObject.boxes.get(i);
-                    System.out.println("Clicked bound: " + label);
+//                    System.out.println("Clicked bound: " + label);
                 }
 
                 GlyphLayout layout = new GlyphLayout(font, label);

@@ -3,7 +3,7 @@ package com.pavengine.app.PavCrypt;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCrypt.DataMap.gameObjectCrypt;
-import static com.pavengine.app.PavCrypt.DataMap.pavBoudCrypt;
+import static com.pavengine.app.PavCrypt.DataMap.pavBoundCrypt;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -126,18 +126,18 @@ public class PavCrypt {
                         cryptWrite(out, gameObjectCrypt((GameObject) item));
                         break;
                     case PavBounds:
-                        cryptWrite(out, pavBoudCrypt((PavBounds) item));
+                        cryptWrite(out, pavBoundCrypt((PavBounds) item));
                         break;
                 }
             }
             out.close();
+            print(file.file().getAbsolutePath());
         } catch (Exception e) {
-            print("Error ocurred! : " + e);
-            throw new RuntimeException(e);
+            System.err.println("[WARN] Failed to read binary: " + path + " (" + e + ")");
         }
     }
 
-    public static <T> void readArray(String path, CryptSchema schema, Consumer<Map<String, Object>> onRead) {
+    public static void readArray(String path, CryptSchema schema, Consumer<Map<String, Object>> onRead) {
         try (DataInputStream in = new DataInputStream(Gdx.files.local(path).read())) {
 
             int arraySize = in.readInt();
@@ -147,20 +147,15 @@ public class PavCrypt {
 
                 switch (schema) {
                     case GameObject:
+                    case PavBounds:
                         readFields(in, objMap);
                         onRead.accept(objMap);
                         break;
-
-                    // Add other schemas here in future
-                    // case SomeOtherSchema:
-                    //     readFields(in, objMap);
-                    //     onRead.accept(objMap);
-                    //     break;
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Error reading binary: " + e);
+            System.err.println("[WARN] Failed to read binary: " + path + " (" + e + ")");
         }
     }
 

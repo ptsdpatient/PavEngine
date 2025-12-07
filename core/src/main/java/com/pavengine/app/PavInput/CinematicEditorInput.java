@@ -15,7 +15,6 @@ import static com.pavengine.app.PavScreen.CinematicEditor.cinematicEditorLayout;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
-import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -271,9 +270,6 @@ public class CinematicEditorInput {
                     axisGizmo.lookFromAxis(Vector3.Z);
                     return true;
                 }
-
-                if (cursor.clicked(mapEditorPanel))
-                    return true;
 
                 for (PavLayout layout : cinematicEditorLayout) {
 

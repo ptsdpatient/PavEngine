@@ -71,7 +71,7 @@ public class GameScreen extends PavScreen {
         interactableLayout;
     public static Array<PavLayout>
         gameWorldLayout = new Array<>();
-    public static Rectangle mapEditorPanel = new Rectangle(200, 0, 700, 300);
+//    public static Rectangle mapEditorPanel = new Rectangle(200, 0, 700, 300);
     public static TextBox messageBox = new TextBox("", gameFont[2], uiBG[2], ClickBehavior.NextMessage);
     public static LevelManager levelManager;
     public boolean intro = false;
@@ -181,16 +181,6 @@ public class GameScreen extends PavScreen {
 //        world.addObject("ground", "ground", new Vector3(-10, -2, 0), 50, 0.4f, ObjectType.GROUND, new String[]{""});
 
 
-        addObjects(
-            new String[]{
-//                "tree", "bush", "props", "lamp",
-//                "ground"
-            }
-        );
-
-
-
-
 
         if(!enableMapEditor) {
             setPlayer();
@@ -230,105 +220,7 @@ public class GameScreen extends PavScreen {
 
 
 
-    public static void addObjects(String[] fileNames) {
-        for(String fileName : fileNames) {
-            JsonValue root = getJson("list/" + fileName + ".json");
 
-            if (root == null) return;
-
-            for (JsonValue obj : root) {
-                JsonValue
-                    pos = obj.get("position"),
-                    rot = obj.get("rotation"),
-                    size = obj.get("size"),
-                    room = obj.get("room"),
-                    enemy = obj.get("enemy");
-                String name = obj.getString("name");
-                Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
-
-                switch (obj.getString("type")) {
-                    case "STATIC": {
-                        staticObjects.add(new StaticObject(
-                                name,
-                                scene,
-                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                            )
-                        );
-                    }
-                    break;
-                    case "GROUND": {
-                        groundObjects.add(new GroundObject(
-                                name,
-                                scene,
-                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                            )
-                        );
-                    }
-                    break;
-                    case "TARGET": {
-                        targetObjects.add(new TargetObject(
-                                name,
-                                scene,
-                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                            )
-                        );
-                        if (enemy.getBoolean("isEnemy")) {
-                            JsonValue attackOffset = enemy.get("attackOffset");
-
-                            JsonValue attackArray = obj.get("attackAnimation");
-                            int[] attackAnimation = new int[attackArray.size];
-
-                            for (int i = 0; i < attackArray.size; i++) {
-                                attackAnimation[i] = attackArray.getInt(i);
-                            }
-
-                            targetObjects.get(targetObjects.size).setEnemy(
-                                new Vector3(attackOffset.getFloat("x"), attackOffset.getFloat("y"), attackOffset.getFloat("z")),
-                                enemy.getFloat("behaveRange"),
-                                enemy.getFloat("attackRange"),
-                                enemy.getFloat("fireRate"),
-                                enemy.getFloat("damage"),
-                                enemy.getBoolean("behaveIfCloseToPlayer"),
-                                attackAnimation
-                            );
-
-                        }
-                    }
-                    break;
-                    case "KINEMATIC": {
-                        kinematicObjects.add(new KinematicObject(
-                                name,
-                                scene,
-                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                            )
-                        );
-                    }
-                    break;
-                    case "DYNAMIC": {
-                        dynamicObjects.add(new DynamicObject(
-                                name,
-                                scene,
-                                new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                                new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                                new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                            )
-                        );
-                    }
-                    break;
-                }
-
-                sceneManager.addScene(scene);
-            }
-        }
-    }
 
     private void setPlayer() {
         world.addObject("player", "ball", new Vector3(0,20,0), 2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Bounce", "Squish"});

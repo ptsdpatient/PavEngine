@@ -13,7 +13,6 @@ import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.perspectiveTouchRay;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
-import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -61,14 +60,19 @@ public class MapEditorInput {
             if (selectedObject != null) switch (keycode) {
                 case Input.Keys.G:
                     if (transformMode != TransformMode.NONE) {
+                        print("none");
                         transformMode = TransformMode.NONE;
                         setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
-                    initialPosition = selectedObject.center;
+
+                    initialPosition.set(selectedObject.center);
                     transformMode = TransformMode.MOVE;
                     dragPlane = new Plane(camera.direction, initialPosition);
-                    dragOffset.set(new Vector3());
+
+                    Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, startPointerPos);
+                    dragOffset.set(selectedObject.pos).sub(startPointerPos);
+
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
                     activeAxis = Vector3.Zero;
                     break;
@@ -83,7 +87,7 @@ public class MapEditorInput {
                     initialPosition = selectedObject.center;
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
                     dragPlane = new Plane(camera.direction, initialPosition);
-                    dragOffset.set(new Vector3());
+
                     if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
                         startPointerPos.set(intersection_scale);
                         initialScale.set(selectedObject.size);
@@ -98,7 +102,7 @@ public class MapEditorInput {
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.ROTATE;
-                    initialPosition = selectedObject.center;
+                    initialPosition.set(selectedObject.center);
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
                     break;
@@ -107,7 +111,6 @@ public class MapEditorInput {
                         activeAxis = Vector3.Zero;
                         break;
                     }
-
                     activeAxis = Vector3.X;
                     break;
                 case Input.Keys.Y:
@@ -140,56 +143,6 @@ public class MapEditorInput {
         @Override
         public boolean keyUp(int keycode) {
 
-//            if(keycode == Input.Keys.G) {
-//                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
-//                if(selectedObject != null) {
-//                    initialRotation = selectedObject.rotation.cpy();
-//                    initialPosition = selectedObject.pos;
-//                    initialSize = selectedObject.size.x;
-//                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                }
-//            }
-//
-//            if(keycode == Input.Keys.R) {
-//
-//                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
-//                if(selectedObject != null) {
-//                    initialRotation = selectedObject.rotation.cpy();
-//                    initialPosition = selectedObject.pos;
-//                    initialSize = selectedObject.size.x;
-//                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                }
-//            }
-//
-//            if(keycode == Input.Keys.S) {
-//                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
-//                if(selectedObject != null) {
-//                    initialRotation = selectedObject.rotation.cpy();
-//                    initialPosition = selectedObject.pos;
-//                    initialSize = selectedObject.size.x;
-//                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                }
-//            }
-//
-//            if(keycode == Input.Keys.X) {
-//                if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
-//                    if(selectedObject != null) {
-//                        selectedObject.rotation = initialRotation;
-//                        selectedObject.size = new Vector3(initialSize,initialSize,initialSize);
-//                        selectedObject.pos = initialPosition;
-//                    }
-//                }
-//                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-//            }
-//
-//            if (keycode == Input.Keys.ESCAPE) {
-//                Gdx.input.setCursorCatched(!enableCursor);
-//                lockCursor(enableCursor);
-//            }
-
             if (keycode == Input.Keys.DEL || keycode == Input.Keys.FORWARD_DEL) {
                 if (selectedObject != null) {
                     sceneManager.removeScene(selectedObject.scene);
@@ -208,7 +161,43 @@ public class MapEditorInput {
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 
+            if(button != Input.Buttons.LEFT) return false;
             setPerspectiveTouch();
+
+            for (PavLayout layout : mapEditingLayout) {
+
+
+                for (PavWidget widget : layout.widgets) {
+
+                    if (cursor.clicked(widget.box)) {
+
+                        switch (widget.clickBehavior) {
+
+                            case ExportModelInfo: {
+                                writeArray(
+                                    "assets/scenes/" + sceneName + ".bin",
+                                    staticObjects,
+                                    CryptSchema.GameObject
+                                );
+                                return true;
+                            }
+
+                            case AddStaticObjectToMapEditor: {
+                                print("add : " + widget.text);
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                setSelectedObject(staticObjects.peek());
+                                print(selectedObject == null ? "null" : "exists");
+                                return true;
+                            }
+                            case ExitGame: {
+                                Gdx.app.exit();
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
 
 
             for (GameObject obj : staticObjects) {
@@ -224,13 +213,6 @@ public class MapEditorInput {
                     return true;
                 }
             }
-
-//            for (GameObject obj : targetObjects) {
-//                if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
-//                    setSelectedObject(obj);
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                }
-//            }
 
             return false;
         }
@@ -264,43 +246,7 @@ public class MapEditorInput {
                     return true;
                 }
 
-                if (cursor.clicked(mapEditorPanel))
-                    return true;
 
-                for (PavLayout layout : mapEditingLayout) {
-
-
-                    for (PavWidget widget : layout.widgets) {
-
-                        if (cursor.clicked(widget.box)) {
-
-                            switch (widget.clickBehavior) {
-
-                                case ExportModelInfo: {
-                                    writeArray(
-                                        "scene/" + sceneName + ".bin",
-                                        staticObjects,
-                                        CryptSchema.GameObject
-                                    );
-                                    return true;
-                                }
-
-                                case AddStaticObjectToMapEditor: {
-                                    print("add : " + widget.text);
-                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                    setSelectedObject(staticObjects.peek());
-                                    print(selectedObject == null ? "null" : "exists");
-                                    return true;
-                                }
-                                case ExitGame: {
-                                    Gdx.app.exit();
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-                }
                 if (selectedObject != null)
                     if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
                         selectedObject.debugColor = Color.YELLOW;
@@ -339,17 +285,20 @@ public class MapEditorInput {
                         break;
                     case MOVE:
                         Vector3 intersection = new Vector3();
+                        Vector3 originalPos = initialPosition.cpy();
+
                         if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
                             if (!activeAxis.isZero()) {
+                                print(initialPosition);
                                 if (activeAxis.equals(Vector3.X))
-                                    intersection.set(intersection.x, initialPosition.y, initialPosition.z);
+                                    intersection.set(intersection.x, originalPos.y, originalPos.z);
                                 else if (activeAxis.equals(Vector3.Y))
-                                    intersection.set(initialPosition.x, intersection.y, initialPosition.z);
+                                    intersection.set(originalPos.x, intersection.y, originalPos.z);
                                 else if (activeAxis.equals(Vector3.Z))
-                                    intersection.set(initialPosition.x, initialPosition.y, intersection.z);
+                                    intersection.set(originalPos.x, originalPos.y, intersection.z);
                             }
 
-                            selectedObject.pos.set(intersection);
+                            selectedObject.pos.set(intersection.add(dragOffset));
                         }
                         break;
                     case SCALE:

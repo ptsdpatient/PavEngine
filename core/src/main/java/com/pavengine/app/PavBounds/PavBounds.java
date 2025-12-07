@@ -38,6 +38,13 @@ public class PavBounds {
     public float ringRadius=2f , heightOffset = 0f;
 
 
+    public PavBounds(Vector3 position, Vector3 scale, Quaternion rotation, PavBoundsType type) {
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+        this.type = type;
+        rebuild();
+    }
 
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;
@@ -159,7 +166,6 @@ public class PavBounds {
     }
 
     public void rebuild() {
-
         transform.idt()
             .translate(position)
             .rotate(rotation)

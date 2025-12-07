@@ -5,6 +5,9 @@ import static com.pavengine.app.Debug.Draw.debugLine;
 import static com.pavengine.app.Debug.Draw.debugRay;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
+import static com.pavengine.app.Methods.addObjects;
+import static com.pavengine.app.Methods.listFile;
+import static com.pavengine.app.Methods.listFolder;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
@@ -29,15 +32,18 @@ import static com.pavengine.app.PavUI.PavAnchor.TOP_RIGHT;
 import static com.pavengine.app.PavUI.PavFlex.COLUMN;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.ClickBehavior;
+import com.pavengine.app.PavUI.DropDown;
 import com.pavengine.app.PavUI.InputTag;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
@@ -62,14 +68,35 @@ public class MapEditor extends  PavScreen {
         objectList = new ArrayList<>();
 
 
-        mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 192, 64, 5));
-        for (String model : listModels("assets/models/"))
-            mapEditingLayout.get(0).addSprite(new TextButton(model, font,hoverUIBG[2], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+        mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 226, 64, 5));
+        mapEditingLayout.peek().addSprite(new DropDown(listFile("assets/scenes/"),new StringBind() {
+            @Override
+            public String get() {
+                return sceneName;
+            }
 
-        addAndGet(mapEditingLayout,new PavLayout(TOP_RIGHT, COLUMN, 6, 224, 48, 8)).addSprite(new InputTag( new StringBind() {
+            @Override
+            public void set(String value) {
+                sceneName = value;
+                readArray("assets/scenes/" + value +".bin", CryptSchema.GameObject, data -> {
+                    String name = (String) data.get("field0");
+                    ObjectType type = ObjectType.valueOf((String) data.get("field1"));
+                    Vector3 position = (Vector3) data.get("field2");
+                    Quaternion rotation = (Quaternion) data.get("field3");
+                    Vector3 scale = (Vector3) data.get("field4");
+
+                    addObjects(name, "STATIC", type, position, scale, rotation);
+                });
+            }
+        }, mapEditorInput ,gameFont[2], hoverUIBG[2], uiBG[1]));
+
+        for (String model : listFolder("assets/models/"))
+            mapEditingLayout.peek().addSprite(new TextButton(model, font,hoverUIBG[2], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+
+        addAndGet(mapEditingLayout,new PavLayout(TOP_RIGHT, COLUMN, 20, 224, 48, 8)).addSprite(new InputTag( new StringBind() {
             @Override public String get() { return sceneName; }
             @Override public void set(String value) { sceneName = value; }
-        }, font, hoverUIBG[2], uiBG[0], ClickBehavior.ExportModelInfo)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+        }, font, hoverUIBG[2], uiBG[0], ClickBehavior.Nothing)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
@@ -77,20 +104,7 @@ public class MapEditor extends  PavScreen {
 
     }
 
-    public ArrayList<String> listModels(String path) {
-        ArrayList<String> folders = new ArrayList<>();
 
-        FileHandle dir = Gdx.files.internal(path);
-
-        if (dir.exists()) {
-            for (FileHandle file : dir.list()) {
-                if (file.isDirectory()) {
-                    folders.add(file.name());
-                }
-            }
-        }
-        return folders;
-    }
 
 
     @Override

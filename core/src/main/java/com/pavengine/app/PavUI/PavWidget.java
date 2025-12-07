@@ -18,6 +18,7 @@ public abstract class PavWidget {
     public WidgetType type = WidgetType.Undefined;
     public int upgradeIndex = 1;
     GlyphLayout layout = new GlyphLayout();
+    public boolean active = false;
 
     public abstract Vector2 getCenter();
 

@@ -55,15 +55,16 @@ public class DataMap {
             json.addChild("type", getStringJson(obj.objectType.name()));
             json.addChild("position", getVector3Json(obj.pos));
             json.addChild("rotation", getQuaternionJson(obj.rotation));
+            json.addChild("scale", getVector3Json(obj.size));
         };
     }
 
-    public static Consumer<JsonValue> pavBoudCrypt(PavBounds bound) {
+    public static Consumer<JsonValue> pavBoundCrypt(PavBounds bound) {
         return json -> {
             json.addChild("position", getVector3Json(bound.position));
-            json.addChild("rotation", getQuaternionJson(bound.rotation));
             json.addChild("scale", getVector3Json(bound.scale));
-
+            json.addChild("rotation", getQuaternionJson(bound.rotation));
+            json.addChild("type", getStringJson(bound.type.toString()));
         };
     }
 }

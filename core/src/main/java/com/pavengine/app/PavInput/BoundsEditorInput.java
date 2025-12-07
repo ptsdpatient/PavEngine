@@ -16,7 +16,6 @@ import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
 import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
-import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -36,6 +35,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
 import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
@@ -73,7 +73,7 @@ public class BoundsEditorInput {
                         setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     transformMode = TransformMode.MOVE;
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
@@ -88,7 +88,7 @@ public class BoundsEditorInput {
                     }
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.SCALE;
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
@@ -106,7 +106,7 @@ public class BoundsEditorInput {
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.ROTATE;
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
                     break;
@@ -172,7 +172,7 @@ public class BoundsEditorInput {
                             PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
                         ) {
                             if(selectedBound != null) {
-                                initialPosition = selectedBound.getCenter();
+                                initialPosition.set(selectedBound.getCenter());
                                 dragPlane = new Plane(camera.direction, initialPosition);
                                 dragOffset.set(new Vector3());
                             }
@@ -209,7 +209,8 @@ public class BoundsEditorInput {
                         switch (widget.clickBehavior) {
                             case SaveBoundsArray : {
                                 if(selectedObject != null) {
-                                    writeArray("models/"+selectedObject.name+"bounds.bin",selectedObject.boxes, CryptSchema.PavBounds);
+                                    writeArray("assets/models/"+selectedObject.name+"/bounds.bin", selectedObject.boxes, CryptSchema.PavBounds);
+                                    print("written");
                                 }
 
                             } break;
@@ -218,11 +219,19 @@ public class BoundsEditorInput {
                                     staticObjects.peek().boxes.clear();
                                     sceneManager.removeScene(staticObjects.peek().scene);
                                 }
-//                                print("add : " + widget.text);
+
                                 world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
                                 setSelectedObject(staticObjects.get(staticObjects.size - 1));
-                                selectedObject.boxes.addAll(readArray(selectedObject.name));
-//                                print(selectedObject == null ? "null" : "exists");
+
+                                readArray("assets/models/" + selectedObject.name + "/bounds.bin" , CryptSchema.PavBounds, data -> {
+                                    Vector3 position = (Vector3) data.get("field0");
+                                    Vector3 scale = (Vector3) data.get("field1");
+                                    Quaternion rotation = (Quaternion) data.get("field2");
+                                    PavBoundsType type = PavBoundsType.valueOf( (String) data.get("field3"));
+
+                                    selectedObject.boxes.add(new PavBounds(position, scale, rotation, type));
+                                });
+
                                 return true;
                             }
                             case ExitGame: {
@@ -246,7 +255,7 @@ public class BoundsEditorInput {
 
                     ) {
                         if(selectedBound != null) {
-                            initialPosition = selectedBound.getCenter();
+                            initialPosition.set(selectedBound.getCenter());
                             dragPlane = new Plane(camera.direction, initialPosition);
                             dragOffset.set(new Vector3());
                         }
@@ -267,10 +276,6 @@ public class BoundsEditorInput {
                     axisGizmo.lookFromAxis(Vector3.Z);
                     return true;
                 }
-
-                if (cursor.clicked(mapEditorPanel))
-                    return true;
-
 
 
             }

@@ -175,13 +175,23 @@ public class PavLayout {
 
             widget.setPosition(x, y);
 
-            if (widget.getCenter().y > box.y + box.height || widget.getCenter().y < box.y) {
-                continue;
+            if (!widget.active) {
+                if (widget.getCenter().y <= box.y + box.height &&
+                    widget.getCenter().y >= box.y) {
+                    widget.render(sb);
+                }
             }
+        }
 
-            widget.render(sb);
+        for (int i = 0; i < count; i++) {
+            PavWidget widget = widgets.get(i);
 
-
+            if (widget.active) {
+                if (widget.getCenter().y <= box.y + box.height &&
+                    widget.getCenter().y >= box.y) {
+                    widget.render(sb);
+                }
+            }
         }
     }
 }

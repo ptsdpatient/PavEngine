@@ -1,10 +1,6 @@
 package com.pavengine.app;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
-import static com.pavengine.app.CameraTransitionMode.AXIS_PRIORITY;
-import static com.pavengine.app.CameraTransitionMode.BEZIER_XZ;
-import static com.pavengine.app.CameraTransitionMode.BEZIER_Y;
-import static com.pavengine.app.CameraTransitionMode.STAGGERED;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.enableCursor;
@@ -30,25 +26,18 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
-import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.DynamicObject;
-import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavGameObject.GroundObject;
 import com.pavengine.app.PavGameObject.KinematicObject;
 import com.pavengine.app.PavGameObject.StaticObject;
 import com.pavengine.app.PavGameObject.TargetObject;
-import com.pavengine.app.PavScript.Interactable.Interactable;
 
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneSkybox;
-
-import java.util.ArrayList;
 
 public class Methods {
 
@@ -88,6 +77,72 @@ public class Methods {
 
     public static FileHandle load(String value) {
         return Gdx.files.internal(value);
+    }
+
+    public static void addObjects(String name, String type, ObjectType objectType, Vector3 pos, Vector3 size, Quaternion rot) {
+        Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
+
+        switch (type) {
+            case "STATIC": {
+                staticObjects.add(new StaticObject(
+                        name,
+                        objectType,
+                        scene,
+                        new Vector3(pos.x, pos.y, pos.z),
+                        new Quaternion(rot.x, rot.y, rot.z, rot.w),
+                        new Vector3(size.x, size.y, size.z)
+                    )
+                );
+            }
+            break;
+            case "GROUND": {
+                groundObjects.add(new GroundObject(
+                        name,
+                        scene,
+                        new Vector3(pos.x, pos.y, pos.z),
+                        new Quaternion(rot.x, rot.y, rot.z, rot.w),
+                        new Vector3(size.x, size.y, size.z)
+                    )
+                );
+            }
+            break;
+            case "TARGET": {
+                targetObjects.add(new TargetObject(
+                        name,
+                        scene,
+                        new Vector3(pos.x, pos.y, pos.z),
+                        new Quaternion(rot.x, rot.y, rot.z, rot.w),
+                        new Vector3(size.x, size.y, size.z)
+                    )
+                );
+            }
+            break;
+            case "KINEMATIC": {
+                kinematicObjects.add(new KinematicObject(
+                        name,
+                        scene,
+                        new Vector3(pos.x, pos.y, pos.z),
+                        new Quaternion(rot.x, rot.y, rot.z, rot.w),
+                        new Vector3(size.x, size.y, size.z)
+                    )
+                );
+            }
+            break;
+            case "DYNAMIC": {
+                dynamicObjects.add(new DynamicObject(
+                        name,
+                        scene,
+                        new Vector3(pos.x, pos.y, pos.z),
+                        new Quaternion(rot.x, rot.y, rot.z, rot.w),
+                        new Vector3(size.x, size.y, size.z)
+                    )
+                );
+            }
+            break;
+        }
+
+        sceneManager.addScene(scene);
+
     }
 
     public static <T> T addAndGet(Array<T> array, T element) {
@@ -379,144 +434,174 @@ public class Methods {
         return new SceneSkybox(cubemap);
     }
 
+    public static Array<String> listFile(String path) {
+        Array<String> files = new Array<>();
 
+        FileHandle dir = Gdx.files.local(path);
 
-
-    public static void jsonMapInteractible(ArrayList<Interactable> list, String json) {
-        ArrayList<GameObject> objects = getObjectList(json);
-        int size = Math.min(list.size(), objects.size());
-
-        for (int i = 0; i < size; i++) {
-            list.get(i).object = objects.get(i);
-        }
-    }
-
-    public static ArrayList<GameObject> getObjectList(String fileName) {
-        ArrayList<GameObject> objectList = new ArrayList<>();
-
-        JsonValue root = getJson("list/" + fileName);
-
-        if (root == null) return objectList;
-        for (JsonValue obj : root) {
-            JsonValue
-                pos = obj.get("position"),
-                rot = obj.get("rotation"),
-                size = obj.get("size"),
-                room = obj.get("room"),
-                enemy = obj.get("enemy");
-            String name = obj.getString("name");
-            Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
-
-            switch (obj.getString("type")) {
-                case "STATIC": {
-                    staticObjects.add(new StaticObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-
-//                    if (room.getBoolean("isRoom")) {
-//                        ArrayList<EntranceBluprint> entrances = new ArrayList<>();
-//                        for (JsonValue entrance : room.get("entrances")) {
-//                            JsonValue
-//                                roomOffset = entrance.get("offset"),
-//                                roomSize = entrance.get("offset");
-//                            String roomType = entrance.getString("type"),
-//                                roomSide = entrance.getString("side");
-//                            entrances.add(new EntranceBluprint() {{
-//                                offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
-//                                size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
-//                                type = Entrance.Type.valueOf(roomType);
-//                                side = EntranceBluprint.Side.valueOf(roomSide);
-//                            }});
-//                        }
-//                        staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
-//                    }
-
-                    objectList.add(staticObjects.get(staticObjects.size - 1));
-
+        if (dir.exists()) {
+            for (FileHandle file : dir.list()) {
+                if (!file.isDirectory()) {
+                    files.add(file.nameWithoutExtension());
                 }
-                break;
-                case "GROUND": {
-                    groundObjects.add(new GroundObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                    objectList.add(groundObjects.get(groundObjects.size - 1));
-                }
-                break;
-                case "TARGET": {
-                    targetObjects.add(new TargetObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-
-                    if (enemy.getBoolean("isEnemy")) {
-                        JsonValue attackOffset = enemy.get("attackOffset");
-
-                        JsonValue attackArray = obj.get("attackAnimation");
-                        int[] attackAnimation = new int[attackArray.size];
-
-                        for (int i = 0; i < attackArray.size; i++) {
-                            attackAnimation[i] = attackArray.getInt(i);
-                        }
-
-                        targetObjects.get(targetObjects.size).setEnemy(
-                            new Vector3(attackOffset.getFloat("x"), attackOffset.getFloat("y"), attackOffset.getFloat("z")),
-                            enemy.getFloat("behaveRange"),
-                            enemy.getFloat("attackRange"),
-                            enemy.getFloat("fireRate"),
-                            enemy.getFloat("damage"),
-                            enemy.getBoolean("behaveIfCloseToPlayer"),
-                            attackAnimation
-                        );
-
-                    }
-                    objectList.add(targetObjects.get(targetObjects.size - 1));
-
-                }
-                break;
-                case "KINEMATIC": {
-                    kinematicObjects.add(new KinematicObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                    objectList.add(kinematicObjects.get(kinematicObjects.size));
-
-                }
-                break;
-                case "DYNAMIC": {
-                    dynamicObjects.add(new DynamicObject(
-                            name,
-                            scene,
-                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
-                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
-                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
-                        )
-                    );
-                    objectList.add(dynamicObjects.get(dynamicObjects.size));
-
-                }
-                break;
             }
-
-            sceneManager.addScene(scene);
         }
-        return objectList;
+        return files;
     }
+
+    public static Array<String> listFolder(String path) {
+        Array<String> folders = new Array<>();
+
+        FileHandle dir = Gdx.files.local(path);
+
+        if (dir.exists()) {
+            for (FileHandle file : dir.list()) {
+                if (file.isDirectory()) {
+                    folders.add(file.name());
+                }
+            }
+        }
+        return folders;
+    }
+
+
+
+//    public static void jsonMapInteractible(ArrayList<Interactable> list, String json) {
+//        ArrayList<GameObject> objects = getObjectList(json);
+//        int size = Math.min(list.size(), objects.size());
+//
+//        for (int i = 0; i < size; i++) {
+//            list.get(i).object = objects.get(i);
+//        }
+//    }
+
+//    public static ArrayList<GameObject> getObjectList(String fileName) {
+//        ArrayList<GameObject> objectList = new ArrayList<>();
+//
+//        JsonValue root = getJson("list/" + fileName);
+//
+//        if (root == null) return objectList;
+//        for (JsonValue obj : root) {
+//            JsonValue
+//                pos = obj.get("position"),
+//                rot = obj.get("rotation"),
+//                size = obj.get("size"),
+//                room = obj.get("room"),
+//                enemy = obj.get("enemy");
+//            String name = obj.getString("name");
+//            Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
+//
+//            switch (obj.getString("type")) {
+//                case "STATIC": {
+//                    staticObjects.add(new StaticObject(
+//                            name,
+//                            ObjectType.STATIC,
+//                            scene,
+//                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+//                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+//                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+//                        )
+//                    );
+//
+////                    if (room.getBoolean("isRoom")) {
+////                        ArrayList<EntranceBluprint> entrances = new ArrayList<>();
+////                        for (JsonValue entrance : room.get("entrances")) {
+////                            JsonValue
+////                                roomOffset = entrance.get("offset"),
+////                                roomSize = entrance.get("offset");
+////                            String roomType = entrance.getString("type"),
+////                                roomSide = entrance.getString("side");
+////                            entrances.add(new EntranceBluprint() {{
+////                                offset = new Vector3(roomOffset.getFloat("x"), roomOffset.getFloat("y"), roomOffset.getFloat("z"));
+////                                size = new Vector3(roomSize.getFloat("x"), roomSize.getFloat("y"), roomSize.getFloat("z"));
+////                                type = Entrance.Type.valueOf(roomType);
+////                                side = EntranceBluprint.Side.valueOf(roomSide);
+////                            }});
+////                        }
+////                        staticObjects.get(staticObjects.size).setRoom(room.getFloat("thickness"), entrances);
+////                    }
+//
+//                    objectList.add(staticObjects.get(staticObjects.size - 1));
+//
+//                }
+//                break;
+//                case "GROUND": {
+//                    groundObjects.add(new GroundObject(
+//                            name,
+//                            scene,
+//                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+//                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+//                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+//                        )
+//                    );
+//                    objectList.add(groundObjects.get(groundObjects.size - 1));
+//                }
+//                break;
+//                case "TARGET": {
+//                    targetObjects.add(new TargetObject(
+//                            name,
+//                            scene,
+//                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+//                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+//                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+//                        )
+//                    );
+//
+//                    if (enemy.getBoolean("isEnemy")) {
+//                        JsonValue attackOffset = enemy.get("attackOffset");
+//
+//                        JsonValue attackArray = obj.get("attackAnimation");
+//                        int[] attackAnimation = new int[attackArray.size];
+//
+//                        for (int i = 0; i < attackArray.size; i++) {
+//                            attackAnimation[i] = attackArray.getInt(i);
+//                        }
+//
+//                        targetObjects.get(targetObjects.size).setEnemy(
+//                            new Vector3(attackOffset.getFloat("x"), attackOffset.getFloat("y"), attackOffset.getFloat("z")),
+//                            enemy.getFloat("behaveRange"),
+//                            enemy.getFloat("attackRange"),
+//                            enemy.getFloat("fireRate"),
+//                            enemy.getFloat("damage"),
+//                            enemy.getBoolean("behaveIfCloseToPlayer"),
+//                            attackAnimation
+//                        );
+//
+//                    }
+//                    objectList.add(targetObjects.get(targetObjects.size - 1));
+//
+//                }
+//                break;
+//                case "KINEMATIC": {
+//                    kinematicObjects.add(new KinematicObject(
+//                            name,
+//                            scene,
+//                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+//                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+//                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+//                        )
+//                    );
+//                    objectList.add(kinematicObjects.get(kinematicObjects.size));
+//
+//                }
+//                break;
+//                case "DYNAMIC": {
+//                    dynamicObjects.add(new DynamicObject(
+//                            name,
+//                            scene,
+//                            new Vector3(pos.getFloat("x"), pos.getFloat("y"), pos.getFloat("z")),
+//                            new Quaternion(rot.getFloat("x"), rot.getFloat("y"), rot.getFloat("z"), rot.getFloat("w")),
+//                            new Vector3(size.getFloat("x"), size.getFloat("y"), size.getFloat("z"))
+//                        )
+//                    );
+//                    objectList.add(dynamicObjects.get(dynamicObjects.size));
+//
+//                }
+//                break;
+//            }
+//
+//            sceneManager.addScene(scene);
+//        }
+//        return objectList;
+//    }
 }
