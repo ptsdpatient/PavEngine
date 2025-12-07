@@ -46,9 +46,6 @@ public class CinematicEditorInput {
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
         Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
-        Quaternion initialRotation = new Quaternion();
-        float initialSize = 1;
-        Vector3 initialPosition = new Vector3(0, 0, 0);
 
         @Override
         public boolean keyDown(int keycode) {
@@ -58,55 +55,6 @@ public class CinematicEditorInput {
         @Override
         public boolean keyUp(int keycode) {
 
-            if (keycode == Input.Keys.G) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.R) {
-
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.Z) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.X) {
-                if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
-                    if (selectedObject != null) {
-                        selectedObject.rotation = initialRotation;
-                        selectedObject.size = new Vector3(initialSize, initialSize, initialSize);
-                        selectedObject.pos = initialPosition;
-                    }
-                }
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-            }
-
-            if (keycode == Input.Keys.ESCAPE) {
-                Gdx.input.setCursorCatched(!enableCursor);
-                lockCursor(enableCursor);
-            }
 
             if (keycode == Input.Keys.DEL || keycode == Input.Keys.FORWARD_DEL) {
                 if (selectedObject != null) {
@@ -145,23 +93,6 @@ public class CinematicEditorInput {
                 }
             }
 
-
-//            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
-//                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
-//
-//                    print("gizmo drag");
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                    return true;
-////                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
-////                    dragAxis.set(box.direction);
-////                    axisOffset = clickToCenter.dot(dragAxis);
-////
-////                    dragPlane = new Plane(camera.direction, dragStartPos);
-////                    gizmoDrag = true;
-////                    return true;
-//                }
-//            }
-
             for (GameObject obj : staticObjects) {
                 if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
                     setSelectedObject(obj);
@@ -185,43 +116,6 @@ public class CinematicEditorInput {
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
             cursor.setCursor(1);
-
-
-            if (cinematicPanel.widgetDrag) {
-                cinematicPanel.widgetDrag = false;
-                if (cinematicPanel.selectedWidget.snapping) {
-                    switch (cinematicPanel.selectedWidget.type) {
-                        case Animate:
-                            break;
-                        case Camera:
-                            cinematicTimeline.timelineWidgets.add(new CameraTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
-                            break;
-                        case Light:
-                            break;
-                        case Music:
-                            break;
-                        case Subtitle:
-                            cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
-                            break;
-                        case Transform:
-                            break;
-                    }
-                }
-            }
 
             if (!enableCursor) {
                 lockCursor(false);

@@ -3,6 +3,7 @@ package com.pavengine.app.PavInput;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
 import static com.pavengine.app.PavCrypt.PavCrypt.writeArray;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.cursor;
@@ -28,8 +29,11 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
+import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
 import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -184,7 +188,16 @@ public class MapEditorInput {
 
                             case AddStaticObjectToMapEditor: {
                                 print("add : " + widget.text);
+                                Array<PavBounds> boundsArray = new Array<>();
                                 world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                readArray("assets/models/" + widget.text + "/bounds.bin" , CryptSchema.PavBounds, boundData -> {
+                                    Vector3 boundPosition = (Vector3) boundData.get("field0");
+                                    Vector3 boundScale = (Vector3) boundData.get("field1");
+                                    Quaternion boundRotation = (Quaternion) boundData.get("field2");
+                                    PavBoundsType boundType = PavBoundsType.valueOf( (String) boundData.get("field3"));
+                                    boundsArray.add(new PavBounds(boundPosition, boundScale, boundRotation, boundType));
+                                });
+                                staticObjects.peek().boxes.addAll(boundsArray);
                                 setSelectedObject(staticObjects.peek());
                                 print(selectedObject == null ? "null" : "exists");
                                 return true;
@@ -339,31 +352,33 @@ public class MapEditorInput {
                         selectedObject.rotation.nor();
                         break;
                 }
+
                 selectedObject.updateBox();
                 selectedObject.updateCenter();
-            }
-
-            boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
-
-            if (cursor.clicked(boundsLister.box)) {
-                if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
-                    boundsLister.dropDownExpand = true;
-            } else if (boundsLister.dropDownExpand) {
-                boundsLister.dropDownExpand = false;
 
             }
 
+//            boundsLister.buttonHovered = cursor.clicked(boundsLister.buttonRect);
+//
+//            if (cursor.clicked(boundsLister.box)) {
+//                if (!boundsLister.dropDownExpand && boundsLister.buttonHovered)
+//                    boundsLister.dropDownExpand = true;
+//            } else if (boundsLister.dropDownExpand) {
+//                boundsLister.dropDownExpand = false;
+//
+//            }
 
-            for (GameObject obj : staticObjects) {
-                boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
-                obj.debugColor = hit ? Color.ORANGE : Color.YELLOW;
-            }
 
-            if (selectedObject != null) selectedObject.debugColor = Color.ORANGE;
+//            for (GameObject obj : staticObjects) {
+//                boolean hit = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch);
+//                obj.debugColor = hit ? Color.ORANGE : Color.YELLOW;
+//            }
 
-            for (GameObject obj : targetObjects) {
-                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
-            }
+//            if (selectedObject != null) selectedObject.debugColor = Color.ORANGE;
+
+//            for (GameObject obj : targetObjects) {
+//                obj.debugColor = PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch) ? Color.ORANGE : Color.YELLOW;
+//            }
 
             for (PavLayout layout : mapEditingLayout) {
                 layout.isHovered = cursor.clicked(layout.box);

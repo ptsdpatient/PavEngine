@@ -49,7 +49,7 @@ import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 public class PavEngine extends Game {
     public static Ray perspectiveTouchRay = new Ray();
     public static CameraBehaviorType cameraBehavior;
-//    public static boolean dragAndDrop = true;
+
     public static boolean enableCursor = true;
     public static boolean enableMapEditor = true;
     public static boolean gamePause = false;
@@ -61,7 +61,6 @@ public class PavEngine extends Game {
 
     public static Array<ReferenceOriginLine> centerReferenceOriginRays = new Array<>();
 
-//    Screens
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
     public UpgradeScreen upgradeScreen;
@@ -162,8 +161,6 @@ public class PavEngine extends Game {
         camera.near = 0.1f;
         camera.far = 1000f;
         perspectiveViewport = new FitViewport(resolution.x/2, resolution.y/2, camera);
-
-
 
         perspectiveViewport.apply();
 //        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());

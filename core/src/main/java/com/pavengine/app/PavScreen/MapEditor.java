@@ -1,9 +1,6 @@
 package com.pavengine.app.PavScreen;
 
 import static com.pavengine.app.Debug.Draw.debugCube;
-import static com.pavengine.app.Debug.Draw.debugLine;
-import static com.pavengine.app.Debug.Draw.debugRay;
-import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.addObjects;
 import static com.pavengine.app.Methods.listFile;
@@ -19,7 +16,6 @@ import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.overlayViewport;
 import static com.pavengine.app.PavEngine.pavCamera;
-//import static com.pavengine.app.PavEngine.perspectiveAxisGizmo;
 import static com.pavengine.app.PavEngine.referenceEditorRays;
 import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavEngine.uiBG;
@@ -39,6 +35,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
 import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -54,7 +51,7 @@ import com.pavengine.app.StringBind;
 
 import java.util.ArrayList;
 
-public class MapEditor extends  PavScreen {
+public class MapEditor extends PavScreen {
     public static ArrayList<String> objectList;
     public static Array<PavLayout> mapEditingLayout = new Array<>();
     public static PavWidget exportModelInfo;
@@ -69,7 +66,43 @@ public class MapEditor extends  PavScreen {
 
 
         mapEditingLayout.add(new PavLayout(CENTER_LEFT, COLUMN, 5, 226, 64, 5));
-        mapEditingLayout.peek().addSprite(new DropDown(listFile("assets/scenes/"),new StringBind() {
+        mapEditingLayout.peek().addSprite(new DropDown(listFile("assets/scenes/"), new StringBind() {
+            @Override
+            public String get() {
+                return sceneName;
+            }
+
+            @Override
+            public void set(String value) {
+
+                sceneName = value;
+
+                readArray("assets/scenes/" + value + ".bin", CryptSchema.GameObject, data -> {
+                    String name = (String) data.get("field0");
+                    ObjectType type = ObjectType.valueOf((String) data.get("field1"));
+                    Vector3 position = (Vector3) data.get("field2");
+                    Quaternion rotation = (Quaternion) data.get("field3");
+                    Vector3 scale = (Vector3) data.get("field4");
+                    Array<PavBounds> objectBounds = new Array<>();
+
+                    readArray("assets/models/" + name + "/bounds.bin" , CryptSchema.PavBounds, boundData -> {
+                        Vector3 boundPosition = (Vector3) boundData.get("field0");
+                        Vector3 boundScale = (Vector3) boundData.get("field1");
+                        Quaternion boundRotation = (Quaternion) boundData.get("field2");
+                        PavBoundsType boundType = PavBoundsType.valueOf( (String) boundData.get("field3"));
+                        objectBounds.add(new PavBounds(boundPosition, boundScale, boundRotation, boundType));
+                    });
+
+                    addObjects(name, "STATIC", type, position, scale, rotation, objectBounds);
+                });
+            }
+
+        }, mapEditorInput, gameFont[2], hoverUIBG[2], uiBG[1]));
+
+        for (String model : listFolder("assets/models/"))
+            mapEditingLayout.peek().addSprite(new TextButton(model, font, hoverUIBG[2], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
+
+        addAndGet(mapEditingLayout, new PavLayout(TOP_RIGHT, COLUMN, 6, 224, 48, 8)).addSprite(new InputTag(new StringBind() {
             @Override
             public String get() {
                 return sceneName;
@@ -78,33 +111,27 @@ public class MapEditor extends  PavScreen {
             @Override
             public void set(String value) {
                 sceneName = value;
-                readArray("assets/scenes/" + value +".bin", CryptSchema.GameObject, data -> {
-                    String name = (String) data.get("field0");
-                    ObjectType type = ObjectType.valueOf((String) data.get("field1"));
-                    Vector3 position = (Vector3) data.get("field2");
-                    Quaternion rotation = (Quaternion) data.get("field3");
-                    Vector3 scale = (Vector3) data.get("field4");
-
-                    addObjects(name, "STATIC", type, position, scale, rotation);
-                });
             }
-        }, mapEditorInput ,gameFont[2], hoverUIBG[2], uiBG[1]));
+        }, font, hoverUIBG[2], uiBG[0], ClickBehavior.Nothing)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo)).addSprite(
+            new DropDown(new Array<>(new String[]{ObjectType.STATIC.name(), ObjectType.GROUND.name(), ObjectType.TARGET.name(), ObjectType.KINEMATIC.name()}), new StringBind() {
+                @Override
+                public String get() {
+                    return selectedObject != null ? selectedObject.objectType.name() : ObjectType.STATIC.name();
+                }
 
-        for (String model : listFolder("assets/models/"))
-            mapEditingLayout.peek().addSprite(new TextButton(model, font,hoverUIBG[2], uiBG[1], ClickBehavior.AddStaticObjectToMapEditor));
-
-        addAndGet(mapEditingLayout,new PavLayout(TOP_RIGHT, COLUMN, 20, 224, 48, 8)).addSprite(new InputTag( new StringBind() {
-            @Override public String get() { return sceneName; }
-            @Override public void set(String value) { sceneName = value; }
-        }, font, hoverUIBG[2], uiBG[0], ClickBehavior.Nothing)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+                @Override
+                public void set(String value) {
+                    if (selectedObject != null) {
+                        selectedObject.objectType = ObjectType.valueOf(value);
+                    }
+                }
+            }, mapEditorInput, gameFont[2], hoverUIBG[2], uiBG[1]));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
-        addAndGet(mapEditingLayout,new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
+        addAndGet(mapEditingLayout, new PavLayout(TOP_CENTER, COLUMN, 5, 192, 48, 5)).addSprite(editorSelectedObjectText);
 
     }
-
-
 
 
     @Override
@@ -136,7 +163,7 @@ public class MapEditor extends  PavScreen {
         Gdx.gl.glCullFace(GL20.GL_FRONT);
         Gdx.gl.glCullFace(GL20.GL_BACK);
 
-        for(GameObject obj : staticObjects) {
+        for (GameObject obj : staticObjects) {
             obj.update(delta);
         }
 
@@ -148,11 +175,11 @@ public class MapEditor extends  PavScreen {
         sceneManager.render();
 
 
-        for(ReferenceOriginLine or : centerReferenceOriginRays) {
+        for (ReferenceOriginLine or : centerReferenceOriginRays) {
             or.draw();
         }
 
-        for(ReferenceEditorLine or : referenceEditorRays) {
+        for (ReferenceEditorLine or : referenceEditorRays) {
             or.draw();
         }
 
@@ -176,16 +203,19 @@ public class MapEditor extends  PavScreen {
 //        }
 
 
-        for(GameObject obj : staticObjects) {
-            if(obj == selectedObject)
-                for(PavBounds box : obj.boxes)
+        for (GameObject obj : staticObjects) {
+//            print(obj.size);
+//            if (obj == selectedObject)
+                for (PavBounds box : obj.boxes) {
+//                    print(box.scale + " : " + obj.size);
                     debugCube(box, obj.debugColor);
+                }
         }
 
         axisGizmo.update();
         axisGizmo.draw();
 
-        if(selectedObject!=null) {
+        if (selectedObject != null) {
 //            perspectiveAxisGizmo.update();
 //            perspectiveAxisGizmo.draw();
         }

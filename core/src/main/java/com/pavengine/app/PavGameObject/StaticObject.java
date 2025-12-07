@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Direction;
 import com.pavengine.app.InteractType;
 import com.pavengine.app.ObjectType;
@@ -92,7 +93,7 @@ public class StaticObject extends GameObject {
         update(0);
     }
 
-    public StaticObject(String name, ObjectType objectType, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
+    public StaticObject(String name, ObjectType objectType, Scene scene, Vector3 position, Quaternion rotation, Vector3 size, Array<PavBounds> boxes) {
         this.name = name;
         this.scene = scene;
 
@@ -112,9 +113,10 @@ public class StaticObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        boxes.add(new PavBounds(bounds));
+        this.boxes.add(new PavBounds(bounds));
         pavBounds.setBounds(bounds);
 
+        this.boxes.addAll(boxes);
 
         updateCenter();
         updateBox();
@@ -226,8 +228,7 @@ public class StaticObject extends GameObject {
         scene.modelInstance.calculateBoundingBox(bounds);
 
         for(PavBounds bound : boxes) {
-            bound.set(bounds,
-                new Matrix4(pos, rotation, size));
+            bound.set(new Matrix4(pos, rotation, size));
         }
 
         pavBounds.set( bounds,

@@ -43,14 +43,11 @@ public class DropDown extends PavWidget implements InputProcessor {
         public void draw(SpriteBatch sb) {
             sb.draw(uiBG[1], dropDownBound.x, dropDownBound.y, dropDownBound.width, dropDownBound.height);
 
-            float textX = dropDownBound.x + (dropDownBound.width - dropDownLayout.width) / 2f;
-            float textY = dropDownBound.y + (dropDownBound.height + dropDownLayout.height) / 2f;
-
             if (cursor.clicked(this.dropDownBound)) {
                 sb.draw(hoverUIBG[2], dropDownBound.x, dropDownBound.y, dropDownBound.width, dropDownBound.height);
             }
 
-            font.draw(sb, dropDownLayout, textX, textY);
+            font.draw(sb, dropDownLayout, dropDownBound.x + (dropDownBound.width - dropDownLayout.width) / 2f, dropDownBound.y + (dropDownBound.height + dropDownLayout.height) / 2f);
         }
     }
 
@@ -60,7 +57,7 @@ public class DropDown extends PavWidget implements InputProcessor {
     Array<DropdownItem> dropdownItems = new Array<>();
     InputProcessor inputProcessor;
 
-    public DropDown(Array<String> list,StringBind value, InputProcessor inputProcessor, BitmapFont font, TextureRegion hoverTexture, TextureRegion background) {
+    public DropDown(Array<String> list, StringBind value, InputProcessor inputProcessor, BitmapFont font, TextureRegion hoverTexture, TextureRegion background) {
         this.list = list;
         this.inputProcessor = inputProcessor;
         for(String string : list) {
@@ -108,6 +105,8 @@ public class DropDown extends PavWidget implements InputProcessor {
             for(DropdownItem item : dropdownItems) {
                 if(cursor.clicked(item.dropDownBound)) {
                     value.set(item.text);
+                    text = item.text;
+                    layout.setText(gameFont[2],text);
                     break;
                 }
             }
@@ -117,14 +116,11 @@ public class DropDown extends PavWidget implements InputProcessor {
 
         background.draw(sb);
 
-        float textX = box.x + (box.width - layout.width) / 2f;
-        float textY = box.y + (box.height + layout.height) / 2f;
-
         if (isHovered && hoverTexture != null) {
             sb.draw(hoverTexture, box.x, box.y, box.width, box.height);
         }
 
-        font.draw(sb, layout, textX, textY);
+        font.draw(sb, layout, box.x + (box.width - layout.width) / 2f, box.y + (box.height + layout.height) / 2f);
 
         if(active) {
             for(DropdownItem item : dropdownItems) {
@@ -147,7 +143,7 @@ public class DropDown extends PavWidget implements InputProcessor {
         box.setPosition(x, y);
         int dropY = 1;
         for(DropdownItem item : dropdownItems) {
-            item.setPosition(new Vector2(x, y - box.height * dropY));
+            item.setPosition(new Vector2(x, y - box.height * 1.2f * dropY));
             dropY += 1;
         }
         if (background != null) background.setPosition(x, y);

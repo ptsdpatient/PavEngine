@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.DynamicObject;
 import com.pavengine.app.PavGameObject.GroundObject;
 import com.pavengine.app.PavGameObject.KinematicObject;
@@ -79,7 +80,7 @@ public class Methods {
         return Gdx.files.internal(value);
     }
 
-    public static void addObjects(String name, String type, ObjectType objectType, Vector3 pos, Vector3 size, Quaternion rot) {
+    public static void addObjects(String name, String type, ObjectType objectType, Vector3 pos, Vector3 size, Quaternion rot, Array<PavBounds> boxes) {
         Scene scene = new Scene(loadModel("models/" + name + "/" + name + ".gltf").scene);
 
         switch (type) {
@@ -90,7 +91,8 @@ public class Methods {
                         scene,
                         new Vector3(pos.x, pos.y, pos.z),
                         new Quaternion(rot.x, rot.y, rot.z, rot.w),
-                        new Vector3(size.x, size.y, size.z)
+                        new Vector3(size.x, size.y, size.z),
+                        boxes
                     )
                 );
             }
@@ -101,7 +103,8 @@ public class Methods {
                         scene,
                         new Vector3(pos.x, pos.y, pos.z),
                         new Quaternion(rot.x, rot.y, rot.z, rot.w),
-                        new Vector3(size.x, size.y, size.z)
+                        new Vector3(size.x, size.y, size.z),
+                        boxes
                     )
                 );
             }
@@ -112,7 +115,8 @@ public class Methods {
                         scene,
                         new Vector3(pos.x, pos.y, pos.z),
                         new Quaternion(rot.x, rot.y, rot.z, rot.w),
-                        new Vector3(size.x, size.y, size.z)
+                        new Vector3(size.x, size.y, size.z),
+                        boxes
                     )
                 );
             }
@@ -123,7 +127,8 @@ public class Methods {
                         scene,
                         new Vector3(pos.x, pos.y, pos.z),
                         new Quaternion(rot.x, rot.y, rot.z, rot.w),
-                        new Vector3(size.x, size.y, size.z)
+                        new Vector3(size.x, size.y, size.z),
+                        boxes
                     )
                 );
             }
@@ -134,7 +139,8 @@ public class Methods {
                         scene,
                         new Vector3(pos.x, pos.y, pos.z),
                         new Quaternion(rot.x, rot.y, rot.z, rot.w),
-                        new Vector3(size.x, size.y, size.z)
+                        new Vector3(size.x, size.y, size.z),
+                        boxes
                     )
                 );
             }

@@ -336,20 +336,6 @@ public class BoundsEditorInput {
 
                                 if (!activeAxis.isZero()) {
 
-//                                    tempVec1.set(intersection_scale).sub(startPointerPos);
-//
-//                                    float axisDelta = tempVec1.dot(activeAxis);
-//                                    float scaleFactor = 1 + axisDelta;
-//
-//                                    // Use existing newScale (no new objects)
-//                                    newScale.set(initialScale);
-//
-//                                    if (activeAxis == Vector3.X) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
-//                                    if (activeAxis == Vector3.Y) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
-//                                    if (activeAxis == Vector3.Z) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
-//
-//                                    selectedBound.setSize(newScale);
-
                                     tempVec1.set(activeAxis).nor();
 
                                     Vector3 center = selectedBound.position;

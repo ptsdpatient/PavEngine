@@ -39,9 +39,9 @@ public class PavBounds {
 
 
     public PavBounds(Vector3 position, Vector3 scale, Quaternion rotation, PavBoundsType type) {
-        this.position = position;
-        this.scale = scale;
-        this.rotation = rotation;
+        this.position.set(position);
+        this.scale.set(scale);
+        this.rotation.set(rotation);
         this.type = type;
         rebuild();
     }
@@ -148,8 +148,28 @@ public class PavBounds {
         return box.contains(point);
     }
 
-    public void set(BoundingBox bounds, Matrix4 transform) {
-        box.set(bounds, transform);
+    public void set(Matrix4 gameTransform) {
+
+        transform.idt()
+            .translate(position)
+            .rotate(rotation)
+            .scale(scale.x, scale.y, scale.z);
+
+        Matrix4 combined = new Matrix4(gameTransform).mul(transform);
+
+        box.set(CANONICAL_BOX, combined);
+    }
+
+    public void set(BoundingBox box,Matrix4 gameTransform) {
+
+        transform.idt()
+            .translate(position)
+            .rotate(rotation)
+            .scale(scale.x, scale.y, scale.z);
+
+        Matrix4 combined = new Matrix4(gameTransform).mul(transform);
+
+        this.box.set(box, combined);
     }
 
     public void setPosition(Vector3 pos) {
