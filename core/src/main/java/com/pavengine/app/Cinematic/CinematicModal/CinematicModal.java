@@ -1,6 +1,7 @@
 package com.pavengine.app.Cinematic.CinematicModal;
 
 import static com.pavengine.app.PavEngine.cursor;
+import static com.pavengine.app.PavEngine.hoverUIBG;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
@@ -26,7 +27,7 @@ public abstract class CinematicModal implements InputProcessor {
         this.bg = uiBG[2];
         this.closeBG = uiControl[5];
         this.widgetBG = uiBG[0];
-        this.accentBG = uiBG[3];
+        this.accentBG = hoverUIBG[2];
         closeBound.set(resolution.x-60,resolution.y-60,32,32);
         Gdx.input.setInputProcessor(this);
     }

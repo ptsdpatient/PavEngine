@@ -31,6 +31,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.AnimateTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CameraTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
@@ -122,6 +123,14 @@ public class CinematicEditorInput {
                 if (cinematicPanel.selectedWidget.snapping) {
                     switch (cinematicPanel.selectedWidget.type) {
                         case Animate:
+                            cinematicTimeline.timelineWidgets.add(new AnimateTimelineWidget(
+                                cinematicPanel.selectedWidget.bg,
+                                cinematicPanel.selectedWidget.text,
+                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                                cinematicPanel.selectedWidget.type,
+                                cinematicTimeline.pixelsPerSecond
+                            ));
                             break;
                         case Camera:
                             cinematicTimeline.timelineWidgets.add(new CameraTimelineWidget(
@@ -148,6 +157,7 @@ public class CinematicEditorInput {
                             ));
                             break;
                         case Transform:
+
                             break;
                     }
                 }

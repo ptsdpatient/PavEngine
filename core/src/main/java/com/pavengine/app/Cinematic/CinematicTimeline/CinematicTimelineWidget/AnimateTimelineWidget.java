@@ -12,8 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.pavengine.app.Cinematic.CinematicModal.AnimateCinematicModal;
 import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
+import com.pavengine.app.StringBind;
 
 public class AnimateTimelineWidget extends CinematicTimelineWidget{
+
+
     public AnimateTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
     }
@@ -21,8 +24,30 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
     @Override
     public void update(SpriteBatch sb, float time) {
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            cinematicModal = new AnimateCinematicModal(this);
+            cinematicModal = new AnimateCinematicModal(this, new StringBind() {
+                @Override
+                public String get() {
+                    return "";
+                }
+
+                @Override
+                public void set(String value) {
+
+                }
+            }, new StringBind() {
+
+                @Override
+                public String get() {
+                    return "";
+                }
+
+                @Override
+                public void set(String value) {
+
+                }
+            });
         }
+
         if((time > startTime) && time < (startTime + duration)) {
 
         }
