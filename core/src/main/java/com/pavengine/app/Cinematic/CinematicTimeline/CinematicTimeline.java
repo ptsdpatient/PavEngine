@@ -50,7 +50,7 @@ public class CinematicTimeline {
         timelineObjects.add(new SubtitleTimelineObject("Subtitle",  uiBG[1]));
         timelineObjects.add(new AnimateTimelineObject("Animate", uiBG[1]));
         timelineObjects.add(new TransformTimelineObject("Transform",  uiBG[1]));
-        timelineObjects.add(new MusicTimelineObject("Music", uiBG[1]));
+        timelineObjects.add(new SoundTimelineObject("Music", uiBG[1]));
 
         float posY = resolution.y / 2.5f - 70;
         for (CinematicTimelineObject obj : timelineObjects) {

@@ -6,6 +6,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.subtitle;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
@@ -36,7 +37,9 @@ public class CameraTimelineWidget extends CinematicTimelineWidget{
 
     @Override
     public void delete() {
+        Gdx.input.setInputProcessor(cinematicEditorInput);
         cinematicTimeline.timelineWidgets.removeValue(this,true);
+        cinematicModal = null;
     }
 
     @Override

@@ -5,9 +5,9 @@ import static com.pavengine.app.PavEngine.uiBG;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 
-public class MusicPanelWidget extends CinematicPanelWidget {
+public class SoundPanelWidget extends CinematicPanelWidget {
 
-    public MusicPanelWidget(String name, Vector2 position, BitmapFont fnt) {
+    public SoundPanelWidget(String name, Vector2 position, BitmapFont fnt) {
         super(name, position, uiBG[8],CinematicWidgetType.Music);
     }
 

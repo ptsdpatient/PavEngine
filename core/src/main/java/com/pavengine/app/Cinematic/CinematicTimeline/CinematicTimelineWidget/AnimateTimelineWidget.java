@@ -3,6 +3,7 @@ package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.subtitle;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
@@ -25,7 +26,9 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
 
     @Override
     public void delete() {
+        Gdx.input.setInputProcessor(cinematicEditorInput);
         cinematicTimeline.timelineWidgets.removeValue(this,true);
+        cinematicModal = null;
     }
 
     @Override
