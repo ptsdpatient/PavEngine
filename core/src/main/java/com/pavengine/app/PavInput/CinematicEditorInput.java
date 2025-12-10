@@ -213,8 +213,7 @@ public class CinematicEditorInput {
                 }
 
                 for (PavLayout layout : cinematicEditorLayout) {
-
-
+                    
                     for (PavWidget widget : layout.widgets) {
 
                         if (cursor.clicked(widget.box)) {

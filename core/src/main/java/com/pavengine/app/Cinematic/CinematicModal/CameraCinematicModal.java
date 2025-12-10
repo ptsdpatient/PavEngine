@@ -261,6 +261,7 @@ public class CameraCinematicModal extends CinematicModal {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         dropdown.click();
+
 //        if(cursor.clicked(dropdown.dropDownExpand?dropdown.box:dropdown.buttonRect) && button == Input.Buttons.LEFT) {
 //
 //            print("click");

@@ -5,6 +5,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.overlayCamera;
 import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -205,6 +206,10 @@ public class SubtitleCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(cursor.clicked(deleteBound) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+//            this.widget.delete();
+//            Gdx.input.setInputProcessor(cinematicEditorInput);
+        }
         return false;
     }
 

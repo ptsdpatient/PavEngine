@@ -1,13 +1,19 @@
 package com.pavengine.app.Cinematic.CinematicModal;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavEngine.uiControl;
+import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,7 +28,17 @@ import java.util.Objects;
 public class AnimateCinematicModal extends CinematicModal {
 
     class Button {
-        
+        Rectangle bound = new Rectangle(0,0,48,48);
+        TextureRegion region;
+
+        public Button(TextureRegion region, Vector2 position) {
+            this.region = region;
+            bound.setPosition(position);
+        }
+
+        public void draw(SpriteBatch sb) {
+            sb.draw(region,bound.x,bound.y,bound.width,bound.height);
+        }
     }
 
     class TextField {
@@ -32,7 +48,8 @@ public class AnimateCinematicModal extends CinematicModal {
         float value = 0;
         boolean active = false;
 
-        TextField(Vector2 position) {
+        TextField(float value, Vector2 position) {
+            this.value = value;
             bound.setPosition(position);
             layout = new GlyphLayout(gameFont[2], value + "s");
         }
@@ -68,12 +85,13 @@ public class AnimateCinematicModal extends CinematicModal {
         GlyphLayout layout;
         boolean active = false;
         Rectangle buttonRect = new Rectangle(0, 0, 364, 48);
-        StringBind bind;
+
         String label;
 
-        public DropdownData(String label, Array<String> list, Vector2 position, StringBind bind) {
-            this.bind = bind;
+        public DropdownData(String label, Array<String> list, Vector2 position) {
+
             this.label = label;
+            this.value = label;
             buttonRect.setPosition(position);
             layout = new GlyphLayout(gameFont[2], label);
             float yOffset = 0;
@@ -105,39 +123,46 @@ public class AnimateCinematicModal extends CinematicModal {
     }
 
     public class AnimationData {
-        boolean loop;
-        String model;
-        String animationId;
-        Rectangle bounds;
+        Array<String> animationList = new Array<>();
+        DropdownData modelData, animationData;
+        TextField delayField;
+        Button deleteButton;
 
-        public AnimationData() {
-
+        public AnimationData(String model, String animation, float delay, TextureRegion buttonTexture, float yPos) {
+            modelData = new DropdownData(model, modelList, new Vector2(50, yPos));
+            animationData = new DropdownData(animation, animationList, new Vector2(430, yPos));
+            delayField = new TextField(delay,new Vector2(820, yPos));
+            deleteButton = new Button(buttonTexture, new Vector2(1100, yPos));
         }
 
         public void draw(SpriteBatch sb) {
-
+            modelData.draw(sb);
+            animationData.draw(sb);
+            delayField.draw(sb);
+            deleteButton.draw(sb);
         }
     }
 
     AnimateTimelineWidget widget;
     Rectangle[] debugRect = new Rectangle[]{};
-    //    Array<AnimationData> animationData = new Array<>();
     DropdownData modelData, animationData;
     Array<String> modelList = new Array<>(), animationList = new Array<>();
     TextField delayField;
+    Button createButton = new Button(uiControl[4],new Vector2(1100, resolution.y - 200));
+    Array<AnimationData> animationDataList = new Array<>();
 
-
-    public AnimateCinematicModal(AnimateTimelineWidget widget, StringBind modelBind, StringBind animationBind) {
+    public AnimateCinematicModal(AnimateTimelineWidget widget) {
         this.widget = widget;
 
         for (GameObject obj : staticObjects) {
             modelList.add(obj.name);
         }
 
-        modelData = new DropdownData("Models", modelList, new Vector2(20, resolution.y - 200), modelBind);
-        animationData = new DropdownData("Animation", animationList, new Vector2(430, resolution.y - 200), animationBind);
+        modelData = new DropdownData("Models", modelList, new Vector2(50, resolution.y - 200));
+        animationData = new DropdownData("Animation", animationList, new Vector2(430, resolution.y - 200));
 
-        delayField = new TextField(new Vector2(820, resolution.y - 200));
+        delayField = new TextField(0, new Vector2(820, resolution.y - 200));
+
     }
 
 
@@ -157,9 +182,11 @@ public class AnimateCinematicModal extends CinematicModal {
         modelData.draw(sb);
         animationData.draw(sb);
         delayField.draw(sb);
-//        for(AnimationData data : animationData) {
-//            data.draw(sb);
-//        }
+        createButton.draw(sb);
+
+        for(AnimationData data : animationDataList) {
+            data.draw(sb);
+        }
 
     }
 
@@ -228,11 +255,83 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            if(cursor.clicked(deleteBound)) {
+                this.widget.delete();
+            }
+
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+
+
+        for(AnimationData data : animationDataList) {
+            if (data.modelData.active) {
+                for (OptionData optionData : data.modelData.optionList) {
+                    if (cursor.clicked(optionData.bound)) {
+                        data.animationList.clear();
+                        if (staticObjects.size < 1) break;
+                        GameObject selectedModel = staticObjects.peek();
+                        for (GameObject obj : staticObjects) {
+                            if (Objects.equals(optionData.text, obj.name)) {
+                                selectedModel = obj;
+                                break;
+                            }
+                        }
+                        for (Animation animation : selectedModel.scene.modelInstance.animations) {
+                            data.animationList.add(animation.id);
+                        }
+                        data.animationData.set(data.animationList);
+                        data.modelData.value = optionData.text;
+                        data.modelData.layout.setText(gameFont[2], optionData.text);
+                        break;
+                    }
+                }
+            }
+
+            if (data.animationData.active) {
+                for (OptionData optionData : data.animationData.optionList) {
+                    if (cursor.clicked(optionData.bound)) {
+                        data.animationData.value = optionData.text;
+                        data.animationData.layout.setText(gameFont[2], optionData.text);
+                        break;
+                    }
+                }
+            }
+
+            data.modelData.active = false;
+            data.animationData.active = false;
+            data.delayField.active = false;
+
+            if (cursor.clicked(data.modelData.buttonRect)) {
+                data.modelData.active = true;
+                print("active!");
+                return false;
+            }
+
+            if (cursor.clicked(data.animationData.buttonRect)) {
+                data.animationData.active = true;
+                print("active!");
+                return false;
+            }
+
+            if (cursor.clicked(data.delayField.bound)) {
+                data.delayField.active = true;
+                data.delayField.layout.setText(gameFont[2], data.delayField.value + "s");
+                return false;
+            }
+
+            if(cursor.clicked(data.deleteButton.bound)) {
+                animationDataList.removeValue(data,true);
+            }
+        }
+
+        if(cursor.clicked(createButton.bound)) {
+            animationDataList.add(new AnimationData(modelData.value,animationData.value,delayField.value,uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
+            return true;
+        }
 
         if (modelData.active) {
             for (OptionData optionData : modelData.optionList) {

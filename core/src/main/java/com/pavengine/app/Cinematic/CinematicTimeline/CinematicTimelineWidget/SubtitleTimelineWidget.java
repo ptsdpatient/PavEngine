@@ -8,6 +8,7 @@ import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -29,6 +30,11 @@ public class SubtitleTimelineWidget extends CinematicTimelineWidget{
     public SubtitleTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
         layout.setText(gameFont[2], text, Color.WHITE, resolution.x * 0.8f, Align.center, true);
+    }
+
+    @Override
+    public void delete() {
+        cinematicTimeline.timelineWidgets.removeValue(this,true);
     }
 
     @Override

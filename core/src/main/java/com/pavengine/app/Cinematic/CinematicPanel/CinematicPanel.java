@@ -27,10 +27,9 @@ public class CinematicPanel {
         this.bg = bg;
         this.bounds = new Rectangle(0,resolution.y/2.5f,284,resolution.y/0.6f);
 
-        panelWidgets.add(new SubtitlePanelWidget("Subtitle",new Vector2( 24,resolution.y - 60)));
-        panelWidgets.add(new CameraPanelWidget("Camera",new Vector2(24,resolution.y - 60 - 48)));
-        panelWidgets.add(new AnimatePanelWidget("Animate",new Vector2(24,resolution.y - 60 - 48*2)));
-
+        panelWidgets.add(new SubtitlePanelWidget("Subtitle", new Vector2( 24,resolution.y - 30)));
+        panelWidgets.add(new CameraPanelWidget("Camera", new Vector2(24,resolution.y - 30 - 48)));
+        panelWidgets.add(new AnimatePanelWidget("Animate", new Vector2(24,resolution.y - 30 - 48*2)));
     }
 
     public void draw(SpriteBatch batch) {

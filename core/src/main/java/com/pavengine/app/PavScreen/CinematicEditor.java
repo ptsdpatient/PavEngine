@@ -5,6 +5,7 @@ import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
 import static com.pavengine.app.Methods.addObjects;
 import static com.pavengine.app.Methods.listFile;
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
@@ -219,9 +220,11 @@ public class CinematicEditor extends  PavScreen {
             cinematicModal.render(batch);
             if(cursor.clicked(cinematicModal.closeBound) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 cinematicModal.save();
+                print("not cinematic modal anymore");
                 Gdx.input.setInputProcessor(cinematicEditorInput);
                 cinematicModal = null;
             }
+
         }
         if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
             gameFont[1].draw(batch, cameraReferenceLayout,resolution.x - cameraReferenceLayout.width,resolution.y / 2.5f + cameraReferenceLayout.height + 16);

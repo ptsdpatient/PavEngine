@@ -3,6 +3,7 @@ package com.pavengine.app.Cinematic.CinematicPanel;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.gameFont;
+import static com.pavengine.app.PavEngine.uiBG;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -24,7 +25,7 @@ public abstract class CinematicPanelWidget {
     public Rectangle bound;
 
     public CinematicPanelWidget(String name, Vector2 position, TextureRegion texture, CinematicWidgetType type) {
-        this.texture = texture;
+        this.texture = uiBG[8];
         this.name = name;
         this.font = gameFont[1];
         this.x = position.x;

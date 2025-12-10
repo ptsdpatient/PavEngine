@@ -7,6 +7,7 @@ import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
 import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -31,6 +32,11 @@ public class CameraTimelineWidget extends CinematicTimelineWidget{
     public CameraTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
         layout.setText(gameFont[2], text, Color.WHITE, resolution.x * 0.8f, Align.center, true);
+    }
+
+    @Override
+    public void delete() {
+        cinematicTimeline.timelineWidgets.removeValue(this,true);
     }
 
     @Override

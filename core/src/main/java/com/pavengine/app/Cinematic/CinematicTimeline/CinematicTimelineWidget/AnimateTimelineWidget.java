@@ -1,8 +1,10 @@
 package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -22,30 +24,14 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
     }
 
     @Override
+    public void delete() {
+        cinematicTimeline.timelineWidgets.removeValue(this,true);
+    }
+
+    @Override
     public void update(SpriteBatch sb, float time) {
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            cinematicModal = new AnimateCinematicModal(this, new StringBind() {
-                @Override
-                public String get() {
-                    return "";
-                }
-
-                @Override
-                public void set(String value) {
-
-                }
-            }, new StringBind() {
-
-                @Override
-                public String get() {
-                    return "";
-                }
-
-                @Override
-                public void set(String value) {
-
-                }
-            });
+            cinematicModal = new AnimateCinematicModal(this);
         }
 
         if((time > startTime) && time < (startTime + duration)) {

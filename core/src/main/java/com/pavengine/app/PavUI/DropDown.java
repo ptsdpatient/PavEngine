@@ -95,7 +95,11 @@ public class DropDown extends PavWidget implements InputProcessor {
     public void render(SpriteBatch sb) {
 
         if(
-            !active && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && cursor.clicked(box)) {
+            !active
+            && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+            && cursor.clicked(box)
+            && Gdx.input.getInputProcessor() == inputProcessor
+        ) {
             active = true;
             inputProcessor = Gdx.input.getInputProcessor();
             Gdx.input.setInputProcessor(this);

@@ -133,7 +133,7 @@ public class PavCrypt {
             out.close();
             print(file.file().getAbsolutePath());
         } catch (Exception e) {
-            System.err.println("[WARN] Failed to read binary: " + path + " (" + e + ")");
+            print("Failed to read binary: " + path + " (" + e + ")");
         }
     }
 
@@ -155,7 +155,7 @@ public class PavCrypt {
             }
 
         } catch (Exception e) {
-            System.err.println("[WARN] Failed to read binary: " + path + " (" + e + ")");
+            print("Failed to read binary: " + path + " (" + e + ")");
         }
     }
 
