@@ -42,7 +42,7 @@ public abstract class GameObject {
     public float mass, bounciness;
     public Array<Force> forces = new Array<>();
     public Array<Actions> actions = new Array<>();
-    public String[] animationNames;
+    public Array<String> animationNames = new Array<>();
     public GameObject attachObject;
     public Color debugColor = new Color(Color.LIGHT_GRAY);
     public Quaternion rotation = new Quaternion(), deltaRotation = new Quaternion();
@@ -87,6 +87,8 @@ public abstract class GameObject {
     public abstract void updateCenter();
 
     public abstract void playAnimation(int index, boolean loop, boolean force);
+
+    public abstract void playAnimation(String name, boolean loop, boolean force);
 
     public abstract void moveTowards(Vector3 target, float speed, float delta);
 

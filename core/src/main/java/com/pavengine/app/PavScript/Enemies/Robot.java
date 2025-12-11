@@ -31,7 +31,7 @@ public class Robot extends Enemy {
     public Robot(Lane lane, EnemyBlueprint bp) {
         this.yOffset = bp.yOffset;
         this.lane = new Lane(lane.start.cpy(), lane.end.cpy());
-        world.addObject("robot", bp.name, lane.start.cpy().add(new Vector3(0, yOffset, 0)), 0, 0, ObjectType.TARGET, bp.animationNames);
+//        world.addObject("robot", bp.name, lane.start.cpy().add(new Vector3(0, yOffset, 0)), 0, 0, ObjectType.TARGET, bp.animationNames);
         object = targetObjects.get(targetObjects.size - 1);
         if (Objects.equals(bp.name, "prime")) object.size = new Vector3(3, 3, 3);
         int i = 0;

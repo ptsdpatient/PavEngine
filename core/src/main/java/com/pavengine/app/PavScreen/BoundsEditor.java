@@ -165,8 +165,6 @@ public class BoundsEditor extends  PavScreen {
             or.draw();
         }
 
-
-
         batch.setProjectionMatrix(overlayCamera.combined);
         batch.begin();
 
@@ -175,9 +173,7 @@ public class BoundsEditor extends  PavScreen {
             layout.draw(batch, overlayViewport.getWorldWidth(), overlayViewport.getWorldHeight());
         }
 
-
         batch.end();
-
 
 //        for(PavLayout layout : boundsEditorLayout) {
 //            for(PavWidget widget : layout.widgets) {
@@ -188,14 +184,14 @@ public class BoundsEditor extends  PavScreen {
 
 
         for(GameObject obj : staticObjects) {
-            if(obj == selectedObject)
-                for(PavBounds box : obj.boxes)
-                    debugCube(box, obj.debugColor);
+//            if(obj == selectedObject)
+//                for(PavBounds box : obj.boxes)
+//                    debugCube(box, obj.debugColor);
         }
 
         if(selectedObject!=null) {
             for(PavBounds box : selectedObject.boxes) {
-                debugCube(box);
+//                debugCube(box);
             }
         }
 

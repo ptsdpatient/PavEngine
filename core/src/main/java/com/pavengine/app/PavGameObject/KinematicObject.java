@@ -13,6 +13,7 @@ import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -42,7 +43,7 @@ public class KinematicObject extends GameObject {
 
     }
 
-    public KinematicObject(String name, Vector3 position, float size, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
+    public KinematicObject(String name, Vector3 position, float size, Scene scene, ObjectType objectType) {
         this.name = name;
         this.animationNames = animationNames;
         this.objectType = objectType;
@@ -62,30 +63,6 @@ public class KinematicObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        this.radius = center.dst(bounds.max);
-
-        this.scene.modelInstance.calculateBoundingBox(bounds);
-        bounds.min.add(pos);
-        bounds.max.add(pos);
-        boxes.add(new PavBounds(bounds));
-        pavBounds.setBounds(bounds);
-
-    }
-
-    public KinematicObject(String name, Vector3 position, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
-        this.name = name;
-        this.animationNames = animationNames;
-        this.objectType = objectType;
-        this.scene = scene;
-        this.mass = mass;
-        this.pos = position;
-        this.bounciness = bounciness;
-        this.scene.modelInstance.transform.setToTranslation(position);
-        this.bounds = new BoundingBox();
-        this.scene.modelInstance.calculateBoundingBox(bounds);
-        bounds.min.add(pos);
-        bounds.max.add(pos);
-        objectBehaviorType = Static;
         this.radius = center.dst(bounds.max);
 
         this.scene.modelInstance.calculateBoundingBox(bounds);
@@ -153,6 +130,37 @@ public class KinematicObject extends GameObject {
         return position.dst(center);
     }
 
+    @Override
+    public void playAnimation(String animationName, boolean loop, boolean force) {
+        int i = 0;
+        for(String string : animationNames) {
+            if(Objects.equals(string, animationName)) {
+
+                if ((animated && !force) || this.scene.animationController == null) return;
+
+                currentAnimation = i;
+                animated = true;
+
+                scene.animationController.setAnimation(animationName, loop ? -1 : 1, new AnimationController.AnimationListener() {
+
+                    @Override
+                    public void onEnd(AnimationController.AnimationDesc animation) {
+                        animated = false;
+                        animation.time = 0f;
+                    }
+
+                    @Override
+                    public void onLoop(AnimationController.AnimationDesc animation) {
+
+                    }
+                });
+
+                break;
+            }
+            i++;
+        }
+    }
+
     public boolean checkCollision(GameObject otherObject) {
         return pavBounds.getBounds().getCenter(new Vector3()).mul(scene.modelInstance.transform).dst(otherObject.pavBounds.getBounds().getCenter(new Vector3()).mul(otherObject.scene.modelInstance.transform)) < 5f;
     }
@@ -200,7 +208,7 @@ public class KinematicObject extends GameObject {
         currentAnimation = index;
         animated = true;
 
-        scene.animationController.setAnimation(animationNames[index], loop ? -1 : 1, new AnimationController.AnimationListener() {
+        scene.animationController.setAnimation(animationNames.get(index), loop ? -1 : 1, new AnimationController.AnimationListener() {
 
             @Override
             public void onEnd(AnimationController.AnimationDesc animation) {

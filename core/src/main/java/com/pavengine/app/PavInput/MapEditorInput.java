@@ -189,7 +189,7 @@ public class MapEditorInput {
                             case AddStaticObjectToMapEditor: {
                                 print("add : " + widget.text);
                                 Array<PavBounds> boundsArray = new Array<>();
-                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
                                 readArray("assets/models/" + widget.text + "/bounds.bin" , CryptSchema.PavBounds, boundData -> {
                                     Vector3 boundPosition = (Vector3) boundData.get("field0");
                                     Vector3 boundScale = (Vector3) boundData.get("field1");

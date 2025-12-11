@@ -30,6 +30,7 @@ public class CinematicPanel {
         panelWidgets.add(new SubtitlePanelWidget("Subtitle", new Vector2( 24,resolution.y - 30)));
         panelWidgets.add(new CameraPanelWidget("Camera", new Vector2(24,resolution.y - 30 - 48)));
         panelWidgets.add(new AnimatePanelWidget("Animate", new Vector2(24,resolution.y - 30 - 48*2)));
+        panelWidgets.add(new SoundPanelWidget("Sound", new Vector2(24,resolution.y - 30 - 48*3)));
     }
 
     public void draw(SpriteBatch batch) {

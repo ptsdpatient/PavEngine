@@ -27,13 +27,13 @@ public abstract class CinematicModal implements InputProcessor {
     public Rectangle closeBound = new Rectangle(),deleteBound = new Rectangle();
 
     public CinematicModal() {
-        this.bg = uiBG[1];
+        this.bg = uiBG[2];
         this.closeBG = uiControl[5];
         this.widgetBG = uiBG[0];
         accentBG = hoverUIBG[2];
         deleteBG = uiControl[6];
         closeBound.set(resolution.x-60,resolution.y-60,48,48);
-        deleteBound.set(resolution.x-60,resolution.y-60 - 54,48,48);
+        deleteBound.set(resolution.x - 60 - 54,resolution.y-60,48,48);
         Gdx.input.setInputProcessor(this);
     }
 
@@ -53,6 +53,6 @@ public abstract class CinematicModal implements InputProcessor {
     }
 
     public void debug(SpriteBatch sb) {
-        debugRectangle(deleteBound, Color.CYAN);
+//        debugRectangle(deleteBound, Color.CYAN);
     }
 }

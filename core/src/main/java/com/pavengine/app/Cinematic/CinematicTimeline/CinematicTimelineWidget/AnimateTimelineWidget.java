@@ -12,13 +12,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicModal.AnimateCinematicModal;
 import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 import com.pavengine.app.StringBind;
 
+
 public class AnimateTimelineWidget extends CinematicTimelineWidget{
 
+    public Array<TimelineAnimateData> animateDataList = new Array<>();
 
     public AnimateTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
@@ -37,8 +40,15 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
             cinematicModal = new AnimateCinematicModal(this);
         }
 
-        if((time > startTime) && time < (startTime + duration)) {
 
+        if((time > startTime) && time < (startTime + duration)) {
+            for(TimelineAnimateData data : animateDataList) {
+                if(time > startTime + data.delay && !data.played && time < startTime + data.delay + 0.5f) {
+                    data.played = true;
+                    data.object.playAnimation(data.animation,false,true);
+                    print("play : " + data.animation);
+                }
+            }
         }
     }
 }

@@ -223,7 +223,7 @@ public class GameScreen extends PavScreen {
 
 
     private void setPlayer() {
-        world.addObject("player", "ball", new Vector3(0,20,0), 2f, 10, 1, ObjectType.KINEMATIC, new String[]{"Bounce", "Squish"});
+        world.addObject("player", "ball", new Vector3(0,20,0), 2f, ObjectType.KINEMATIC);
         PavPlayer.player = world.getGameObject("player");
         PavPlayer.player.detectSlope = true;
         PavPlayer.player.setSlopeDetection();

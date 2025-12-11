@@ -234,7 +234,7 @@ public class BoundsEditorInput {
                                     sceneManager.removeScene(staticObjects.peek().scene);
                                 }
 
-                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
                                 setSelectedObject(staticObjects.peek());
 
                                 readArray("assets/models/" + selectedObject.name + "/bounds.bin" , CryptSchema.PavBounds, data -> {

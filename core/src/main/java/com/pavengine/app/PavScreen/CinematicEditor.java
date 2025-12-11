@@ -98,7 +98,7 @@ public class CinematicEditor extends  PavScreen {
 //        selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
 
 
-        addAndGet(cinematicEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 226, 48, 5)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo))
+        addAndGet(cinematicEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 226, 48, 12)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo))
             .addSprite(new DropDown(listFile("assets/scenes/"), new StringBind() {
                 @Override
                 public String get() {
@@ -220,7 +220,6 @@ public class CinematicEditor extends  PavScreen {
             cinematicModal.render(batch);
             if(cursor.clicked(cinematicModal.closeBound) && Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
                 cinematicModal.save();
-                print("not cinematic modal anymore");
                 Gdx.input.setInputProcessor(cinematicEditorInput);
                 cinematicModal = null;
             }

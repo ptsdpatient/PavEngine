@@ -213,7 +213,7 @@ public class CinematicEditorInput {
                 }
 
                 for (PavLayout layout : cinematicEditorLayout) {
-                    
+
                     for (PavWidget widget : layout.widgets) {
 
                         if (cursor.clicked(widget.box)) {
@@ -223,7 +223,7 @@ public class CinematicEditorInput {
 
                                 case AddStaticObjectToMapEditor: {
                                     print("add : " + widget.text);
-                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
                                     setSelectedObject(staticObjects.get(staticObjects.size - 1));
                                     print(selectedObject == null ? "null" : "exists");
                                     return true;

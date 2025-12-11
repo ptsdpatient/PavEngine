@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.AnimateTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TimelineAnimateData;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.StringBind;
 
@@ -38,6 +39,10 @@ public class AnimateCinematicModal extends CinematicModal {
 
         public void draw(SpriteBatch sb) {
             sb.draw(region,bound.x,bound.y,bound.width,bound.height);
+        }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
         }
     }
 
@@ -58,6 +63,10 @@ public class AnimateCinematicModal extends CinematicModal {
             sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
             gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
         }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
+        }
     }
 
     class OptionData {
@@ -75,6 +84,10 @@ public class AnimateCinematicModal extends CinematicModal {
         public void draw(SpriteBatch sb) {
             sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
             gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
+        }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
         }
     }
 
@@ -120,6 +133,10 @@ public class AnimateCinematicModal extends CinematicModal {
                 }
             }
         }
+
+        public void setY(float y) {
+            buttonRect.setY(y + buttonRect.getY());
+        }
     }
 
     public class AnimationData {
@@ -127,8 +144,10 @@ public class AnimateCinematicModal extends CinematicModal {
         DropdownData modelData, animationData;
         TextField delayField;
         Button deleteButton;
+        float yPos;
 
         public AnimationData(String model, String animation, float delay, TextureRegion buttonTexture, float yPos) {
+            this.yPos = yPos;
             modelData = new DropdownData(model, modelList, new Vector2(50, yPos));
             animationData = new DropdownData(animation, animationList, new Vector2(430, yPos));
             delayField = new TextField(delay,new Vector2(820, yPos));
@@ -141,6 +160,14 @@ public class AnimateCinematicModal extends CinematicModal {
             delayField.draw(sb);
             deleteButton.draw(sb);
         }
+
+        public void setPosition(float scrollY) {
+            yPos+=scrollY;
+            modelData.setY(scrollY);
+            animationData.setY(scrollY);
+            delayField.setY(scrollY);
+            deleteButton.setY(scrollY);
+        }
     }
 
     AnimateTimelineWidget widget;
@@ -150,6 +177,7 @@ public class AnimateCinematicModal extends CinematicModal {
     TextField delayField;
     Button createButton = new Button(uiControl[4],new Vector2(1100, resolution.y - 200));
     Array<AnimationData> animationDataList = new Array<>();
+    float scrollY = 0f;
 
     public AnimateCinematicModal(AnimateTimelineWidget widget) {
         this.widget = widget;
@@ -168,7 +196,10 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public void save() {
-
+        this.widget.animateDataList.clear();
+        for(AnimationData data : animationDataList) {
+            this.widget.animateDataList.add(new TimelineAnimateData(data.modelData.value,data.animationData.value,data.delayField.value,false));
+        }
     }
 
     @Override
@@ -185,7 +216,13 @@ public class AnimateCinematicModal extends CinematicModal {
         createButton.draw(sb);
 
         for(AnimationData data : animationDataList) {
-            data.draw(sb);
+            if((data.yPos < resolution.y - 200 - 48
+
+//                && animationDataList.peek().yPos < resolution.y - 200
+            )
+//                && data.yPos > animationDataList.size * 54
+            )
+                data.draw(sb);
         }
 
     }
@@ -264,7 +301,6 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
 
 
         for(AnimationData data : animationDataList) {
@@ -406,6 +442,14 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        if(
+            animationDataList.peek().yPos + 54 + amountY*10 <= resolution.y - 200
+            && animationDataList.first().yPos + 60 + amountY*10 >= resolution.y - 200
+        )
+            for(AnimationData data : animationDataList) {
+                data.setPosition(amountY*10);
+            }
+
         return false;
     }
 }
