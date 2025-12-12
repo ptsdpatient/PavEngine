@@ -2,7 +2,7 @@ package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavEngine.subtitle;
+import static com.pavengine.app.PavEngine.soundBox;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
@@ -13,17 +13,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.Cinematic.CinematicModal.AnimateCinematicModal;
-import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
+import com.pavengine.app.Cinematic.CinematicModal.SoundCinematicModal;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
-import com.pavengine.app.StringBind;
 
 
-public class AnimateTimelineWidget extends CinematicTimelineWidget{
+public class SoundTimelineWidget extends CinematicTimelineWidget{
 
-    public Array<TimelineAnimateData> animateDataList = new Array<>();
+    public Array<TimelineSoundData> soundDataList = new Array<>();
+    boolean dataFalse = false;
 
-    public AnimateTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
+    public SoundTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
         super(bg, text, pixelPos, type, pixelsPerSecond);
     }
 
@@ -37,21 +36,22 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
     @Override
     public void update(SpriteBatch sb, float time) {
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            cinematicModal = new AnimateCinematicModal(this);
+            cinematicModal = new SoundCinematicModal(this);
         }
 
-        if (time < startTime) {
-            for (TimelineAnimateData data : animateDataList) {
+        if (time < startTime && !dataFalse) {
+            for (TimelineSoundData data : soundDataList) {
                 data.played = false;
             }
+            dataFalse = true;
         }
 
         if((time > startTime) && time < (startTime + duration)) {
-            for(TimelineAnimateData data : animateDataList) {
+            for(TimelineSoundData data : soundDataList) {
                 if(time > startTime + data.delay && !data.played && time < startTime + data.delay + 0.5f) {
                     data.played = true;
-                    data.object.playAnimation(data.animation,false,true);
-                    print("play : " + data.animation);
+                    dataFalse = false;
+                    soundBox.playSound(data.sound);
                 }
             }
         }

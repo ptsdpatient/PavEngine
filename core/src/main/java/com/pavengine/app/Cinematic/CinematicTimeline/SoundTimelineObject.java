@@ -5,6 +5,6 @@ import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
 
 public class SoundTimelineObject extends CinematicTimelineObject{
     public SoundTimelineObject(String name, TextureRegion nameTexture) {
-        super(name, nameTexture, CinematicWidgetType.Music);
+        super(name, nameTexture, CinematicWidgetType.Sound);
     }
 }

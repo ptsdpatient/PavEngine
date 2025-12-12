@@ -3,6 +3,7 @@ package com.pavengine.app;
 import static com.pavengine.app.Methods.createSkybox;
 import static com.pavengine.app.Methods.extractSprites;
 import static com.pavengine.app.Methods.files;
+import static com.pavengine.app.Methods.listFile;
 import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
@@ -101,10 +102,6 @@ public class PavEngine extends Game {
 
     public static Array<ReferenceEditorLine> referenceEditorRays = new Array<>();
 
-    public String[] soundList = new String[]{
-        "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
-        "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"
-    };
 
     public PavEngine() {
 
@@ -238,7 +235,7 @@ public class PavEngine extends Game {
     }
 
     private void initializeSound() {
-        for (String soundName : soundList) {
+        for (String soundName : listFile("assets/sound",true,true)) {
             soundBox.addSound(soundName, true);
         }
         soundBox.updateVolume();

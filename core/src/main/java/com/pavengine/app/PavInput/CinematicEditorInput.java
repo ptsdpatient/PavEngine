@@ -34,6 +34,7 @@ import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.AnimateTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CameraTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SoundTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
@@ -144,7 +145,15 @@ public class CinematicEditorInput {
                             break;
                         case Light:
                             break;
-                        case Music:
+                        case Sound:
+                            cinematicTimeline.timelineWidgets.add(new SoundTimelineWidget(
+                                cinematicPanel.selectedWidget.bg,
+                                cinematicPanel.selectedWidget.text,
+                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+                                cinematicPanel.selectedWidget.type,
+                                cinematicTimeline.pixelsPerSecond
+                            ));
                             break;
                         case Subtitle:
                             cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(

@@ -10,7 +10,7 @@ import java.util.Objects;
 public class SoundBox {
     public static boolean volume = true;
     public boolean isSound = true;
-    Array<Sounds> sounds = new Array<>();
+    public Array<Sounds> sounds = new Array<>();
 
     public void addSound(String name, Boolean isSound) {
         this.isSound = isSound;

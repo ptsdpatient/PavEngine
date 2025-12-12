@@ -286,6 +286,7 @@ public class CameraCinematicModal extends CinematicModal {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        dropdown.scroll(amountY * 10);
         return false;
     }
 }

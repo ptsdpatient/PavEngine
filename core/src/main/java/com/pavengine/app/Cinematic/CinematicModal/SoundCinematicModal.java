@@ -4,27 +4,25 @@ import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.gameFont;
 import static com.pavengine.app.PavEngine.resolution;
+import static com.pavengine.app.PavEngine.soundBox;
 import static com.pavengine.app.PavEngine.uiControl;
-import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.AnimateTimelineWidget;
-import com.pavengine.app.PavGameObject.GameObject;
-
-import java.util.Objects;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SoundTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TimelineSoundData;
+import com.pavengine.app.PavSound.Sounds;
 
 public class SoundCinematicModal extends CinematicModal {
 
     class Button {
-        Rectangle bound = new Rectangle(0,0,48,48);
+        Rectangle bound = new Rectangle(0, 0, 48, 48);
         TextureRegion region;
 
         public Button(TextureRegion region, Vector2 position) {
@@ -33,7 +31,11 @@ public class SoundCinematicModal extends CinematicModal {
         }
 
         public void draw(SpriteBatch sb) {
-            sb.draw(region,bound.x,bound.y,bound.width,bound.height);
+            sb.draw(region, bound.x, bound.y, bound.width, bound.height);
+        }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
         }
     }
 
@@ -54,6 +56,10 @@ public class SoundCinematicModal extends CinematicModal {
             sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
             gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
         }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
+        }
     }
 
     class OptionData {
@@ -72,6 +78,10 @@ public class SoundCinematicModal extends CinematicModal {
             sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
             gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
         }
+
+        public void setY(float y) {
+            bound.setY(y + bound.getY());
+        }
     }
 
     public class DropdownData {
@@ -80,7 +90,7 @@ public class SoundCinematicModal extends CinematicModal {
         Array<OptionData> optionList = new Array<>();
         GlyphLayout layout;
         boolean active = false;
-        Rectangle buttonRect = new Rectangle(0, 0, 364, 48);
+        Rectangle buttonRect = new Rectangle(0, 0, 600, 48);
 
         String label;
 
@@ -93,7 +103,7 @@ public class SoundCinematicModal extends CinematicModal {
             float yOffset = 0;
             for (String string : list) {
                 yOffset += 56;
-                optionList.add(new OptionData(string, new Rectangle(position.x, position.y - yOffset, 364, 48)));
+                optionList.add(new OptionData(string, new Rectangle(position.x, position.y - yOffset, 600, 48)));
             }
         }
 
@@ -112,59 +122,82 @@ public class SoundCinematicModal extends CinematicModal {
 
             if (active) {
                 for (OptionData option : optionList) {
-                    option.draw(sb);
+                    if (option.bound.y >= buttonRect.y - 400 && option.bound.y < buttonRect.y - 45) {
+                        option.draw(sb);
+                    }
                 }
+            }
+        }
+
+        public void setY(float y) {
+            buttonRect.setY(y + buttonRect.getY());
+        }
+
+        public void scrollOptions(float y) {
+            for (OptionData option : optionList) {
+                option.setY(y);
             }
         }
     }
 
-    public class AnimationData {
-        Array<String> animationList = new Array<>();
-        DropdownData modelData, animationData;
+    public class SoundData {
+        DropdownData soundData;
         TextField delayField;
         Button deleteButton;
+        float yPos;
 
-        public AnimationData(String model, String animation, float delay, TextureRegion buttonTexture, float yPos) {
-            modelData = new DropdownData(model, modelList, new Vector2(50, yPos));
-            animationData = new DropdownData(animation, animationList, new Vector2(430, yPos));
-            delayField = new TextField(delay,new Vector2(820, yPos));
-            deleteButton = new Button(buttonTexture, new Vector2(1100, yPos));
+        public SoundData(String sound, float delay, TextureRegion buttonTexture, float yPos) {
+            this.yPos = yPos;
+            soundData = new DropdownData(sound, soundsList, new Vector2(120, yPos));
+            delayField = new TextField(delay, new Vector2(760, yPos));
+            deleteButton = new Button(buttonTexture, new Vector2(1000, yPos));
         }
 
         public void draw(SpriteBatch sb) {
-            modelData.draw(sb);
-            animationData.draw(sb);
+            soundData.draw(sb);
             delayField.draw(sb);
             deleteButton.draw(sb);
         }
+
+        public void setPosition(float scrollY) {
+            yPos += scrollY;
+            soundData.setY(scrollY);
+            delayField.setY(scrollY);
+            deleteButton.setY(scrollY);
+        }
     }
 
-    AnimateTimelineWidget widget;
+    SoundTimelineWidget widget;
     Rectangle[] debugRect = new Rectangle[]{};
-    DropdownData modelData, animationData;
-    Array<String> modelList = new Array<>(), animationList = new Array<>();
+    DropdownData soundData;
+    Array<String> soundsList = new Array<>();
     TextField delayField;
-    Button createButton = new Button(uiControl[4],new Vector2(1100, resolution.y - 200));
-    Array<AnimationData> animationDataList = new Array<>();
+    Button createButton = new Button(uiControl[4], new Vector2(1000, resolution.y - 200));
+    Array<SoundData> animationDataList = new Array<>();
 
-    public SoundCinematicModal(AnimateTimelineWidget widget) {
+    public SoundCinematicModal(SoundTimelineWidget widget) {
         this.widget = widget;
 
-        for (GameObject obj : staticObjects) {
-            modelList.add(obj.name);
+        for (Sounds sound : soundBox.sounds) {
+            this.soundsList.add(sound.name);
         }
 
-        modelData = new DropdownData("Models", modelList, new Vector2(50, resolution.y - 200));
-        animationData = new DropdownData("Animation", animationList, new Vector2(430, resolution.y - 200));
+        soundData = new DropdownData("Sound", soundsList, new Vector2(120, resolution.y - 200));
 
-        delayField = new TextField(0, new Vector2(820, resolution.y - 200));
+        delayField = new TextField(0, new Vector2(760, resolution.y - 200));
 
+        for (TimelineSoundData data : this.widget.soundDataList) {
+            animationDataList.add(new SoundData(data.sound, data.delay,uiControl[5], resolution.y - 256 - animationDataList.size * 56f));
+        }
     }
 
 
     @Override
     public void save() {
-
+        this.widget.soundDataList.clear();
+        for (SoundData data : animationDataList) {
+            this.widget.soundDataList.add(new TimelineSoundData(data.soundData.value, data.delayField.value));
+        }
     }
 
     @Override
@@ -175,13 +208,14 @@ public class SoundCinematicModal extends CinematicModal {
     @Override
     public void draw(SpriteBatch sb) {
 
-        modelData.draw(sb);
-        animationData.draw(sb);
+        soundData.draw(sb);
         delayField.draw(sb);
         createButton.draw(sb);
 
-        for(AnimationData data : animationDataList) {
-            data.draw(sb);
+        for (SoundData data : animationDataList) {
+            if (data.yPos < soundData.buttonRect.y - 48) {
+                data.draw(sb);
+            }
         }
 
     }
@@ -200,6 +234,54 @@ public class SoundCinematicModal extends CinematicModal {
 
     @Override
     public boolean keyTyped(char c) {
+
+        for (SoundData data : animationDataList) {
+            if (data.delayField.active) {
+                if (c == '\b') {
+                    if (!data.delayField.input.isEmpty()) {
+                        data.delayField.input = data.delayField.input.substring(0, data.delayField.input.length() - 1);
+                    }
+                } else if (c >= 32 && c != 127) {
+
+                    if (Character.isDigit(c)) {
+                        data.delayField.input += c;
+                    } else if (c == '.' && !data.delayField.input.contains(".")) {
+                        data.delayField.input += c;
+                    } else if (c == '-' && data.delayField.input.isEmpty()) {
+                        data.delayField.input += c;
+                    } else return true;
+                }
+
+                if (!data.delayField.input.equals("") &&
+                    !data.delayField.input.equals("-") &&
+                    !data.delayField.input.equals(".") &&
+                    !data.delayField.input.equals("-.")) {
+
+                    try {
+                        data.delayField.value = Float.parseFloat(data.delayField.input);
+                        if (data.delayField.value > widget.duration) {
+                            data.delayField.value = widget.duration;
+                            data.delayField.input = Float.toString(data.delayField.value);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+
+                if (data.delayField.input.isEmpty()) {
+                    data.delayField.value = 0f;
+                }
+
+                data.delayField.layout.setText(
+                    gameFont[2],
+                    data.delayField.input + "s",
+                    Color.WHITE,
+                    data.delayField.bound.width,
+                    Align.left,
+                    true
+                );
+            }
+        }
+
         if (delayField.active) {
             if (c == '\b') {
                 if (!delayField.input.isEmpty()) {
@@ -251,9 +333,9 @@ public class SoundCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            if(cursor.clicked(deleteBound)) {
-                this.widget.delete();
-            }
+        if (cursor.clicked(deleteBound)) {
+            this.widget.delete();
+        }
 
         return false;
     }
@@ -262,53 +344,23 @@ public class SoundCinematicModal extends CinematicModal {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
 
-
-        for(AnimationData data : animationDataList) {
-            if (data.modelData.active) {
-                for (OptionData optionData : data.modelData.optionList) {
+        for (SoundData data : animationDataList) {
+            if (data.soundData.active) {
+                for (OptionData optionData : data.soundData.optionList) {
                     if (cursor.clicked(optionData.bound)) {
-                        data.animationList.clear();
-                        if (staticObjects.size < 1) break;
-                        GameObject selectedModel = staticObjects.peek();
-                        for (GameObject obj : staticObjects) {
-                            if (Objects.equals(optionData.text, obj.name)) {
-                                selectedModel = obj;
-                                break;
-                            }
-                        }
-                        for (Animation animation : selectedModel.scene.modelInstance.animations) {
-                            data.animationList.add(animation.id);
-                        }
-                        data.animationData.set(data.animationList);
-                        data.modelData.value = optionData.text;
-                        data.modelData.layout.setText(gameFont[2], optionData.text);
+                        data.soundData.value = optionData.text;
+                        data.soundData.layout.setText(gameFont[2], optionData.text);
                         break;
                     }
                 }
             }
 
-            if (data.animationData.active) {
-                for (OptionData optionData : data.animationData.optionList) {
-                    if (cursor.clicked(optionData.bound)) {
-                        data.animationData.value = optionData.text;
-                        data.animationData.layout.setText(gameFont[2], optionData.text);
-                        break;
-                    }
-                }
-            }
-
-            data.modelData.active = false;
-            data.animationData.active = false;
+            data.soundData.active = false;
             data.delayField.active = false;
 
-            if (cursor.clicked(data.modelData.buttonRect)) {
-                data.modelData.active = true;
-                print("active!");
-                return false;
-            }
 
-            if (cursor.clicked(data.animationData.buttonRect)) {
-                data.animationData.active = true;
+            if (cursor.clicked(data.soundData.buttonRect)) {
+                data.soundData.active = true;
                 print("active!");
                 return false;
             }
@@ -319,59 +371,33 @@ public class SoundCinematicModal extends CinematicModal {
                 return false;
             }
 
-            if(cursor.clicked(data.deleteButton.bound)) {
-                animationDataList.removeValue(data,true);
+            if (cursor.clicked(data.deleteButton.bound)) {
+                animationDataList.removeValue(data, true);
             }
         }
 
-        if(cursor.clicked(createButton.bound)) {
-            animationDataList.add(new AnimationData(modelData.value,animationData.value,delayField.value,uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
+        if (cursor.clicked(createButton.bound)) {
+            animationDataList.add(new SoundData(soundData.value, delayField.value, uiControl[5], resolution.y - 256 - animationDataList.size * 56f));
             return true;
         }
 
-        if (modelData.active) {
-            for (OptionData optionData : modelData.optionList) {
+
+        if (soundData.active) {
+            for (OptionData optionData : soundData.optionList) {
                 if (cursor.clicked(optionData.bound)) {
-                    animationList.clear();
-                    if (staticObjects.size < 1) break;
-                    GameObject selectedModel = staticObjects.peek();
-                    for (GameObject obj : staticObjects) {
-                        if (Objects.equals(optionData.text, obj.name)) {
-                            selectedModel = obj;
-                            break;
-                        }
-                    }
-                    for (Animation animation : selectedModel.scene.modelInstance.animations) {
-                        animationList.add(animation.id);
-                    }
-                    animationData.set(animationList);
-                    modelData.value = optionData.text;
-                    modelData.layout.setText(gameFont[2], optionData.text);
-                    break;
+                    soundData.value = optionData.text;
+                    soundData.layout.setText(gameFont[2], optionData.text);
                 }
             }
         }
 
-        if (animationData.active) {
-            for (OptionData optionData : animationData.optionList) {
-                if (cursor.clicked(optionData.bound)) {
-                    animationData.value = optionData.text;
-                    animationData.layout.setText(gameFont[2], optionData.text);
-                }
-            }
-        }
 
-        modelData.active = false;
-        animationData.active = false;
+        soundData.active = false;
         delayField.active = false;
 
-        if (cursor.clicked(modelData.buttonRect)) {
-            modelData.active = true;
-            return false;
-        }
 
-        if (cursor.clicked(animationData.buttonRect)) {
-            animationData.active = true;
+        if (cursor.clicked(soundData.buttonRect)) {
+            soundData.active = true;
             return false;
         }
 
@@ -402,6 +428,27 @@ public class SoundCinematicModal extends CinematicModal {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        if (
+            soundData.optionList.peek().bound.y + 54 + amountY * 10 <= soundData.buttonRect.y
+                && soundData.optionList.first().bound.y + 60 + amountY * 10 >= soundData.buttonRect.y
+        ) {
+            soundData.scrollOptions(amountY * 10);
+        }
+
+        if (!animationDataList.isEmpty()) {
+
+
+            if (
+                animationDataList.peek().yPos + 54 + amountY * 10 <= resolution.y - 200
+                    && animationDataList.first().yPos + 60 + amountY * 10 >= resolution.y - 200
+            ) {
+                for (SoundData data : animationDataList) {
+                    data.setPosition(amountY * 10);
+                }
+            }
+        }
+
+
         return false;
     }
 }

@@ -129,13 +129,20 @@ public class AnimateCinematicModal extends CinematicModal {
 
             if (active) {
                 for (OptionData option : optionList) {
-                    option.draw(sb);
+                    if(option.bound.y < buttonRect.y - 48 && option.bound.y > buttonRect.y - 356)
+                        option.draw(sb);
                 }
             }
         }
 
         public void setY(float y) {
             buttonRect.setY(y + buttonRect.getY());
+        }
+
+        public void scrollOption(float v) {
+            for(OptionData optionData : optionList) {
+                optionData.setY(v);
+            }
         }
     }
 
@@ -177,7 +184,6 @@ public class AnimateCinematicModal extends CinematicModal {
     TextField delayField;
     Button createButton = new Button(uiControl[4],new Vector2(1100, resolution.y - 200));
     Array<AnimationData> animationDataList = new Array<>();
-    float scrollY = 0f;
 
     public AnimateCinematicModal(AnimateTimelineWidget widget) {
         this.widget = widget;
@@ -191,6 +197,9 @@ public class AnimateCinematicModal extends CinematicModal {
 
         delayField = new TextField(0, new Vector2(820, resolution.y - 200));
 
+        for(TimelineAnimateData data : this.widget.animateDataList) {
+            animationDataList.add(new AnimationData(data.model, data.animation, data.delay, uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
+        }
     }
 
 
@@ -210,20 +219,20 @@ public class AnimateCinematicModal extends CinematicModal {
     @Override
     public void draw(SpriteBatch sb) {
 
+        for(AnimationData data : animationDataList) {
+            if(!(data.modelData.active || data.animationData.active || data.delayField.active)) if(data.yPos < resolution.y - 200 - 48)
+                data.draw(sb);
+        }
+
+        for(AnimationData data : animationDataList) {
+            if(data.modelData.active || data.animationData.active || data.delayField.active) if(data.yPos < resolution.y - 200 - 48)
+                data.draw(sb);
+        }
+
         modelData.draw(sb);
         animationData.draw(sb);
         delayField.draw(sb);
         createButton.draw(sb);
-
-        for(AnimationData data : animationDataList) {
-            if((data.yPos < resolution.y - 200 - 48
-
-//                && animationDataList.peek().yPos < resolution.y - 200
-            )
-//                && data.yPos > animationDataList.size * 54
-            )
-                data.draw(sb);
-        }
 
     }
 
@@ -241,6 +250,54 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public boolean keyTyped(char c) {
+
+        for(AnimationData data : animationDataList) {
+            if (data.delayField.active) {
+                if (c == '\b') {
+                    if (!data.delayField.input.isEmpty()) {
+                        data.delayField.input = data.delayField.input.substring(0, data.delayField.input.length() - 1);
+                    }
+                } else if (c >= 32 && c != 127) {
+
+                    if (Character.isDigit(c)) {
+                        data.delayField.input += c;
+                    } else if (c == '.' && !data.delayField.input.contains(".")) {
+                        data.delayField.input += c;
+                    } else if (c == '-' && data.delayField.input.isEmpty()) {
+                        data.delayField.input += c;
+                    } else return true;
+                }
+
+                if (!data.delayField.input.equals("") &&
+                    !data.delayField.input.equals("-") &&
+                    !data.delayField.input.equals(".") &&
+                    !data.delayField.input.equals("-.")) {
+
+                    try {
+                        data.delayField.value = Float.parseFloat(data.delayField.input);
+                        if (data.delayField.value > widget.duration) {
+                            data.delayField.value = widget.duration;
+                            data.delayField.input = Float.toString(data.delayField.value);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+
+                if (data.delayField.input.isEmpty()) {
+                    data.delayField.value = 0f;
+                }
+
+                data.delayField.layout.setText(
+                    gameFont[2],
+                    data.delayField.input + "s",
+                    Color.WHITE,
+                    data.delayField.bound.width,
+                    Align.left,
+                    true
+                );
+            }
+        }
+
         if (delayField.active) {
             if (c == '\b') {
                 if (!delayField.input.isEmpty()) {
@@ -442,14 +499,67 @@ public class AnimateCinematicModal extends CinematicModal {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        if(
-            animationDataList.peek().yPos + 54 + amountY*10 <= resolution.y - 200
-            && animationDataList.first().yPos + 60 + amountY*10 >= resolution.y - 200
-        )
-            for(AnimationData data : animationDataList) {
-                data.setPosition(amountY*10);
+
+        if(modelData.active && !modelData.optionList.isEmpty()) {
+             if(
+                modelData.optionList.peek().bound.y + 54 + amountY*10 <= modelData.buttonRect.y
+                    && modelData.optionList.first().bound.y + 60 + amountY*10 >= modelData.buttonRect.y
+            )
+            {
+                modelData.scrollOption(amountY * 10);
+                return true;
+            }
+        }
+
+        if(animationData.active && !animationData.optionList.isEmpty()) {
+             if(
+                animationData.optionList.peek().bound.y + 54 + amountY*10 <= animationData.buttonRect.y
+                    && animationData.optionList.first().bound.y + 60 + amountY*10 >= animationData.buttonRect.y
+            )
+            {
+                animationData.scrollOption(amountY * 10);
+                return true;
             }
 
-        return false;
+        }
+
+       if(!animationDataList.isEmpty()) {
+
+           for(AnimationData data : animationDataList) {
+               if(data.modelData.active && !data.modelData.optionList.isEmpty()) {
+                   if(
+                       data.modelData.optionList.peek().bound.y + 54 + amountY*10 <= data.modelData.buttonRect.y
+                           && data.modelData.optionList.first().bound.y + 60 + amountY*10 >= data.modelData.buttonRect.y
+                   )
+                   {
+                       data.modelData.scrollOption(amountY * 10);
+                       return true;
+                   }
+               }
+
+               if(data.animationData.active && !data.animationData.optionList.isEmpty()) {
+                   if(
+                       data.animationData.optionList.peek().bound.y + 54 + amountY*10 <= data.animationData.buttonRect.y
+                           && data.animationData.optionList.first().bound.y + 60 + amountY*10 >= data.animationData.buttonRect.y
+                   )
+                   {
+                       data.animationData.scrollOption(amountY * 10);
+                       return true;
+                   }
+
+               }
+           }
+
+           if(
+               animationDataList.peek().yPos + 54 + amountY*10 <= resolution.y - 200
+                   && animationDataList.first().yPos + 60 + amountY*10 >= resolution.y - 200
+           )
+               for(AnimationData data : animationDataList) {
+
+                   data.setPosition(amountY*10);
+               }
+       }
+
+    return false;
     }
 }

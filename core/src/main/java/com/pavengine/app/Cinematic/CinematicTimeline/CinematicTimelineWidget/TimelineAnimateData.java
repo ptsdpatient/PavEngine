@@ -8,12 +8,12 @@ import com.pavengine.app.PavGameObject.StaticObject;
 import java.util.Objects;
 
 public class TimelineAnimateData {
-    boolean played = false;
-    GameObject object;
-    String model;
-    String animation;
-    float delay;
-    boolean loop;
+    public boolean played = false;
+    public GameObject object;
+    public String model;
+    public String animation;
+    public float delay;
+    public boolean loop;
 
     public TimelineAnimateData(String model, String animation, float delay, boolean loop) {
         this.model = model;

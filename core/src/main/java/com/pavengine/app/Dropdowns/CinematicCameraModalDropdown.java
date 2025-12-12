@@ -14,7 +14,7 @@ public class CinematicCameraModalDropdown extends Dropdown {
 
     public CameraTransitionMode currentMode;
 
-    CameraTransitionMode[] transitionModes = new CameraTransitionMode[]{
+    CameraTransitionMode[] transitionModes = new CameraTransitionMode[] {
         CameraTransitionMode.LINEAR,
         CameraTransitionMode.SMOOTHSTEP,
         CameraTransitionMode.EASE_IN,
@@ -28,7 +28,7 @@ public class CinematicCameraModalDropdown extends Dropdown {
 
 
     public CinematicCameraModalDropdown(TextureRegion background, TextureRegion hover, Vector2 position, CameraTransitionMode mode) {
-        super(background, hover, position, new String[]{
+        super(background,196, hover, position, new String[]{
             CameraTransitionMode.LINEAR.name(),
             CameraTransitionMode.SMOOTHSTEP.name(),
             CameraTransitionMode.EASE_IN.name(),

@@ -4,7 +4,7 @@ public enum CinematicWidgetType {
     Animate,
     Camera,
     Light,
-    Music,
+    Sound,
     Subtitle,
     Transform
 }
