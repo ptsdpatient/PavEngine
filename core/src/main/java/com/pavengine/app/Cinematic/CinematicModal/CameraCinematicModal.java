@@ -19,11 +19,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.CameraTransform;
-import com.pavengine.app.CameraTransitionMode;
+import com.pavengine.app.TransformTransition;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CameraTimelineWidget;
 import com.pavengine.app.Dropdowns.CinematicCameraModalDropdown;
-import com.pavengine.app.Dropdowns.Dropdown;
 
 public class CameraCinematicModal extends CinematicModal {
 
@@ -101,9 +99,9 @@ public class CameraCinematicModal extends CinematicModal {
     public static class Info {
         public Property pos, dir;
         public Rectangle bounds;
-        public CameraTransform transform;
+        public TransformTransition transform;
         public Rectangle cameraInfoBound;
-        public Info(CameraTransform transform, Rectangle bounds, float yOffset) {
+        public Info(TransformTransition transform, Rectangle bounds, float yOffset) {
             this.bounds = bounds;
             this.transform = transform;
             pos = new Property("Pos",new float[] {transform.position.x,transform.position.y,transform.position.z}, new Vector2(bounds.x + 16, bounds.y - 16 + 80));

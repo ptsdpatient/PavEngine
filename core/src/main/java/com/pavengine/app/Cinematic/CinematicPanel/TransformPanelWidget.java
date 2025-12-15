@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class TransformPanelWidget extends CinematicPanelWidget {
 
-    public TransformPanelWidget(String name, Vector2 position, BitmapFont fnt) {
+    public TransformPanelWidget(String name, Vector2 position) {
         super(name, position, uiBG[8], CinematicWidgetType.Transform);
     }
 

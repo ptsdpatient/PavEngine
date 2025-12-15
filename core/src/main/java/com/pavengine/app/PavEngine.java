@@ -216,7 +216,7 @@ public class PavEngine extends Game {
             referenceEditorRays.add(new ReferenceEditorLine(
                 new Vector3(i * step, 0, -size * step),
                 new Vector3(i * step, 0, size * step),
-                i==0?Color.GREEN:gridColor
+                i==0 ? Color.GREEN:gridColor
             ));
         }
     }

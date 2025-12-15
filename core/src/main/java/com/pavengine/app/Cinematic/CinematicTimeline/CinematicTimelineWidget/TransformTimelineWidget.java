@@ -2,7 +2,6 @@ package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavEngine.cursor;
-import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
@@ -11,22 +10,17 @@ import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.Cinematic.CinematicModal.AnimateCinematicModal;
-import com.pavengine.app.Cinematic.CinematicModal.SubtitleCinematicModal;
-import com.pavengine.app.Cinematic.CinematicPanel.CinematicWidgetType;
-import com.pavengine.app.StringBind;
+import com.pavengine.app.Cinematic.CinematicModal.TransformCinematicModal;
 
 
-public class AnimateTimelineWidget extends CinematicTimelineWidget{
+public class TransformTimelineWidget extends CinematicTimelineWidget{
 
-    public Array<TimelineAnimateData> animateDataList = new Array<>();
+    public Array<TimelineTransformData> transformDataList = new Array<>();
 
-    public AnimateTimelineWidget() {
-        super(
-            cinematicPanel.selectedWidget.bg,
+    public TransformTimelineWidget() {
+        super(cinematicPanel.selectedWidget.bg,
             cinematicPanel.selectedWidget.text,
             new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
                 cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
@@ -44,21 +38,21 @@ public class AnimateTimelineWidget extends CinematicTimelineWidget{
     @Override
     public void update(SpriteBatch sb, float time) {
         if(cursor.clicked(bounds) && Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)) {
-            cinematicModal = new AnimateCinematicModal(this);
+            cinematicModal = new TransformCinematicModal(this);
         }
 
         if (time < startTime) {
-            for (TimelineAnimateData data : animateDataList) {
+            for (TimelineTransformData data : transformDataList) {
                 data.played = false;
             }
         }
 
         if((time > startTime) && time < (startTime + duration)) {
-            for(TimelineAnimateData data : animateDataList) {
+            for(TimelineTransformData data : transformDataList) {
                 if(time > startTime + data.delay && !data.played && time < startTime + data.delay + 0.5f) {
                     data.played = true;
-                    data.object.playAnimation(data.animation,false,true);
-                    print("play : " + data.animation);
+
+                    print("play : " + data.model);
                 }
             }
         }

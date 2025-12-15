@@ -129,4 +129,12 @@ public abstract class GameObject {
         slopeRays.add(new SlopeRay(new Vector3(0, (bounds.getWidth() * size.x) / 2f, bounds.getWidth() * size.x)));      // forward
         slopeRays.add(new SlopeRay(new Vector3(bounds.getWidth() * size.x, (bounds.getWidth() * size.x) / 2f, 0)));      // right
     }
+
+    public Vector3 getDirection() {
+        return new Vector3(
+            rotation.getYaw(),
+            rotation.getPitch(),
+            rotation.getRoll()
+        );
+    }
 }

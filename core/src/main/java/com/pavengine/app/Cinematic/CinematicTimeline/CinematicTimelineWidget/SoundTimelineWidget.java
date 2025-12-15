@@ -5,6 +5,7 @@ import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.soundBox;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
@@ -22,8 +23,14 @@ public class SoundTimelineWidget extends CinematicTimelineWidget{
     public Array<TimelineSoundData> soundDataList = new Array<>();
     boolean dataFalse = false;
 
-    public SoundTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
-        super(bg, text, pixelPos, type, pixelsPerSecond);
+    public SoundTimelineWidget() {
+        super(
+            cinematicPanel.selectedWidget.bg,
+            cinematicPanel.selectedWidget.text,
+            new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+            cinematicPanel.selectedWidget.type,
+            cinematicTimeline.pixelsPerSecond);
     }
 
     @Override

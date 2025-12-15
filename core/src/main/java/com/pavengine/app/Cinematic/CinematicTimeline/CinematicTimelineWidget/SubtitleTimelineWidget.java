@@ -9,6 +9,7 @@ import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
+import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 
 import com.badlogic.gdx.Gdx;
@@ -28,8 +29,14 @@ public class SubtitleTimelineWidget extends CinematicTimelineWidget{
     public Color color = Color.WHITE;
     public GlyphLayout layout = new GlyphLayout();
 
-    public SubtitleTimelineWidget(TextureRegion bg, String text, Vector2 pixelPos, CinematicWidgetType type, float pixelsPerSecond) {
-        super(bg, text, pixelPos, type, pixelsPerSecond);
+    public SubtitleTimelineWidget() {
+        super(
+            cinematicPanel.selectedWidget.bg,
+            cinematicPanel.selectedWidget.text,
+            new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
+                cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
+            cinematicPanel.selectedWidget.type,
+            cinematicTimeline.pixelsPerSecond);
         layout.setText(gameFont[2], text, Color.WHITE, resolution.x * 0.8f, Align.center, true);
     }
 

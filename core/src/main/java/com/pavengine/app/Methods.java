@@ -236,8 +236,8 @@ public class Methods {
 //        return true;
 //    }
 
-    public static boolean transitionCamera(CameraTransform start,
-                                           CameraTransform end,
+    public static boolean transitionCamera(TransformTransition start,
+                                           TransformTransition end,
                                            float elapsed,
                                            float duration,
                                            CameraTransitionMode mode) {

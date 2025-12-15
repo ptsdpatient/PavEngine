@@ -36,6 +36,7 @@ import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.Cam
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SoundTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TransformTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -122,54 +123,32 @@ public class CinematicEditorInput {
             if (cinematicPanel.widgetDrag) {
                 cinematicPanel.widgetDrag = false;
                 if (cinematicPanel.selectedWidget.snapping) {
+
+                    CinematicTimelineWidget widget = null;
+
                     switch (cinematicPanel.selectedWidget.type) {
                         case Animate:
-                            cinematicTimeline.timelineWidgets.add(new AnimateTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
+                            widget = new AnimateTimelineWidget();
                             break;
                         case Camera:
-                            cinematicTimeline.timelineWidgets.add(new CameraTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
-                            break;
-                        case Light:
+                            widget = new CameraTimelineWidget();
                             break;
                         case Sound:
-                            cinematicTimeline.timelineWidgets.add(new SoundTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
+                            widget = new SoundTimelineWidget();
                             break;
                         case Subtitle:
-                            cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
+                            widget = new SubtitleTimelineWidget();
                             break;
                         case Transform:
-
+                            widget = new TransformTimelineWidget();
                             break;
                     }
+
+                    if (widget != null) {
+                        cinematicTimeline.timelineWidgets.add(widget);
+                    }
                 }
+
             }
 
 
