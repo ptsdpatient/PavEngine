@@ -19,8 +19,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TimelineTransformData;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TransformTimelineWidget;
+import com.pavengine.app.ObjectTransformMode;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.TransformTransition;
 
@@ -55,12 +55,12 @@ public class TransformCinematicModal extends CinematicModal {
             this.value = value;
             bound.setPosition(position);
             bound.setWidth(width);
-            layout = new GlyphLayout(gameFont[2], value + "");
+            layout = new GlyphLayout(gameFont[1], value + "");
         }
 
         public void draw(SpriteBatch sb) {
-            sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
-            gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
+            sb.draw(!active ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
+            gameFont[1].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
         }
 
         public void setY(float y) {
@@ -69,7 +69,7 @@ public class TransformCinematicModal extends CinematicModal {
 
         public void setValue(float value) {
             this.value = value;
-            layout = new GlyphLayout(gameFont[2], value + "");
+            layout = new GlyphLayout(gameFont[1], value + "");
         }
     }
 
@@ -81,13 +81,13 @@ public class TransformCinematicModal extends CinematicModal {
 
         public OptionData(String text, Rectangle bound) {
             this.text = text;
-            layout = new GlyphLayout(gameFont[2], text);
+            layout = new GlyphLayout(gameFont[1], text);
             this.bound = bound;
         }
 
         public void draw(SpriteBatch sb) {
             sb.draw(!cursor.clicked(bound) ? widgetBG : accentBG, bound.x, bound.y, bound.width, bound.height);
-            gameFont[2].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
+            gameFont[1].draw(sb, layout, bound.x + (bound.width - layout.width) / 2f, bound.y + (bound.height + layout.height) / 2f);
         }
 
         public void setY(float y) {
@@ -110,7 +110,7 @@ public class TransformCinematicModal extends CinematicModal {
             this.label = label;
             this.value = label;
             buttonRect.setPosition(position);
-            layout = new GlyphLayout(gameFont[2], label);
+            layout = new GlyphLayout(gameFont[1], label);
             float yOffset = 0;
             for (String string : list) {
                 yOffset += 56;
@@ -129,7 +129,7 @@ public class TransformCinematicModal extends CinematicModal {
         public void draw(SpriteBatch sb) {
 
             sb.draw(!cursor.clicked(buttonRect) ? widgetBG : accentBG, buttonRect.x, buttonRect.y, buttonRect.width, buttonRect.height);
-            gameFont[2].draw(sb, layout, buttonRect.x + (buttonRect.width - layout.width) / 2f, buttonRect.y + (buttonRect.height + layout.height) / 2f);
+            gameFont[1].draw(sb, layout, buttonRect.x + (buttonRect.width - layout.width) / 2f, buttonRect.y + (buttonRect.height + layout.height) / 2f);
 
             if (active) {
                 for (OptionData option : optionList) {
@@ -155,15 +155,19 @@ public class TransformCinematicModal extends CinematicModal {
         TextField x,y,z;
         GlyphLayout labelLayout;
         Vector2 fontPos;
+        TextField[] fields = new TextField[3];
 
         public TransformWidgetField(String labelName, Vector2 position, Vector3 value, float yOffset) {
             this.position = position;
-            this.labelLayout = new GlyphLayout(gameFont[2],labelName);
+            this.labelLayout = new GlyphLayout(gameFont[1],labelName);
             this.position.y -= yOffset;
             this.x = new TextField(value.x, 32 * 10, new Vector2(this.position.x + labelLayout.width + 16, this.position.y));
             this.y = new TextField(value.y, 32 * 10, new Vector2(this.position.x + labelLayout.width + 16 + 32 * 10, this.position.y));
             this.z = new TextField(value.z, 32 * 10, new Vector2(this.position.x + labelLayout.width + 16 + 32 * 2 * 10, this.position.y));
             this.fontPos = new Vector2(position.x,position.y + (labelLayout.height + 45) /2);
+            fields[0] = x;
+            fields[1] = y;
+            fields[2] = z;
         }
 
         public void setValue(Vector3 value) {
@@ -173,10 +177,19 @@ public class TransformCinematicModal extends CinematicModal {
         }
 
         public void draw(SpriteBatch sb) {
-            gameFont[2].draw(sb,labelLayout,fontPos.x,fontPos.y);
-            x.draw(sb);
-            y.draw(sb);
-            z.draw(sb);
+                gameFont[1].draw(sb,labelLayout,fontPos.x,fontPos.y);
+
+                x.draw(sb);
+                y.draw(sb);
+                z.draw(sb);
+        }
+
+        public void setY(float scrollY) {
+            fontPos.y += scrollY;
+            position.y += scrollY;
+            for(TextField field : fields) {
+                field.setY(scrollY);
+            }
         }
     }
 
@@ -186,6 +199,7 @@ public class TransformCinematicModal extends CinematicModal {
         TransformTransition data;
         TransformWidgetField posField, dirField;
         Sprite inheritDataButton;
+        Array<TextField> fields = new Array<>();
 
         public TransformWidget(TransformTransition data, Vector2 position) {
             this.position = position;
@@ -193,6 +207,9 @@ public class TransformCinematicModal extends CinematicModal {
 
             posField = new TransformWidgetField("Pos", new Vector2(position), data.position,0);
             dirField = new TransformWidgetField("Dir", new Vector2(position), data.position,54);
+
+            fields.addAll(posField.fields);
+            fields.addAll(dirField.fields);
 
             inheritDataButton = new Sprite(icons[1]);
             inheritDataButton.setOriginCenter();
@@ -211,55 +228,74 @@ public class TransformCinematicModal extends CinematicModal {
             dirField.setValue(data.direction.cpy());
         }
 
+        public void setY(float scrollY) {
+            this.position.y += scrollY;
+            this.inheritDataButton.translateY(scrollY);
+            posField.setY(scrollY);
+            dirField.setY(scrollY);
+        }
+
     }
 
     public class TransformData {
-        String model = "";
-        Array<String> animationList = new Array<>();
+
+        String model;
         TransformWidget initialTransform, finalTransform;
         TextField delayField;
         Button deleteButton;
+        DropdownData modelData,transformModeData;
         float yPos;
 
         public TransformData(String model, TransformTransition initialTransform, TransformTransition finalTransform, float delay, TextureRegion buttonTexture, float yPos) {
             this.model = model;
             this.yPos = yPos;
-            this.initialTransform = new TransformWidget(initialTransform, new Vector2(10,resolution.y - 200));
-            this.finalTransform = new TransformWidget(finalTransform, new Vector2(10,resolution.y - 200));
-
-            delayField = new TextField(delay,32 * 7f,new Vector2(820, yPos));
-            deleteButton = new Button(buttonTexture, new Vector2(1100, yPos));
+            this.initialTransform = new TransformWidget(initialTransform, new Vector2(100,yPos - 64));
+            this.finalTransform = new TransformWidget(finalTransform, new Vector2(100,yPos - 64 - 54 * 2));
+            this.modelData = new DropdownData("Models", modelList, new Vector2(30, yPos));
+            this.transformModeData = new DropdownData("Mode",transformModeList, new Vector2(675,yPos));
+            this.delayField = new TextField(delay,32 * 7f,new Vector2(420, yPos));
+            this.deleteButton = new Button(buttonTexture, new Vector2(1100, yPos));
         }
 
         public void draw(SpriteBatch sb) {
-//            modelData.draw(sb);
-//            animationData.draw(sb);
-            initialTransform.draw(sb);
-            finalTransform.draw(sb);
-            delayField.draw(sb);
-            deleteButton.draw(sb);
+            if(this.initialTransform.position.y < resolution.y - 425) this.initialTransform.draw(sb);
+            if(this.finalTransform.position.y < resolution.y - 425) this.finalTransform.draw(sb);
+            if(this.modelData.buttonRect.y < resolution.y - 425) this.modelData.draw(sb);
+            if(this.transformModeData.buttonRect.y < resolution.y - 425) this.transformModeData.draw(sb);
+            if(this.delayField.bound.y < resolution.y - 425) this.delayField.draw(sb);
+            if(this.deleteButton.bound.y < resolution.y - 425) this.deleteButton.draw(sb);
         }
 
         public void setPosition(float scrollY) {
-            yPos+=scrollY;
-//            modelData.setY(scrollY);
-//            animationData.setY(scrollY);
-            delayField.setY(scrollY);
-            deleteButton.setY(scrollY);
+            this.yPos+=scrollY;
+            this.modelData.setY(scrollY);
+            this.transformModeData.setY(scrollY);
+            this.delayField.setY(scrollY);
+            this.deleteButton.setY(scrollY);
+            this.initialTransform.setY(scrollY);
+            this.finalTransform.setY(scrollY);
         }
     }
 
     TransformTimelineWidget widget;
     Rectangle[] debugRect = new Rectangle[]{};
     TransformWidget initialTransform, finalTransform;
-    Array<String> modelList = new Array<>();
-    DropdownData modelData;
+    Array<String> modelList = new Array<>(), transformModeList = new Array<>(
+        new String[]{
+            ObjectTransformMode.SMOOTHSTEP.name(),
+            ObjectTransformMode.EASE_IN.name(),
+            ObjectTransformMode.ELASTIC.name(),
+            ObjectTransformMode.LINEAR.name(),
+            ObjectTransformMode.STEP.name(),
+        });
+    DropdownData modelData, transformModeData;
     TextField delayField;
     Button createButton = new Button(
         uiControl[4],
         new Vector2(1100, resolution.y - 200 + 64)
     );
-    Array<TransformData> animationDataList = new Array<>();
+
+    Array<TransformData> transformDataList = new Array<>();
 
     public TransformCinematicModal(TransformTimelineWidget widget) {
         this.widget = widget;
@@ -268,14 +304,17 @@ public class TransformCinematicModal extends CinematicModal {
             modelList.add(obj.name);
         }
 
+
+
         this.initialTransform = new TransformWidget(new TransformTransition(), new Vector2(100,resolution.y - 200));
         this.finalTransform = new TransformWidget(new TransformTransition(), new Vector2(100,resolution.y - 200 - 54 * 2));
 
         modelData = new DropdownData("Models", modelList, new Vector2(30, resolution.y - 200 + 64));
+        transformModeData = new DropdownData("Mode",transformModeList,new Vector2(675,resolution.y - 200 + 64));
 
 //      animationData = new DropdownData("Animation", animationList, new Vector2(430, resolution.y - 200));
 
-        delayField = new TextField(0, 32 * 7f, new Vector2(400, resolution.y - 200 + 64));
+        delayField = new TextField(0, 32 * 7f, new Vector2(420, resolution.y - 200 + 64));
 
 //        for(TimelineTransformData data : this.widget.transformDataList) {
 //            animationDataList.add(new TransformData(data.model,data.initialTransform, data.finalTransform, data.delay, uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
@@ -287,7 +326,7 @@ public class TransformCinematicModal extends CinematicModal {
     @Override
     public void save() {
         this.widget.transformDataList.clear();
-        for(TransformData data : animationDataList) {
+        for(TransformData data : transformDataList) {
 //            this.widget.transformDataList.add(
 //                new TimelineTransformData(data.model,data.initialTransform, data.finalTransform,data.delayField.value,false)
 //            );
@@ -303,20 +342,22 @@ public class TransformCinematicModal extends CinematicModal {
     public void draw(SpriteBatch sb) {
         initialTransform.draw(sb);
         finalTransform.draw(sb);
-
-//        for(TransformData data : animationDataList) {
-//            if(!(data.modelData.active || data.animationData.active || data.delayField.active)) if(data.yPos < resolution.y - 200 - 48)
-//                data.draw(sb);
-//        }
-
-//        for(TransformData data : animationDataList) {
-//            if(data.modelData.active || data.animationData.active || data.delayField.active) if(data.yPos < resolution.y - 200 - 48)
-//                data.draw(sb);
-//        }
-
+        transformModeData.draw(sb);
         modelData.draw(sb);
         delayField.draw(sb);
         createButton.draw(sb);
+
+        for(TransformData data : transformDataList) {
+//            if(!(data.modelData.active || data.modelData.active || data.delayField.active)) if(data.yPos < resolution.y - 200 - 48)
+                data.draw(sb);
+        }
+
+        for(TransformData data : transformDataList) {
+//            if(data.modelData.active || data.modelData.active || data.delayField.active) if(data.yPos < resolution.y - 200 - 48)
+                data.draw(sb);
+        }
+
+
 
     }
 
@@ -332,102 +373,80 @@ public class TransformCinematicModal extends CinematicModal {
         return false;
     }
 
+
+    public boolean fieldWrite(TextField field, char c, String suffix) {
+
+        if (c == '\b') {
+            if (!field.input.isEmpty()) {
+                field.input = field.input.substring(0, field.input.length() - 1);
+            }
+        } else if (c >= 32 && c != 127) {
+
+            if (Character.isDigit(c)) {
+                field.input += c;
+            } else if (c == '.' && !field.input.contains(".")) {
+                field.input += c;
+            } else if (c == '-' && field.input.isEmpty()) {
+                field.input += c;
+            } else return true;
+        }
+
+        if (!field.input.equals("") &&
+            !field.input.equals("-") &&
+            !field.input.equals(".") &&
+            !field.input.equals("-.")) {
+
+            try {
+                field.value = Float.parseFloat(field.input);
+                if (field.value > widget.duration) {
+                    field.value = widget.duration;
+                    field.input = Float.toString(field.value);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (field.input.isEmpty()) {
+            field.value = 0f;
+        }
+
+        field.layout.setText(
+            gameFont[1],
+            field.input + suffix,
+            Color.WHITE,
+            field.bound.width,
+            Align.left,
+            true
+        );
+
+        return true;
+    }
+
     @Override
     public boolean keyTyped(char c) {
 
-        for(TransformData data : animationDataList) {
+        for(TransformData data : transformDataList) {
             if (data.delayField.active) {
-                if (c == '\b') {
-                    if (!data.delayField.input.isEmpty()) {
-                        data.delayField.input = data.delayField.input.substring(0, data.delayField.input.length() - 1);
-                    }
-                } else if (c >= 32 && c != 127) {
+                fieldWrite(data.delayField, c, "s");
+            }
+        }
 
-                    if (Character.isDigit(c)) {
-                        data.delayField.input += c;
-                    } else if (c == '.' && !data.delayField.input.contains(".")) {
-                        data.delayField.input += c;
-                    } else if (c == '-' && data.delayField.input.isEmpty()) {
-                        data.delayField.input += c;
-                    } else return true;
-                }
+        for(TextField field : initialTransform.fields) {
+            if (field.active) {
+                fieldWrite(field, c, "");
+            }
+        }
 
-                if (!data.delayField.input.equals("") &&
-                    !data.delayField.input.equals("-") &&
-                    !data.delayField.input.equals(".") &&
-                    !data.delayField.input.equals("-.")) {
-
-                    try {
-                        data.delayField.value = Float.parseFloat(data.delayField.input);
-                        if (data.delayField.value > widget.duration) {
-                            data.delayField.value = widget.duration;
-                            data.delayField.input = Float.toString(data.delayField.value);
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-
-                if (data.delayField.input.isEmpty()) {
-                    data.delayField.value = 0f;
-                }
-
-                data.delayField.layout.setText(
-                    gameFont[2],
-                    data.delayField.input + "s",
-                    Color.WHITE,
-                    data.delayField.bound.width,
-                    Align.left,
-                    true
-                );
+        for(TextField field : finalTransform.fields) {
+            if (field.active) {
+                fieldWrite(field, c, "");
             }
         }
 
         if (delayField.active) {
-            if (c == '\b') {
-                if (!delayField.input.isEmpty()) {
-                    delayField.input = delayField.input.substring(0, delayField.input.length() - 1);
-                }
-            } else if (c >= 32 && c != 127) {
-
-                if (Character.isDigit(c)) {
-                    delayField.input += c;
-                } else if (c == '.' && !delayField.input.contains(".")) {
-                    delayField.input += c;
-                } else if (c == '-' && delayField.input.isEmpty()) {
-                    delayField.input += c;
-                } else return true;
-            }
-
-            if (!delayField.input.equals("") &&
-                !delayField.input.equals("-") &&
-                !delayField.input.equals(".") &&
-                !delayField.input.equals("-.")) {
-
-                try {
-                    delayField.value = Float.parseFloat(delayField.input);
-                    if (delayField.value > widget.duration) {
-                        delayField.value = widget.duration;
-                        delayField.input = Float.toString(delayField.value);
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-
-            if (delayField.input.isEmpty()) {
-                delayField.value = 0f;
-            }
-
-            delayField.layout.setText(
-                gameFont[2],
-                delayField.input + "s",
-                Color.WHITE,
-                delayField.bound.width,
-                Align.left,
-                true
-            );
-
-
+            fieldWrite(delayField, c, "s");
         }
+
         return false;
     }
 
@@ -443,45 +462,170 @@ public class TransformCinematicModal extends CinematicModal {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
-        if(cursor.clicked(initialTransform.inheritDataButton.getBoundingRectangle())) {
-            initialTransform.inheritData(new TransformTransition(modelData.value));
+        for(TransformData data : transformDataList) {
+            if (data.transformModeData.active) {
+                for (OptionData optionData : data.transformModeData.optionList) {
+                    if (cursor.clicked(optionData.bound)) {
+                        data.transformModeData.value = optionData.text;
+                        data.transformModeData.layout.setText(gameFont[1], optionData.text);
+                        data.transformModeData.active = false;
+                        return true;
+                    }
+                }
+            }
+
+            if(cursor.clicked(data.initialTransform.inheritDataButton.getBoundingRectangle())) {
+                data.initialTransform.inheritData(new TransformTransition(modelData.value));
+                return true;
+            }
+
+            if(cursor.clicked(data.finalTransform.inheritDataButton.getBoundingRectangle())) {
+                data.finalTransform.inheritData(new TransformTransition(modelData.value));
+                return true;
+            }
+
+            for(TextField field : data.initialTransform.fields) {
+                field.active = false;
+            }
+
+            for(TextField field : data.finalTransform.fields) {
+                field.active = false;
+            }
+
+            for(TextField field : data.initialTransform.fields) {
+                if(cursor.clicked(field.bound)){
+                    field.active = true;
+                    return true;
+                }
+            }
+
+            for(TextField field : data.finalTransform.fields) {
+                if(cursor.clicked(field.bound)){
+                    field.active = true;
+                    return true;
+                }
+            }
+
+
+
+            if (data.modelData.active) {
+                for (OptionData optionData : data.modelData.optionList) {
+                    if (cursor.clicked(optionData.bound)) {
+                        data.modelData.value = optionData.text;
+                        data.modelData.layout.setText(gameFont[1], optionData.text);
+                        break;
+                    }
+                }
+            }
+
+            data.modelData.active = false;
+            data.transformModeData.active = false;
+            data.delayField.active = false;
+
+            if (cursor.clicked(data.modelData.buttonRect)) {
+                data.modelData.active = true;
+                return false;
+            }
+
+            if (cursor.clicked(data.transformModeData.buttonRect)) {
+                data.transformModeData.active = true;
+                return false;
+            }
+
+            if (cursor.clicked(data.delayField.bound)) {
+                data.delayField.active = true;
+                data.delayField.layout.setText(gameFont[1], data.delayField.value + "s");
+                return false;
+            }
+
+            if (cursor.clicked(data.deleteButton.bound)) {
+                transformDataList.removeValue(data,true);
+                return false;
+            }
+
         }
 
-//        if(cursor.clicked(createButton.bound)) {
-//            animationDataList.add(
-//                new TransformData(modelData.value,animationData.value,delayField.value,uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
-//            return true;
-//        }
+
+        if (transformModeData.active) {
+            for (OptionData optionData : transformModeData.optionList) {
+                if (cursor.clicked(optionData.bound)) {
+                    transformModeData.value = optionData.text;
+                    transformModeData.layout.setText(gameFont[1], optionData.text);
+                    transformModeData.active = false;
+                    return true;
+                }
+            }
+        }
+
+        if(cursor.clicked(initialTransform.inheritDataButton.getBoundingRectangle())) {
+            initialTransform.inheritData(new TransformTransition(modelData.value));
+            return true;
+        }
+
+        if(cursor.clicked(finalTransform.inheritDataButton.getBoundingRectangle())) {
+            finalTransform.inheritData(new TransformTransition(modelData.value));
+            return true;
+        }
+
+        for(TextField field : initialTransform.fields) {
+            field.active = false;
+        }
+
+        for(TextField field : finalTransform.fields) {
+            field.active = false;
+        }
+
+        for(TextField field : initialTransform.fields) {
+            if(cursor.clicked(field.bound)){
+                field.active = true;
+                return true;
+            }
+        }
+
+        for(TextField field : finalTransform.fields) {
+            if(cursor.clicked(field.bound)){
+                field.active = true;
+                return true;
+            }
+        }
+
+
 
         if (modelData.active) {
             for (OptionData optionData : modelData.optionList) {
                 if (cursor.clicked(optionData.bound)) {
                     modelData.value = optionData.text;
-                    modelData.layout.setText(gameFont[2], optionData.text);
+                    modelData.layout.setText(gameFont[1], optionData.text);
                     break;
                 }
             }
         }
 
-
         modelData.active = false;
+        transformModeData.active = false;
         delayField.active = false;
 
         if (cursor.clicked(modelData.buttonRect)) {
             modelData.active = true;
             return false;
         }
-//
-//        if (cursor.clicked(animationData.buttonRect)) {
-//            animationData.active = true;
-//            return false;
-//        }
+
+        if (cursor.clicked(transformModeData.buttonRect)) {
+            transformModeData.active = true;
+            return false;
+        }
 
         if (cursor.clicked(delayField.bound)) {
             delayField.active = true;
-            delayField.layout.setText(gameFont[2], delayField.value + "s");
+            delayField.layout.setText(gameFont[1], delayField.value + "s");
             return false;
         }
+
+        if (cursor.clicked(createButton.bound)) {
+            transformDataList.add(new TransformData(modelData.value,initialTransform.data,finalTransform.data,delayField.value,uiControl[5],resolution.y - 200 + 64 - (transformDataList.size + 1) * 300));
+            return false;
+        }
+
 
 
         return false;
@@ -528,13 +672,16 @@ public class TransformCinematicModal extends CinematicModal {
 //
 //        }
 
-       if(!animationDataList.isEmpty()) {
+//        print((transformDataList.first().yPos + 300 + amountY * 10)  + " : " + (resolution.y - 200 + 64));
+
+        if(!transformDataList.isEmpty()) {
 
            if(
-               animationDataList.peek().yPos + 54 + amountY*10 <= resolution.y - 200
-                   && animationDataList.first().yPos + 60 + amountY*10 >= resolution.y - 200
+               transformDataList.peek().yPos + 300 + amountY * 10 <= resolution.y - 200 + 64
+               &&
+                   transformDataList.first().yPos + 300 + amountY * 10 >= resolution.y - 200 + 64
            )
-               for(TransformData data : animationDataList) {
+               for(TransformData data : transformDataList) {
 
                    data.setPosition(amountY*10);
                }
