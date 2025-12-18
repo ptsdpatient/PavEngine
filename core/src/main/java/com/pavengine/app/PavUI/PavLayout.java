@@ -6,13 +6,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PavLayout {
 
-    public final List<PavWidget> widgets = new ArrayList<>();
+    public final Array<PavWidget> widgets = new Array<>();
     public final PavAnchor anchor;
     public final PavFlex direction;
     public final float gap;
@@ -69,14 +70,15 @@ public class PavLayout {
         this.maxHeight = maxHeight;
     }
 
-    public void addSprite(PavWidget widget) {
+    public PavLayout addSprite(PavWidget widget) {
         widgets.add(widget);
         widget.setSize(spriteWidth, spriteHeight);
+        return this;
     }
 
     public void draw(SpriteBatch sb, float worldWidth, float worldHeight) {
 
-        int count = widgets.size();
+        int count = widgets.size;
         if (count == 0) return;
 
         totalWidth = (direction == PavFlex.ROW)
@@ -109,8 +111,6 @@ public class PavLayout {
             overflowX = true;
             renderWidth = worldWidth;
         }
-
-
         switch (anchor) {
             case TOP_LEFT:
                 startX = 0;
@@ -175,13 +175,23 @@ public class PavLayout {
 
             widget.setPosition(x, y);
 
-            if (widget.getCenter().y > box.y + box.height || widget.getCenter().y < box.y) {
-                continue;
+            if (!widget.active) {
+                if (widget.getCenter().y <= box.y + box.height &&
+                    widget.getCenter().y >= box.y) {
+                    widget.render(sb);
+                }
             }
+        }
 
-            widget.render(sb);
+        for (int i = 0; i < count; i++) {
+            PavWidget widget = widgets.get(i);
 
-
+            if (widget.active) {
+                if (widget.getCenter().y <= box.y + box.height &&
+                    widget.getCenter().y >= box.y) {
+                    widget.render(sb);
+                }
+            }
         }
     }
 }

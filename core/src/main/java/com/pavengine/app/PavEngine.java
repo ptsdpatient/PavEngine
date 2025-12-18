@@ -3,6 +3,7 @@ package com.pavengine.app;
 import static com.pavengine.app.Methods.createSkybox;
 import static com.pavengine.app.Methods.extractSprites;
 import static com.pavengine.app.Methods.files;
+import static com.pavengine.app.Methods.listFile;
 import static com.pavengine.app.Methods.load;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
@@ -49,7 +50,7 @@ import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
 public class PavEngine extends Game {
     public static Ray perspectiveTouchRay = new Ray();
     public static CameraBehaviorType cameraBehavior;
-    public static boolean dragAndDrop = true;
+
     public static boolean enableCursor = true;
     public static boolean enableMapEditor = true;
     public static boolean gamePause = false;
@@ -61,7 +62,6 @@ public class PavEngine extends Game {
 
     public static Array<ReferenceOriginLine> centerReferenceOriginRays = new Array<>();
 
-//    Screens
     public GameScreen gameScreen;
     public LoadingScreen loadingScreen;
     public UpgradeScreen upgradeScreen;
@@ -91,7 +91,7 @@ public class PavEngine extends Game {
     public static EditorSelectedObjectBehavior editorSelectedObjectBehavior = EditorSelectedObjectBehavior.FreeLook;
     public static TextButton editorSelectedObjectText;
     public static TextureRegion[]
-        uiBG ,
+        uiBG,
         uiControl,
         icons,
         hoverUIBG;
@@ -102,10 +102,6 @@ public class PavEngine extends Game {
 
     public static Array<ReferenceEditorLine> referenceEditorRays = new Array<>();
 
-    public String[] soundList = new String[]{
-        "/winning/1.mp3", "/winning/2.mp3", "/winning/3.mp3", "/loss/1.mp3", "/loss/2.mp3", "/loss/3.mp3", "intro.mp3",
-        "turret_1.mp3", "turret_2.wav", "rail_move.wav", "turret_reload.wav", "robot_damage.wav", "robot_damage_1.mp3", "robot_damage_2.mp3"
-    };
 
     public PavEngine() {
 
@@ -121,7 +117,7 @@ public class PavEngine extends Game {
         if(!enableMapEditor) {
 
         } else {
-            dragAndDrop = true;
+//            dragAndDrop = true;
         }
 
         initializeSound();
@@ -155,17 +151,12 @@ public class PavEngine extends Game {
 
         axisGizmo = new AxisGizmo(overlayCamera);
 
-        cameraBehavior = enableMapEditor ?
-            CameraBehaviorType.MapEditorCamera :
-            CameraBehaviorType.ThirdPerson;
-
+        cameraBehavior = CameraBehaviorType.Cinematic;
 
         camera = new PerspectiveCamera(67, resolution.x/2, resolution.y/2);
         camera.near = 0.1f;
         camera.far = 1000f;
         perspectiveViewport = new FitViewport(resolution.x/2, resolution.y/2, camera);
-
-
 
         perspectiveViewport.apply();
 //        print(perspectiveViewport.getWorldWidth() + " , " + perspectiveViewport.getWorldHeight());
@@ -202,11 +193,7 @@ public class PavEngine extends Game {
         boundsEditor = new BoundsEditor(this);
         cinematicEditor = new CinematicEditor(this);
 
-//        if(enableMapEditor){
-            setScreen(mapEditor);
-//        } else {
-//            setGameScreen();
-//        }
+        setScreen(cinematicEditor);
 
     }
 
@@ -229,7 +216,7 @@ public class PavEngine extends Game {
             referenceEditorRays.add(new ReferenceEditorLine(
                 new Vector3(i * step, 0, -size * step),
                 new Vector3(i * step, 0, size * step),
-                i==0?Color.GREEN:gridColor
+                i==0 ? Color.GREEN:gridColor
             ));
         }
     }
@@ -248,7 +235,7 @@ public class PavEngine extends Game {
     }
 
     private void initializeSound() {
-        for (String soundName : soundList) {
+        for (String soundName : listFile("assets/sound",true,true)) {
             soundBox.addSound(soundName, true);
         }
         soundBox.updateVolume();

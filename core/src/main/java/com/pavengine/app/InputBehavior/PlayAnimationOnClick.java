@@ -33,7 +33,7 @@ public class PlayAnimationOnClick implements InputBehavior {
                 obj.currentAnimation = animationIndex;
                 obj.animated = true;
                 isPlaying = true;
-                obj.scene.animationController.setAnimation(obj.animationNames[animationIndex], loop ? -1 : 1, new AnimationController.AnimationListener() {
+                obj.scene.animationController.setAnimation(obj.animationNames.get(animationIndex), loop ? -1 : 1, new AnimationController.AnimationListener() {
                     @Override
                     public void onEnd(AnimationController.AnimationDesc animation) {
                     }

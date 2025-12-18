@@ -16,7 +16,6 @@ import static com.pavengine.app.PavEngine.sceneManager;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsEditorLayout;
 import static com.pavengine.app.PavScreen.BoundsEditor.boundsLister;
 import static com.pavengine.app.PavScreen.BoundsEditor.selectedBound;
-import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
@@ -25,10 +24,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Animation;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodeAnimation;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
@@ -36,6 +44,8 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavCursor;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
@@ -43,32 +53,32 @@ import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 
+import net.mgsx.gltf.scene3d.scene.Scene;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BoundsEditorInput {
-    enum TransformMode {NONE, MOVE, SCALE, ROTATE}
 
     public static InputProcessor boundsEditorInput = new InputProcessor() {
         private TransformMode transformMode = TransformMode.NONE;
         private Vector3 activeAxis = Vector3.Zero;
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
-        Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
-        Quaternion initialRotation = new Quaternion();
-        float initialSize = 1;
+        Vector3 perspectiveTouch = new Vector3();
         Vector3 initialPosition = new Vector3(0, 0, 0);
         Vector3 startPointerPos = new Vector3();
         Vector3 initialScale = new Vector3();
         Vector3 intersection_scale = new Vector3();
         private final Vector3 tempVec1 = new Vector3();
-        private final Vector3 tempVec2 = new Vector3();
         private final Vector3 newScale = new Vector3();
+
 
         @Override
         public boolean keyDown(int keycode) {
-
 
             if(selectedBound != null) switch (keycode) {
                 case Input.Keys.G:
@@ -77,7 +87,7 @@ public class BoundsEditorInput {
                         setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
                         break;
                     }
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     transformMode = TransformMode.MOVE;
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
@@ -92,7 +102,7 @@ public class BoundsEditorInput {
                     }
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.SCALE;
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
@@ -110,7 +120,7 @@ public class BoundsEditorInput {
                     setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
                     activeAxis = Vector3.Zero;
                     transformMode = TransformMode.ROTATE;
-                    initialPosition = selectedBound.getCenter();
+                    initialPosition.set(selectedBound.getCenter());
                     dragPlane = new Plane(camera.direction, initialPosition);
                     dragOffset.set(new Vector3());
                     break;
@@ -157,7 +167,6 @@ public class BoundsEditorInput {
                 lockCursor(enableCursor);
             }
 
-
             return false;
         }
 
@@ -177,7 +186,7 @@ public class BoundsEditorInput {
                             PavIntersector.intersect(perspectiveTouchRay,obj.box.getBounds(),obj.transform,perspectiveTouch)
                         ) {
                             if(selectedBound != null) {
-                                initialPosition = selectedBound.getCenter();
+                                initialPosition.set(selectedBound.getCenter());
                                 dragPlane = new Plane(camera.direction, initialPosition);
                                 dragOffset.set(new Vector3());
                             }
@@ -214,7 +223,8 @@ public class BoundsEditorInput {
                         switch (widget.clickBehavior) {
                             case SaveBoundsArray : {
                                 if(selectedObject != null) {
-                                    writeArray(selectedObject.name,selectedObject.boxes);
+                                    writeArray("assets/models/"+selectedObject.name+"/bounds.bin", selectedObject.boxes, CryptSchema.PavBounds);
+                                    print("written");
                                 }
 
                             } break;
@@ -223,11 +233,19 @@ public class BoundsEditorInput {
                                     staticObjects.peek().boxes.clear();
                                     sceneManager.removeScene(staticObjects.peek().scene);
                                 }
-//                                print("add : " + widget.text);
-                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
-                                setSelectedObject(staticObjects.get(staticObjects.size - 1));
-                                selectedObject.boxes.addAll(readArray(selectedObject.name));
-//                                print(selectedObject == null ? "null" : "exists");
+
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
+                                setSelectedObject(staticObjects.peek());
+
+                                readArray("assets/models/" + selectedObject.name + "/bounds.bin" , CryptSchema.PavBounds, data -> {
+                                    Vector3 position = (Vector3) data.get("field0");
+                                    Vector3 scale = (Vector3) data.get("field1");
+                                    Quaternion rotation = (Quaternion) data.get("field2");
+                                    PavBoundsType type = PavBoundsType.valueOf( (String) data.get("field3"));
+
+                                    selectedObject.boxes.add(new PavBounds(position, scale, rotation, type));
+                                });
+
                                 return true;
                             }
                             case ExitGame: {
@@ -251,7 +269,7 @@ public class BoundsEditorInput {
 
                     ) {
                         if(selectedBound != null) {
-                            initialPosition = selectedBound.getCenter();
+                            initialPosition.set(selectedBound.getCenter());
                             dragPlane = new Plane(camera.direction, initialPosition);
                             dragOffset.set(new Vector3());
                         }
@@ -272,10 +290,6 @@ public class BoundsEditorInput {
                     axisGizmo.lookFromAxis(Vector3.Z);
                     return true;
                 }
-
-                if (cursor.clicked(mapEditorPanel))
-                    return true;
-
 
 
             }
@@ -336,33 +350,50 @@ public class BoundsEditorInput {
 
                                 if (!activeAxis.isZero()) {
 
-                                    // tempVec1 = intersection_scale - startPointerPos
-                                    tempVec1.set(intersection_scale).sub(startPointerPos);
+                                    tempVec1.set(activeAxis).nor();
 
-                                    float axisDelta = tempVec1.dot(activeAxis);
-                                    float scaleFactor = 1 + axisDelta;
+                                    Vector3 center = selectedBound.position;
 
-                                    // Use existing newScale (no new objects)
-                                    newScale.set(initialScale);
+                                    // Distance projection at current mouse position
+                                    float currentProj = intersection_scale.cpy().sub(center).dot(tempVec1);
 
-                                    if (activeAxis == Vector3.X) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
-                                    if (activeAxis == Vector3.Y) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
-                                    if (activeAxis == Vector3.Z) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+                                    // Distance projection when we clicked
+                                    float startProj   = startPointerPos.cpy().sub(center).dot(tempVec1);
 
-                                    selectedBound.setSize(newScale);
+                                    if (Math.abs(startProj) > 0.0001f) {
+
+                                        float scaleFactor = currentProj / startProj;
+
+                                        // Copy original scale before applying
+                                        newScale.set(initialScale);
+
+                                        // Apply only on the active axis
+                                        if (Math.abs(tempVec1.x) > 0.9f) newScale.x = Math.max(0.1f, initialScale.x * scaleFactor);
+                                        if (Math.abs(tempVec1.y) > 0.9f) newScale.y = Math.max(0.1f, initialScale.y * scaleFactor);
+                                        if (Math.abs(tempVec1.z) > 0.9f) newScale.z = Math.max(0.1f, initialScale.z * scaleFactor);
+
+                                        selectedBound.setSize(newScale);
+                                    }
                                 }
                                 else {
-                                    float distance = intersection_scale.dst(startPointerPos);
-                                    float sign = (intersection_scale.z > startPointerPos.z) ? 1 : -1;
-                                    float scaleFactor = 1 + (distance * sign);
 
-                                    newScale.set(initialScale).scl(scaleFactor);
+                                    float currentDistance = intersection_scale.dst(selectedBound.position.cpy());
 
-                                    newScale.x = Math.max(newScale.x, 0.1f);
-                                    newScale.y = Math.max(newScale.y, 0.1f);
-                                    newScale.z = Math.max(newScale.z, 0.1f);
+                                    float startDistance   = startPointerPos.dst(selectedBound.position.cpy());
 
-                                    selectedBound.setSize(newScale);
+                                    if (startDistance > 0.0001f) {
+
+                                        float scaleFactor = currentDistance / startDistance;
+
+                                        newScale.set(initialScale).scl(scaleFactor);
+
+                                        newScale.x = Math.max(newScale.x, 0.1f);
+                                        newScale.y = Math.max(newScale.y, 0.1f);
+                                        newScale.z = Math.max(newScale.z, 0.1f);
+
+                                        selectedBound.setSize(newScale);
+                                    }
+
                                 }
                             }
                             break;

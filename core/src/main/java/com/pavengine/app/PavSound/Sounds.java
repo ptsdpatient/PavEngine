@@ -7,7 +7,7 @@ public class Sounds {
     public Music music;
     public Sound sound;
     public String name;
-    public Boolean isSound = true;
+    public Boolean isSound;
 
     public Sounds(String name, Sound sound) {
         this.name = name;

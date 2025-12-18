@@ -8,12 +8,14 @@ import static com.pavengine.app.PavCamera.PavCamera.camera;
 import static com.pavengine.app.PavPlayer.PavPlayer.player;
 import static com.pavengine.app.PavScreen.GameWorld.dynamicObjects;
 
+import com.badlogic.gdx.graphics.g3d.model.Animation;
 import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Actions;
 import com.pavengine.app.Direction;
 import com.pavengine.app.Force;
@@ -31,15 +33,12 @@ public class GroundObject extends GameObject {
 
     }
 
-    public GroundObject(String name, Vector3 position, float size, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
+    public GroundObject(String name, Vector3 position, float size, Scene scene, ObjectType objectType) {
         this.name = name;
-        this.animationNames = animationNames;
         this.objectType = objectType;
         this.scene = scene;
         this.size = new Vector3(size, size, size);
-        this.mass = mass;
         this.pos = position;
-        this.bounciness = bounciness;
         this.scene.modelInstance.transform.setToTranslation(position);
         if (Objects.equals(this.name, "laser")) {
             objectBehaviorType = AttachToObject;
@@ -59,35 +58,12 @@ public class GroundObject extends GameObject {
         boxes.add(new PavBounds(bounds));
         pavBounds.setBounds(bounds);
 
-
+        for(Animation animation : this.scene.modelInstance.animations) {
+            animationNames.add(animation.id);
+        }
     }
 
-    public GroundObject(String name, Vector3 position, Scene scene, float mass, float bounciness, ObjectType objectType, String[] animationNames) {
-        this.name = name;
-        this.animationNames = animationNames;
-        this.objectType = objectType;
-        this.scene = scene;
-        this.mass = mass;
-        this.pos = position;
-        this.bounciness = bounciness;
-        this.scene.modelInstance.transform.setToTranslation(position);
-        this.bounds = new BoundingBox();
-        this.scene.modelInstance.calculateBoundingBox(bounds);
-        bounds.min.add(pos);
-        bounds.max.add(pos);
-        objectBehaviorType = Static;
-        this.radius = center.dst(bounds.max);
-
-        this.scene.modelInstance.calculateBoundingBox(bounds);
-        bounds.min.add(pos);
-        bounds.max.add(pos);
-        boxes.add(new PavBounds(bounds));
-        pavBounds.setBounds(bounds);
-
-
-    }
-
-    public GroundObject(String name, Scene scene, Vector3 position, Quaternion rotation, Vector3 size) {
+    public GroundObject(String name, Scene scene, Vector3 position, Quaternion rotation, Vector3 size, Array<PavBounds> boxes) {
         this.name = name;
         this.scene = scene;
 
@@ -106,10 +82,19 @@ public class GroundObject extends GameObject {
         this.scene.modelInstance.calculateBoundingBox(bounds);
         bounds.min.add(pos);
         bounds.max.add(pos);
-        boxes.add(new PavBounds(bounds));
+        this.boxes.add(new PavBounds(bounds));
         pavBounds.setBounds(bounds);
 
+        this.boxes.addAll(boxes);
+
+        updateCenter();
+        updateBox();
+
         update(0);
+
+        for(Animation animation : this.scene.modelInstance.animations) {
+            animationNames.add(animation.id);
+        }
     }
 
     public void setInteractAction(InteractType type) {
@@ -141,6 +126,37 @@ public class GroundObject extends GameObject {
     public void updateCenter() {
         this.pavBounds.getBounds().getCenter(center);
         center.mul(this.scene.modelInstance.transform);
+    }
+
+    @Override
+    public void playAnimation(String animationName, boolean loop, boolean force) {
+        int i = 0;
+        for(String string : animationNames) {
+            if(Objects.equals(string, animationName)) {
+
+                if ((animated && !force) || this.scene.animationController == null) return;
+
+                currentAnimation = i;
+                animated = true;
+
+                scene.animationController.setAnimation(animationName, loop ? -1 : 1, new AnimationController.AnimationListener() {
+
+                    @Override
+                    public void onEnd(AnimationController.AnimationDesc animation) {
+                        animated = false;
+                        animation.time = 0f;
+                    }
+
+                    @Override
+                    public void onLoop(AnimationController.AnimationDesc animation) {
+
+                    }
+                });
+
+                break;
+            }
+            i++;
+        }
     }
 
     public boolean checkVerticalCollision(float distance) {
@@ -176,7 +192,7 @@ public class GroundObject extends GameObject {
         currentAnimation = index;
         animated = true;
 
-        scene.animationController.setAnimation(animationNames[index], loop ? -1 : 1, new AnimationController.AnimationListener() {
+        scene.animationController.setAnimation(animationNames.get(index), loop ? -1 : 1, new AnimationController.AnimationListener() {
 
             @Override
             public void onEnd(AnimationController.AnimationDesc animation) {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonValue;
+import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.GameObject;
 
 import java.util.function.Consumer;
@@ -54,6 +55,16 @@ public class DataMap {
             json.addChild("type", getStringJson(obj.objectType.name()));
             json.addChild("position", getVector3Json(obj.pos));
             json.addChild("rotation", getQuaternionJson(obj.rotation));
+            json.addChild("scale", getVector3Json(obj.size));
+        };
+    }
+
+    public static Consumer<JsonValue> pavBoundCrypt(PavBounds bound) {
+        return json -> {
+            json.addChild("position", getVector3Json(bound.position));
+            json.addChild("scale", getVector3Json(bound.scale));
+            json.addChild("rotation", getQuaternionJson(bound.rotation));
+            json.addChild("type", getStringJson(bound.type.toString()));
         };
     }
 }

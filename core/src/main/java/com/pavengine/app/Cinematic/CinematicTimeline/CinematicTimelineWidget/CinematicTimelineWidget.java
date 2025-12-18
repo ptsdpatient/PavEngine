@@ -32,6 +32,8 @@ public abstract class CinematicTimelineWidget {
         this.trackY = pixelPos.y;
     }
 
+    public abstract void delete();
+
     public abstract void update(SpriteBatch sb, float time);
 
     public void draw(SpriteBatch batch, float time, float pps, float scrollY, float scrollX, float startX) {

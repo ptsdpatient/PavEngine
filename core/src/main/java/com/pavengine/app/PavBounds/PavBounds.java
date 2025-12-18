@@ -38,6 +38,13 @@ public class PavBounds {
     public float ringRadius=2f , heightOffset = 0f;
 
 
+    public PavBounds(Vector3 position, Vector3 scale, Quaternion rotation, PavBoundsType type) {
+        this.position.set(position);
+        this.scale.set(scale);
+        this.rotation.set(rotation);
+        this.type = type;
+        rebuild();
+    }
 
     public PavBounds(OrientedBoundingBox box) {
         this.box = box;
@@ -141,8 +148,28 @@ public class PavBounds {
         return box.contains(point);
     }
 
-    public void set(BoundingBox bounds, Matrix4 transform) {
-        box.set(bounds, transform);
+    public void set(Matrix4 gameTransform) {
+
+        transform.idt()
+            .translate(position)
+            .rotate(rotation)
+            .scale(scale.x, scale.y, scale.z);
+
+        Matrix4 combined = new Matrix4(gameTransform).mul(transform);
+
+        box.set(CANONICAL_BOX, combined);
+    }
+
+    public void set(BoundingBox box,Matrix4 gameTransform) {
+
+        transform.idt()
+            .translate(position)
+            .rotate(rotation)
+            .scale(scale.x, scale.y, scale.z);
+
+        Matrix4 combined = new Matrix4(gameTransform).mul(transform);
+
+        this.box.set(box, combined);
     }
 
     public void setPosition(Vector3 pos) {
@@ -159,7 +186,6 @@ public class PavBounds {
     }
 
     public void rebuild() {
-
         transform.idt()
             .translate(position)
             .rotate(rotation)
@@ -168,19 +194,4 @@ public class PavBounds {
         box.set(CANONICAL_BOX, transform);
     }
 
-
-
-
-
-    public boolean intersects(PavBounds orientedBoundingBox) {
-        return orientedBoundingBox.box.intersects(box);
-    }
-
-
-
-
-//    public Vector3 getPosition() {
-//        box.getTransform().getTranslation(center);
-//        return center;
-//    }
 }

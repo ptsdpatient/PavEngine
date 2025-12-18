@@ -3,6 +3,8 @@ package com.pavengine.app.PavInput;
 import static com.pavengine.app.Methods.lockCursor;
 import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
+import static com.pavengine.app.PavCrypt.PavCrypt.writeArray;
 import static com.pavengine.app.PavEngine.axisGizmo;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.editorSelectedObjectBehavior;
@@ -15,11 +17,11 @@ import static com.pavengine.app.PavScreen.CinematicEditor.cinematicEditorLayout;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicPanel;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicTimeline;
 import static com.pavengine.app.PavScreen.CinematicEditor.playingScene;
-import static com.pavengine.app.PavScreen.GameScreen.mapEditorPanel;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameScreen.world;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
+import static com.pavengine.app.PavScreen.MapEditor.sceneName;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -30,13 +32,20 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineControl;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.AnimateTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CameraTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SoundTimelineWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.SubtitleTimelineWidget;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TransformTimelineWidget;
 import com.pavengine.app.EditorSelectedObjectBehavior;
 import com.pavengine.app.ObjectType;
+import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavIntersector;
 import com.pavengine.app.PavUI.PavLayout;
@@ -44,70 +53,106 @@ import com.pavengine.app.PavUI.PavWidget;
 
 public class CinematicEditorInput {
     public static InputProcessor cinematicEditorInput = new InputProcessor() {
+        private Vector3 activeAxis = Vector3.Zero;
+        private TransformMode transformMode = TransformMode.NONE;
+
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
-        Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
-        Quaternion initialRotation = new Quaternion();
-        float initialSize = 1;
+        Vector3 perspectiveTouch = new Vector3();
         Vector3 initialPosition = new Vector3(0, 0, 0);
-
+        Vector3 startPointerPos = new Vector3();
+        Vector3 initialScale = new Vector3();
+        Vector3 intersection_scale = new Vector3();
+        private final Vector3 newScale = new Vector3();
         @Override
         public boolean keyDown(int keycode) {
+
+            if (selectedObject != null) switch (keycode) {
+                case Input.Keys.G:
+                    if (transformMode != TransformMode.NONE) {
+                        print("none");
+                        transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+                        break;
+                    }
+
+                    initialPosition.set(selectedObject.center);
+                    transformMode = TransformMode.MOVE;
+                    dragPlane = new Plane(camera.direction, initialPosition);
+
+                    Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, startPointerPos);
+                    dragOffset.set(selectedObject.pos).sub(startPointerPos);
+
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
+                    activeAxis = Vector3.Zero;
+                    break;
+                case Input.Keys.S:
+                    if (transformMode != TransformMode.NONE) {
+                        transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+                        break;
+                    }
+                    activeAxis = Vector3.Zero;
+                    transformMode = TransformMode.SCALE;
+                    initialPosition = selectedObject.center;
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
+                    dragPlane = new Plane(camera.direction, initialPosition);
+
+                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
+                        startPointerPos.set(intersection_scale);
+                        initialScale.set(selectedObject.size);
+                    }
+                    break;
+                case Input.Keys.R:
+                    if (transformMode != TransformMode.NONE) {
+                        transformMode = TransformMode.NONE;
+                        setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+                        break;
+                    }
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
+                    activeAxis = Vector3.Zero;
+                    transformMode = TransformMode.ROTATE;
+                    initialPosition.set(selectedObject.center);
+                    dragPlane = new Plane(camera.direction, initialPosition);
+                    dragOffset.set(new Vector3());
+                    break;
+                case Input.Keys.X:
+                    if (activeAxis == Vector3.X) {
+                        activeAxis = Vector3.Zero;
+                        break;
+                    }
+                    activeAxis = Vector3.X;
+                    break;
+                case Input.Keys.Y:
+                    if (activeAxis == Vector3.Y) {
+                        activeAxis = Vector3.Zero;
+                        break;
+                    }
+                    activeAxis = Vector3.Y;
+                    break;
+                case Input.Keys.Z:
+                    if (activeAxis == Vector3.Z) {
+                        activeAxis = Vector3.Zero;
+                        break;
+                    }
+                    activeAxis = Vector3.Z;
+                    break;
+                case Input.Keys.ESCAPE:
+                    transformMode = TransformMode.NONE;
+                    setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
+                    break;
+                case Input.Keys.FORWARD_DEL:
+                    print("delete");
+                    staticObjects.removeValue(selectedObject, true);
+                    selectedObject = null;
+                    break;
+            }
+
             return false;
         }
 
         @Override
         public boolean keyUp(int keycode) {
-
-            if (keycode == Input.Keys.G) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Grab);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.R) {
-
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Rotate);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.Z) {
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.Scale);
-                if (selectedObject != null) {
-                    initialRotation = selectedObject.rotation.cpy();
-                    initialPosition = selectedObject.pos;
-                    initialSize = selectedObject.size.x;
-                    dragPlane = new Plane(camera.direction, selectedObject.pos);
-                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-                }
-            }
-
-            if (keycode == Input.Keys.X) {
-                if (editorSelectedObjectBehavior != EditorSelectedObjectBehavior.FreeLook) {
-                    if (selectedObject != null) {
-                        selectedObject.rotation = initialRotation;
-                        selectedObject.size = new Vector3(initialSize, initialSize, initialSize);
-                        selectedObject.pos = initialPosition;
-                    }
-                }
-                setEditorSelectedObjectBehavior(EditorSelectedObjectBehavior.FreeLook);
-            }
-
-            if (keycode == Input.Keys.ESCAPE) {
-                Gdx.input.setCursorCatched(!enableCursor);
-                lockCursor(enableCursor);
-            }
 
             if (keycode == Input.Keys.DEL || keycode == Input.Keys.FORWARD_DEL) {
                 if (selectedObject != null) {
@@ -146,23 +191,6 @@ public class CinematicEditorInput {
                 }
             }
 
-
-//            if(selectedObject!=null) for(AxisGizmo3D.GizmoCube box : perspectiveAxisGizmo.boxes) {
-//                if(PavIntersector.intersect( perspectiveTouchRay, box.box.getBounds(), box.box.transform, perspectiveTouch)) {
-//
-//                    print("gizmo drag");
-//                    dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
-//                    return true;
-////                    Vector3 clickToCenter = new Vector3(selectedObject.pos).sub(perspectiveTouch);
-////                    dragAxis.set(box.direction);
-////                    axisOffset = clickToCenter.dot(dragAxis);
-////
-////                    dragPlane = new Plane(camera.direction, dragStartPos);
-////                    gizmoDrag = true;
-////                    return true;
-//                }
-//            }
-
             for (GameObject obj : staticObjects) {
                 if (PavIntersector.intersect(perspectiveTouchRay, obj.bounds, obj.scene.modelInstance.transform, perspectiveTouch)) {
                     setSelectedObject(obj);
@@ -179,6 +207,67 @@ public class CinematicEditorInput {
                 }
             }
 
+            for (PavLayout layout : cinematicEditorLayout) {
+
+
+                for (PavWidget widget : layout.widgets) {
+
+                    if (cursor.clicked(widget.box)) {
+
+                        switch (widget.clickBehavior) {
+
+                            case ExportModelInfo: {
+                                writeArray(
+                                    "assets/scenes/" + sceneName + ".bin",
+                                    staticObjects,
+                                    CryptSchema.GameObject
+                                );
+                                return true;
+                            }
+
+                            case AddStaticObjectToMapEditor: {
+                                print("add : " + widget.text);
+                                Array<PavBounds> boundsArray = new Array<>();
+                                world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
+                                readArray("assets/models/" + widget.text + "/bounds.bin" , CryptSchema.PavBounds, boundData -> {
+                                    Vector3 boundPosition = (Vector3) boundData.get("field0");
+                                    Vector3 boundScale = (Vector3) boundData.get("field1");
+                                    Quaternion boundRotation = (Quaternion) boundData.get("field2");
+                                    PavBoundsType boundType = PavBoundsType.valueOf( (String) boundData.get("field3"));
+                                    boundsArray.add(new PavBounds(boundPosition, boundScale, boundRotation, boundType));
+                                });
+                                staticObjects.peek().boxes.addAll(boundsArray);
+                                setSelectedObject(staticObjects.peek());
+                                print(selectedObject == null ? "null" : "exists");
+                                return true;
+                            }
+                            case ExitGame: {
+                                Gdx.app.exit();
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            for (GameObject obj : staticObjects) {
+                for(PavBounds bound : obj.boxes) {
+                    if(Intersector.intersectRayOrientedBoundsFast(perspectiveTouchRay, bound.box)) {
+                        transformMode = TransformMode.NONE;
+                        if (selectedObject == obj) {
+                            selectedObject = null;
+                            return true;
+                        }
+                        setSelectedObject(obj);
+                        dragPlane = new Plane(camera.direction, selectedObject.pos);
+                        dragOffset.set(selectedObject.pos).sub(perspectiveTouch);
+                        return true;
+                    }
+                }
+            }
+
             return false;
         }
 
@@ -187,42 +276,37 @@ public class CinematicEditorInput {
 
             cursor.setCursor(1);
 
-
             if (cinematicPanel.widgetDrag) {
                 cinematicPanel.widgetDrag = false;
                 if (cinematicPanel.selectedWidget.snapping) {
+
+                    CinematicTimelineWidget widget = null;
+
                     switch (cinematicPanel.selectedWidget.type) {
                         case Animate:
+                            widget = new AnimateTimelineWidget();
                             break;
                         case Camera:
-                            cinematicTimeline.timelineWidgets.add(new CameraTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
+                            widget = new CameraTimelineWidget();
                             break;
-                        case Light:
-                            break;
-                        case Music:
+                        case Sound:
+                            widget = new SoundTimelineWidget();
                             break;
                         case Subtitle:
-                            cinematicTimeline.timelineWidgets.add(new SubtitleTimelineWidget(
-                                cinematicPanel.selectedWidget.bg,
-                                cinematicPanel.selectedWidget.text,
-                                new Vector2(cinematicPanel.selectedWidget.lineRect.x - cinematicTimeline.scrollX,
-                                    cinematicPanel.selectedWidget.lineRect.y - cinematicTimeline.scrollY),
-                                cinematicPanel.selectedWidget.type,
-                                cinematicTimeline.pixelsPerSecond
-                            ));
+                            widget = new SubtitleTimelineWidget();
                             break;
                         case Transform:
+                            widget = new TransformTimelineWidget();
                             break;
                     }
+
+                    if (widget != null) {
+                        cinematicTimeline.timelineWidgets.add(widget);
+                    }
                 }
+
             }
+
 
             if (!enableCursor) {
                 lockCursor(false);
@@ -257,10 +341,10 @@ public class CinematicEditorInput {
                     }
                 }
             }
-            overlayTouch = new Vector3(screenX, screenY, 0);
-            overlayViewport.unproject(overlayTouch);
+
 
             if (button == Input.Buttons.LEFT) {
+
                 if (cursor.clicked(axisGizmo.xRect)) {
                     axisGizmo.lookFromAxis(Vector3.X);
                     return true;
@@ -272,11 +356,7 @@ public class CinematicEditorInput {
                     return true;
                 }
 
-                if (cursor.clicked(mapEditorPanel))
-                    return true;
-
                 for (PavLayout layout : cinematicEditorLayout) {
-
 
                     for (PavWidget widget : layout.widgets) {
 
@@ -287,7 +367,7 @@ public class CinematicEditorInput {
 
                                 case AddStaticObjectToMapEditor: {
                                     print("add : " + widget.text);
-                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, 10, 1, ObjectType.STATIC, new String[]{""});
+                                    world.addObject(widget.text, widget.text, new Vector3(0, 0, 0), 1, ObjectType.STATIC);
                                     setSelectedObject(staticObjects.get(staticObjects.size - 1));
                                     print(selectedObject == null ? "null" : "exists");
                                     return true;
@@ -303,7 +383,6 @@ public class CinematicEditorInput {
                 }
                 if (selectedObject != null)
                     if (!PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch)) {
-//                        print("deselect");
                         selectedObject.debugColor = Color.YELLOW;
                         selectedObject = null;
                     }
@@ -320,11 +399,6 @@ public class CinematicEditorInput {
         public boolean touchDragged(int screenX, int screenY, int pointer) {
 
             setPerspectiveTouch();
-
-
-            overlayTouch = new Vector3(screenX, screenY, 0);
-            overlayViewport.unproject(overlayTouch);
-
 
             if (enableCursor && cursor.index != 3) {
                 cursor.setCursor(2);
@@ -359,26 +433,6 @@ public class CinematicEditorInput {
             }
 
 
-//            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//                if (selectedObject != null) {
-//                    for (PavLayout layout : cinematicEditorLayout) {
-//                        if (cursor.clicked(layout.box))
-//                            return true;
-//                    }
-//
-//                    if (cursor.clicked(mapEditorPanel))
-//                        return true;
-//
-//                    if (PavIntersector.intersect(perspectiveTouchRay, selectedObject.bounds, selectedObject.scene.modelInstance.transform, perspectiveTouch))
-//                        selectedObject.pos.set(perspectiveTouch.x, perspectiveTouch.y - selectedObject.getHeight()/2f, perspectiveTouch.z);
-//                    Vector3 intersection = new Vector3();
-//
-//                    if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-//                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
-//                    }
-//                }
-//            }
-
             return false;
         }
 
@@ -407,54 +461,71 @@ public class CinematicEditorInput {
             }
 
             if (selectedObject != null) {
-                switch (editorSelectedObjectBehavior) {
-                    case Grab:
+
+
+                switch (transformMode) {
+                    case NONE:
+                        break;
+                    case MOVE:
                         Vector3 intersection = new Vector3();
+                        Vector3 originalPos = initialPosition.cpy();
 
                         if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection)) {
-                            selectedObject.pos.set(intersection.cpy().add(dragOffset));
+                            if (!activeAxis.isZero()) {
+                                print(initialPosition);
+                                if (activeAxis.equals(Vector3.X))
+                                    intersection.set(intersection.x, originalPos.y, originalPos.z);
+                                else if (activeAxis.equals(Vector3.Y))
+                                    intersection.set(originalPos.x, intersection.y, originalPos.z);
+                                else if (activeAxis.equals(Vector3.Z))
+                                    intersection.set(originalPos.x, originalPos.y, intersection.z);
+                            }
+
+                            selectedObject.pos.set(intersection.add(dragOffset));
                         }
                         break;
+                    case SCALE:
+                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, intersection_scale)) {
 
-                    case Rotate:
+                            float currentDistance = intersection_scale.dst(selectedObject.pos.cpy());
 
-                        float sensitivity = 1.5f;
+                            float startDistance   = startPointerPos.dst(selectedObject.pos.cpy());
+
+                            if (startDistance > 0.0001f) {
+
+                                float scaleFactor = currentDistance / startDistance;
+
+                                newScale.set(initialScale).scl(scaleFactor);
+
+                                newScale.x = Math.max(newScale.x, 0.1f);
+                                newScale.y = Math.max(newScale.y, 0.1f);
+                                newScale.z = Math.max(newScale.z, 0.1f);
+
+                                selectedObject.size.set(newScale);
+                            }
+                        }
+
+                        break;
+
+                    case ROTATE:
 
                         Quaternion q = new Quaternion();
 
                         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                            q.set(Vector3.X, -Gdx.input.getDeltaY() * sensitivity);
+                            q.set(Vector3.X, -Gdx.input.getDeltaY() * 0.75f);
                             selectedObject.rotation.mulLeft(q);
                         } else {
-                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * sensitivity);
+                            q.set(Vector3.Y, -Gdx.input.getDeltaX() * 0.75f);
                             selectedObject.rotation.mulLeft(q);
                         }
 
                         selectedObject.rotation.nor();
-
-                        break;
-
-                    case Scale:
-                        Vector3 scaleIntersection = new Vector3();
-                        if (Intersector.intersectRayPlane(perspectiveTouchRay, dragPlane, scaleIntersection)) {
-
-                            float distance = scaleIntersection.dst(selectedObject.pos);
-
-                            float minScale = 0.1f;
-
-                            float scalePower = 0.3f;
-
-                            float scaleFactor = minScale + (distance * scalePower);
-
-                            scaleFactor = Math.min(scaleFactor, 50f);
-
-                            selectedObject.size.set(new Vector3(scaleFactor, scaleFactor, scaleFactor));
-
-                        }
-                        break;
-                    case FreeLook:
                         break;
                 }
+
+                selectedObject.updateBox();
+                selectedObject.updateCenter();
+
             }
 
 

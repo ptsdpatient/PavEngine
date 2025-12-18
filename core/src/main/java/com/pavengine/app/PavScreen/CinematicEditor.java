@@ -3,7 +3,11 @@ package com.pavengine.app.PavScreen;
 import static com.pavengine.app.Debug.Draw.debugCube;
 import static com.pavengine.app.Debug.Draw.debugRectangle;
 import static com.pavengine.app.Methods.addAndGet;
+import static com.pavengine.app.Methods.addObjects;
+import static com.pavengine.app.Methods.listFile;
+import static com.pavengine.app.Methods.print;
 import static com.pavengine.app.PavCamera.PavCamera.camera;
+import static com.pavengine.app.PavCrypt.PavCrypt.readArray;
 import static com.pavengine.app.PavEngine.centerReferenceOriginRays;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavEngine.editorSelectedObjectText;
@@ -19,6 +23,7 @@ import static com.pavengine.app.PavEngine.subtitle;
 import static com.pavengine.app.PavEngine.uiBG;
 import static com.pavengine.app.PavEngine.uiControl;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
+import static com.pavengine.app.PavInput.MapEditorInput.mapEditorInput;
 import static com.pavengine.app.PavScreen.GameScreen.selectedObject;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavUI.PavAnchor.CENTER_LEFT;
@@ -33,7 +38,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.pavengine.app.Cinematic.CinematicModal.CameraCinematicModal;
 import com.pavengine.app.Cinematic.CinematicModal.CinematicModal;
@@ -43,15 +50,20 @@ import com.pavengine.app.Cinematic.CinematicPanel.CinematicPanelWidget;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimeline;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineObject;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.CinematicTimelineWidget;
+import com.pavengine.app.ObjectType;
 import com.pavengine.app.PavBounds.PavBounds;
+import com.pavengine.app.PavBounds.PavBoundsType;
+import com.pavengine.app.PavCrypt.CryptSchema;
 import com.pavengine.app.PavEngine;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavUI.ClickBehavior;
+import com.pavengine.app.PavUI.DropDown;
 import com.pavengine.app.PavUI.PavLayout;
 import com.pavengine.app.PavUI.PavWidget;
 import com.pavengine.app.PavUI.TextButton;
 import com.pavengine.app.ReferenceEditorLine;
 import com.pavengine.app.ReferenceOriginLine;
+import com.pavengine.app.StringBind;
 
 import java.util.ArrayList;
 
@@ -66,6 +78,7 @@ public class CinematicEditor extends  PavScreen {
     public static boolean playingScene = false;
     public static CinematicModal cinematicModal;
     public static GlyphLayout cameraReferenceLayout = new GlyphLayout();
+    public String sceneName = "scene";
 
     public CinematicEditor(PavEngine game) {
         super(game);
@@ -85,7 +98,39 @@ public class CinematicEditor extends  PavScreen {
 //        selectedObjectType = new Dropdown(192 + 32, 200, new String[]{"StaticObject", "TargetObject", "GroundObject", "KinematicObject"}, 1, font);
 
 
-        addAndGet(cinematicEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 192, 48, 5)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo));
+        addAndGet(cinematicEditorLayout,new PavLayout(TOP_RIGHT, COLUMN, 5, 226, 48, 12)).addSprite(new TextButton("Export", font, hoverUIBG[3], uiBG[2], ClickBehavior.ExportModelInfo))
+            .addSprite(new DropDown(listFile("assets/scenes/"), new StringBind() {
+                @Override
+                public String get() {
+                    return sceneName;
+                }
+
+                @Override
+                public void set(String value) {
+
+                    sceneName = value;
+
+                    readArray("assets/scenes/" + value + ".bin", CryptSchema.GameObject, data -> {
+                        String name = (String) data.get("field0");
+                        ObjectType type = ObjectType.valueOf((String) data.get("field1"));
+                        Vector3 position = (Vector3) data.get("field2");
+                        Quaternion rotation = (Quaternion) data.get("field3");
+                        Vector3 scale = (Vector3) data.get("field4");
+                        Array<PavBounds> objectBounds = new Array<>();
+
+                        readArray("assets/models/" + name + "/bounds.bin" , CryptSchema.PavBounds, boundData -> {
+                            Vector3 boundPosition = (Vector3) boundData.get("field0");
+                            Vector3 boundScale = (Vector3) boundData.get("field1");
+                            Quaternion boundRotation = (Quaternion) boundData.get("field2");
+                            PavBoundsType boundType = PavBoundsType.valueOf( (String) boundData.get("field3"));
+                            objectBounds.add(new PavBounds(boundPosition, boundScale, boundRotation, boundType));
+                        });
+
+                        addObjects(name, "STATIC", type, position, scale, rotation, objectBounds);
+                    });
+                }
+
+            }, cinematicEditorInput, gameFont[2], hoverUIBG[2], uiBG[1]));
 
         PavEngine.editorSelectedObjectText = new TextButton("Free Move", font, ClickBehavior.Nothing);
 
@@ -178,6 +223,7 @@ public class CinematicEditor extends  PavScreen {
                 Gdx.input.setInputProcessor(cinematicEditorInput);
                 cinematicModal = null;
             }
+
         }
         if((Gdx.input.getInputProcessor() == cinematicEditorInput)) {
             gameFont[1].draw(batch, cameraReferenceLayout,resolution.x - cameraReferenceLayout.width,resolution.y / 2.5f + cameraReferenceLayout.height + 16);

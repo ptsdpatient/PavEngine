@@ -26,9 +26,12 @@ public class CinematicPanel {
     public CinematicPanel(TextureRegion bg) {
         this.bg = bg;
         this.bounds = new Rectangle(0,resolution.y/2.5f,284,resolution.y/0.6f);
-        panelWidgets.add(new SubtitlePanelWidget("Subtitle",new Vector2( 24,resolution.y - 50)));
-        panelWidgets.add(new CameraPanelWidget("Camera",new Vector2(24,resolution.y - 50 - 48)));
-        panelWidgets.add(new AnimatePanelWidget("Animate",new Vector2(24,resolution.y - 50 - 48*2)));
+
+        panelWidgets.add(new SubtitlePanelWidget("Subtitle", new Vector2( 24,resolution.y - 30)));
+        panelWidgets.add(new CameraPanelWidget("Camera", new Vector2(24,resolution.y - 30 - 48)));
+        panelWidgets.add(new AnimatePanelWidget("Animate", new Vector2(24,resolution.y - 30 - 48*2)));
+        panelWidgets.add(new SoundPanelWidget("Sound", new Vector2(24,resolution.y - 30 - 48*3)));
+        panelWidgets.add(new TransformPanelWidget("Transform", new Vector2(24,resolution.y - 30 - 48*4)));
 
     }
 
@@ -41,7 +44,6 @@ public class CinematicPanel {
 
         if(cinematicPanel.widgetDrag) {
             cinematicPanel.selectedWidget.draw( batch, cursor.getPosition());
-
         }
     }
 

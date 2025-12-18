@@ -133,60 +133,60 @@ public class GameWorld {
         return null;
     }
 
-    public void addObject(String name, String model, Vector3 position, float mass, float bounciness, ObjectType type, String[] animationNames) {
-        switch (type) {
-            case TARGET: {
-                targetObjects.add(new TargetObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(targetObjects.peek().scene);
-            }
-            break;
-            case STATIC: {
-                staticObjects.add(new StaticObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(staticObjects.peek().scene);
-            }
-            break;
-            case DYNAMIC: {
-                dynamicObjects.add(new DynamicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(dynamicObjects.peek().scene);
-            }
-            break;
-            case KINEMATIC: {
-                kinematicObjects.add(new KinematicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(kinematicObjects.peek().scene);
-            }
-            break;
-            case GROUND: {
-                groundObjects.add(new GroundObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
-                sceneManager.addScene(groundObjects.peek().scene);
-            }
-            break;
-        }
-    }
+//    public void addObject(String name, String model, Vector3 position, float mass, float bounciness, ObjectType type, String[] animationNames) {
+//        switch (type) {
+//            case TARGET: {
+//                targetObjects.add(new TargetObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+//                sceneManager.addScene(targetObjects.peek().scene);
+//            }
+//            break;
+//            case STATIC: {
+//                staticObjects.add(new StaticObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+//                sceneManager.addScene(staticObjects.peek().scene);
+//            }
+//            break;
+//            case DYNAMIC: {
+//                dynamicObjects.add(new DynamicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+//                sceneManager.addScene(dynamicObjects.peek().scene);
+//            }
+//            break;
+//            case KINEMATIC: {
+//                kinematicObjects.add(new KinematicObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+//                sceneManager.addScene(kinematicObjects.peek().scene);
+//            }
+//            break;
+//            case GROUND: {
+//                groundObjects.add(new GroundObject(name, position, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+//                sceneManager.addScene(groundObjects.peek().scene);
+//            }
+//            break;
+//        }
+//    }
 
-    public void addObject(String name, String model, Vector3 position, float scale, float mass, float bounciness, ObjectType type, String[] animationNames) {
+    public void addObject(String name, String model, Vector3 position, float scale, ObjectType type) {
         switch (type) {
             case TARGET: {
-                targetObjects.add(new TargetObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+                targetObjects.add(new TargetObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), type));
                 sceneManager.addScene(targetObjects.peek().scene);
             }
             break;
             case STATIC: {
-                staticObjects.add(new StaticObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+                staticObjects.add(new StaticObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), type));
                 sceneManager.addScene(staticObjects.peek().scene);
             }
             break;
             case DYNAMIC: {
-                dynamicObjects.add(new DynamicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+                dynamicObjects.add(new DynamicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), type));
                 sceneManager.addScene(dynamicObjects.peek().scene);
             }
             break;
             case KINEMATIC: {
-                kinematicObjects.add(new KinematicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+                kinematicObjects.add(new KinematicObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), type));
                 sceneManager.addScene(kinematicObjects.peek().scene);
             }
             break;
             case GROUND: {
-                groundObjects.add(new GroundObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), mass, bounciness, type, animationNames));
+                groundObjects.add(new GroundObject(name, position, scale, new Scene(loadModel("models/" + model + "/" + model + ".gltf").scene), type));
                 sceneManager.addScene(groundObjects.peek().scene);
             }
             break;
