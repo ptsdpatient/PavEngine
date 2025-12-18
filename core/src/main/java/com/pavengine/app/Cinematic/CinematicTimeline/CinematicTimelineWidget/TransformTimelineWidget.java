@@ -1,6 +1,7 @@
 package com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget;
 
 import static com.pavengine.app.Methods.print;
+import static com.pavengine.app.Methods.transformObjectTransition;
 import static com.pavengine.app.PavEngine.cursor;
 import static com.pavengine.app.PavInput.CinematicEditorInput.cinematicEditorInput;
 import static com.pavengine.app.PavScreen.CinematicEditor.cinematicModal;
@@ -41,20 +42,13 @@ public class TransformTimelineWidget extends CinematicTimelineWidget{
             cinematicModal = new TransformCinematicModal(this);
         }
 
-        if (time < startTime) {
-            for (TimelineTransformData data : transformDataList) {
-                data.played = false;
-            }
-        }
-
         if((time > startTime) && time < (startTime + duration)) {
             for(TimelineTransformData data : transformDataList) {
-                if(time > startTime + data.delay && !data.played && time < startTime + data.delay + 0.5f) {
-                    data.played = true;
-
-                    print("play : " + data.model);
+                if(time > startTime + data.delay && time < startTime + duration) {
+                    transformObjectTransition( data.object, data.initialTransform, data.finalTransform, time,startTime + data.delay, duration);
                 }
             }
         }
+
     }
 }

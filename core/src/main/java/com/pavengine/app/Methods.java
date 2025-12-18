@@ -12,6 +12,7 @@ import static com.pavengine.app.PavScreen.GameWorld.kinematicObjects;
 import static com.pavengine.app.PavScreen.GameWorld.staticObjects;
 import static com.pavengine.app.PavScreen.GameWorld.targetObjects;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
@@ -30,6 +31,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.pavengine.app.PavBounds.PavBounds;
 import com.pavengine.app.PavGameObject.DynamicObject;
+import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.PavGameObject.GroundObject;
 import com.pavengine.app.PavGameObject.KinematicObject;
 import com.pavengine.app.PavGameObject.StaticObject;
@@ -489,6 +491,49 @@ public class Methods {
         }
     }
 
+    public static void transformObjectTransition(
+        GameObject object,
+        TransformTransition initialTransform,
+        TransformTransition finalTransform,
+        float currentTime,
+        float clipStartTime,
+        float clipDuration
+    ) {
+        // Convert seconds → normalized 0..1
+        float t = (currentTime - clipStartTime) / clipDuration;
+        t = MathUtils.clamp(t, 0f, 1f);
+
+        // Optional easing (cinematic feel)
+        // t = Interpolation.smooth.apply(t);
+
+        // --- Position ---
+        Vector3 pos = new Vector3(initialTransform.position)
+            .lerp(finalTransform.position, t);
+
+        // --- Rotation ---
+        Quaternion startRot = directionToQuaternion(initialTransform.direction);
+        Quaternion endRot   = directionToQuaternion(finalTransform.direction);
+
+        Quaternion rot = new Quaternion(startRot).slerp(endRot, t);
+
+        // --- Apply ---
+        object.pos.set(pos);
+        object.rotation.set(rot);
+
+    }
+
+
+    private static Quaternion directionToQuaternion(Vector3 direction) {
+        Vector3 forward = new Vector3(direction).nor();
+        Vector3 up = Vector3.Y;
+
+        // Prevent gimbal edge case
+        if (Math.abs(forward.dot(up)) > 0.999f) {
+            up = Vector3.Z;
+        }
+
+        return new Quaternion().setFromCross(Vector3.Z, forward).nor();
+    }
 
     public static Array<String> listFolder(String path) {
         Array<String> folders = new Array<>();

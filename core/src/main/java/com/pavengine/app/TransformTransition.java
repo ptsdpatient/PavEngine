@@ -29,6 +29,11 @@ public class TransformTransition {
 
     }
 
+    public TransformTransition(Vector3 position, Vector3 direction) {
+        this.position = position;
+        this.direction = direction;
+    }
+
     public void set(Vector3 position,Vector3 direction) {
         this.position = position;
         this.direction = direction;

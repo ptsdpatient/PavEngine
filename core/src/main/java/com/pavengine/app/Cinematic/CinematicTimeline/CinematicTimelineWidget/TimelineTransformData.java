@@ -16,7 +16,7 @@ public class TimelineTransformData {
     public float delay;
     public boolean loop;
 
-    public TimelineTransformData(String model, TransformTransition initialTransform, TransformTransition finalTransform, String animation, float delay, boolean loop) {
+    public TimelineTransformData(String model, TransformTransition initialTransform, TransformTransition finalTransform, float delay, boolean loop) {
         this.model = model;
         for(GameObject object : staticObjects) {
             if(Objects.equals(model, object.name)) {

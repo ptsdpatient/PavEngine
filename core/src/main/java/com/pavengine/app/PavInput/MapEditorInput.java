@@ -48,14 +48,11 @@ public class MapEditorInput {
 
         Plane dragPlane = new Plane();
         Vector3 dragOffset = new Vector3();
-        Vector3 perspectiveTouch = new Vector3(), overlayTouch = new Vector3();
-        Quaternion initialRotation = new Quaternion();
-        float initialSize = 1;
+        Vector3 perspectiveTouch = new Vector3();
         Vector3 initialPosition = new Vector3(0, 0, 0);
         Vector3 startPointerPos = new Vector3();
         Vector3 initialScale = new Vector3();
         Vector3 intersection_scale = new Vector3();
-        private final Vector3 tempVec1 = new Vector3();
         private final Vector3 newScale = new Vector3();
 
 

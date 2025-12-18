@@ -19,10 +19,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TimelineTransformData;
 import com.pavengine.app.Cinematic.CinematicTimeline.CinematicTimelineWidget.TransformTimelineWidget;
 import com.pavengine.app.ObjectTransformMode;
 import com.pavengine.app.PavGameObject.GameObject;
 import com.pavengine.app.TransformTransition;
+
+import java.util.Objects;
 
 public class TransformCinematicModal extends CinematicModal {
 
@@ -170,6 +173,10 @@ public class TransformCinematicModal extends CinematicModal {
             fields[2] = z;
         }
 
+        public Vector3 getValue() {
+            return new Vector3(x.value,y.value,z.value);
+        }
+
         public void setValue(Vector3 value) {
             x.setValue(value.x);
             y.setValue(value.y);
@@ -215,6 +222,10 @@ public class TransformCinematicModal extends CinematicModal {
             inheritDataButton.setOriginCenter();
             inheritDataButton.setSize(54,54);
             inheritDataButton.setPosition(position.x + 1070, position.y - 54/2f);
+        }
+
+        public TransformTransition getData() {
+            return new TransformTransition(posField.getValue(),dirField.getValue());
         }
 
         public void draw(SpriteBatch sb) {
@@ -315,22 +326,28 @@ public class TransformCinematicModal extends CinematicModal {
 //      animationData = new DropdownData("Animation", animationList, new Vector2(430, resolution.y - 200));
 
         delayField = new TextField(0, 32 * 7f, new Vector2(420, resolution.y - 200 + 64));
+        transformDataList.clear();
 
-//        for(TimelineTransformData data : this.widget.transformDataList) {
-//            animationDataList.add(new TransformData(data.model,data.initialTransform, data.finalTransform, data.delay, uiControl[5],resolution.y - 256 - animationDataList.size * 56f));
-//        }
-
+        for(TimelineTransformData data : widget.transformDataList) {
+            print("adding init");
+            transformDataList.add(new TransformData(data.model,data.initialTransform, data.finalTransform, data.delay, uiControl[5],
+                resolution.y - 200 + 64 - (transformDataList.size + 1) * 300
+//            300
+            ));
+        }
+        print(transformDataList.size);
     }
-
 
     @Override
     public void save() {
         this.widget.transformDataList.clear();
         for(TransformData data : transformDataList) {
-//            this.widget.transformDataList.add(
-//                new TimelineTransformData(data.model,data.initialTransform, data.finalTransform,data.delayField.value,false)
-//            );
+            print("adding");
+            this.widget.transformDataList.add(
+                new TimelineTransformData(data.model, data.initialTransform.data, data.finalTransform.data, data.delayField.value,false)
+            );
         }
+        print(widget.transformDataList.size);
     }
 
     @Override
@@ -398,7 +415,7 @@ public class TransformCinematicModal extends CinematicModal {
 
             try {
                 field.value = Float.parseFloat(field.input);
-                if (field.value > widget.duration) {
+                if (field.value > widget.duration && Objects.equals(suffix, "s")) {
                     field.value = widget.duration;
                     field.input = Float.toString(field.value);
                 }
@@ -426,6 +443,19 @@ public class TransformCinematicModal extends CinematicModal {
     public boolean keyTyped(char c) {
 
         for(TransformData data : transformDataList) {
+
+            for(TextField field : data.initialTransform.fields) {
+                if (field.active) {
+                    fieldWrite(field, c, "");
+                }
+            }
+
+            for(TextField field : data.finalTransform.fields) {
+                if (field.active) {
+                    fieldWrite(field, c, "");
+                }
+            }
+
             if (data.delayField.active) {
                 fieldWrite(data.delayField, c, "s");
             }
@@ -447,6 +477,8 @@ public class TransformCinematicModal extends CinematicModal {
             fieldWrite(delayField, c, "s");
         }
 
+
+
         return false;
     }
 
@@ -461,6 +493,91 @@ public class TransformCinematicModal extends CinematicModal {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+
+
+
+
+        if (transformModeData.active) {
+            for (OptionData optionData : transformModeData.optionList) {
+                if (cursor.clicked(optionData.bound)) {
+                    transformModeData.value = optionData.text;
+                    transformModeData.layout.setText(gameFont[1], optionData.text);
+                    transformModeData.active = false;
+                    return true;
+                }
+            }
+        }
+
+        if (modelData.active) {
+            for (OptionData optionData : modelData.optionList) {
+                if (cursor.clicked(optionData.bound)) {
+                    modelData.value = optionData.text;
+                    modelData.layout.setText(gameFont[1], optionData.text);
+                    modelData.active = false;
+                    return true;
+                }
+            }
+        }
+
+        if(cursor.clicked(initialTransform.inheritDataButton.getBoundingRectangle())) {
+            initialTransform.inheritData(new TransformTransition(modelData.value));
+            return true;
+        }
+
+        if(cursor.clicked(finalTransform.inheritDataButton.getBoundingRectangle())) {
+            finalTransform.inheritData(new TransformTransition(modelData.value));
+            return true;
+        }
+
+
+
+
+        for(TextField field : initialTransform.fields) {
+            field.active = false;
+        }
+
+        for(TextField field : finalTransform.fields) {
+            field.active = false;
+        }
+
+        for(TextField field : initialTransform.fields) {
+            if(cursor.clicked(field.bound)){
+                field.active = true;
+                return true;
+            }
+        }
+
+        for(TextField field : finalTransform.fields) {
+            if(cursor.clicked(field.bound)){
+                field.active = true;
+                return true;
+            }
+        }
+
+        modelData.active = false;
+        transformModeData.active = false;
+        delayField.active = false;
+
+        if (cursor.clicked(modelData.buttonRect)) {
+            modelData.active = true;
+            return false;
+        }
+
+        if (cursor.clicked(transformModeData.buttonRect)) {
+            transformModeData.active = true;
+            return false;
+        }
+
+        if (cursor.clicked(delayField.bound)) {
+            delayField.active = true;
+            delayField.layout.setText(gameFont[1], delayField.value + "s");
+            return false;
+        }
+
+        if (cursor.clicked(createButton.bound)) {
+            transformDataList.add(new TransformData(modelData.value,initialTransform.getData(),finalTransform.getData(),delayField.value,uiControl[5],resolution.y - 200 + 64 - (transformDataList.size + 1) * 300));
+            return false;
+        }
 
         for(TransformData data : transformDataList) {
             if (data.transformModeData.active) {
@@ -546,87 +663,6 @@ public class TransformCinematicModal extends CinematicModal {
         }
 
 
-        if (transformModeData.active) {
-            for (OptionData optionData : transformModeData.optionList) {
-                if (cursor.clicked(optionData.bound)) {
-                    transformModeData.value = optionData.text;
-                    transformModeData.layout.setText(gameFont[1], optionData.text);
-                    transformModeData.active = false;
-                    return true;
-                }
-            }
-        }
-
-        if(cursor.clicked(initialTransform.inheritDataButton.getBoundingRectangle())) {
-            initialTransform.inheritData(new TransformTransition(modelData.value));
-            return true;
-        }
-
-        if(cursor.clicked(finalTransform.inheritDataButton.getBoundingRectangle())) {
-            finalTransform.inheritData(new TransformTransition(modelData.value));
-            return true;
-        }
-
-        for(TextField field : initialTransform.fields) {
-            field.active = false;
-        }
-
-        for(TextField field : finalTransform.fields) {
-            field.active = false;
-        }
-
-        for(TextField field : initialTransform.fields) {
-            if(cursor.clicked(field.bound)){
-                field.active = true;
-                return true;
-            }
-        }
-
-        for(TextField field : finalTransform.fields) {
-            if(cursor.clicked(field.bound)){
-                field.active = true;
-                return true;
-            }
-        }
-
-
-
-        if (modelData.active) {
-            for (OptionData optionData : modelData.optionList) {
-                if (cursor.clicked(optionData.bound)) {
-                    modelData.value = optionData.text;
-                    modelData.layout.setText(gameFont[1], optionData.text);
-                    break;
-                }
-            }
-        }
-
-        modelData.active = false;
-        transformModeData.active = false;
-        delayField.active = false;
-
-        if (cursor.clicked(modelData.buttonRect)) {
-            modelData.active = true;
-            return false;
-        }
-
-        if (cursor.clicked(transformModeData.buttonRect)) {
-            transformModeData.active = true;
-            return false;
-        }
-
-        if (cursor.clicked(delayField.bound)) {
-            delayField.active = true;
-            delayField.layout.setText(gameFont[1], delayField.value + "s");
-            return false;
-        }
-
-        if (cursor.clicked(createButton.bound)) {
-            transformDataList.add(new TransformData(modelData.value,initialTransform.data,finalTransform.data,delayField.value,uiControl[5],resolution.y - 200 + 64 - (transformDataList.size + 1) * 300));
-            return false;
-        }
-
-
 
         return false;
     }
@@ -648,31 +684,6 @@ public class TransformCinematicModal extends CinematicModal {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-
-//        if(modelData.active && !modelData.optionList.isEmpty()) {
-//             if(
-//                modelData.optionList.peek().bound.y + 54 + amountY*10 <= modelData.buttonRect.y
-//                    && modelData.optionList.first().bound.y + 60 + amountY*10 >= modelData.buttonRect.y
-//            )
-//            {
-//                modelData.scrollOption(amountY * 10);
-//                return true;
-//            }
-//        }
-//
-//        if(animationData.active && !animationData.optionList.isEmpty()) {
-//             if(
-//                animationData.optionList.peek().bound.y + 54 + amountY*10 <= animationData.buttonRect.y
-//                    && animationData.optionList.first().bound.y + 60 + amountY*10 >= animationData.buttonRect.y
-//            )
-//            {
-//                animationData.scrollOption(amountY * 10);
-//                return true;
-//            }
-//
-//        }
-
-//        print((transformDataList.first().yPos + 300 + amountY * 10)  + " : " + (resolution.y - 200 + 64));
 
         if(!transformDataList.isEmpty()) {
 
